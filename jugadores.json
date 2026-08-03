@@ -1,0 +1,518 @@
+[
+  {
+    "nombre": "Angel Di Maria",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Alejandro Gomez",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Antoine Griezmann",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Achraf Hakimi",
+    "nacionalidad": "Marruecos"
+  },
+  {
+    "nombre": "Alexandre Lacazette",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Aymeric Laporte",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Andrew Robertson",
+    "nacionalidad": "Scotland"
+  },
+  {
+    "nombre": "Antonio Rudiger",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Alisson",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Azpilicueta",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Bernardo Silva",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Bruno Fernandes",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Christian Eriksen",
+    "nacionalidad": "Dinamarca"
+  },
+  {
+    "nombre": "Ciro Immobile",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Carvajal",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Casemiro",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Coutinho",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Cristiano Ronaldo",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "David Alaba",
+    "nacionalidad": "Austria"
+  },
+  {
+    "nombre": "Dries Mertens",
+    "nacionalidad": "Bélgica"
+  },
+  {
+    "nombre": "David Silva",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "De Gea",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Edinson Cavani",
+    "nacionalidad": "Uruguay"
+  },
+  {
+    "nombre": "Edin Dzeko",
+    "nacionalidad": "Bosnia and Herzegovina"
+  },
+  {
+    "nombre": "Erling Haaland",
+    "nacionalidad": "Noruega"
+  },
+  {
+    "nombre": "Eden Hazard",
+    "nacionalidad": "Bélgica"
+  },
+  {
+    "nombre": "Emiliano Martinez",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Ederson",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Federico Chiesa",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Frenkie de Jong",
+    "nacionalidad": "Países Bajos"
+  },
+  {
+    "nombre": "Federico Valverde",
+    "nacionalidad": "Uruguay"
+  },
+  {
+    "nombre": "Fabinho",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Gareth Bale",
+    "nacionalidad": "Wales"
+  },
+  {
+    "nombre": "Giorgio Chiellini",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Gianluigi Donnarumma",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Georginio Wijnaldum",
+    "nacionalidad": "Países Bajos"
+  },
+  {
+    "nombre": "Gabriel Jesus",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Hakan Calhanoglu",
+    "nacionalidad": "Turquía"
+  },
+  {
+    "nombre": "Harry Kane",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Hugo Lloris",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Harry Maguire",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Heung-min Son",
+    "nacionalidad": "Corea del Sur"
+  },
+  {
+    "nombre": "Ilkay Gundogan",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Isco",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Jack Grealish",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Jordan Henderson",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Joshua Kimmich",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Jan Oblak",
+    "nacionalidad": "Eslovenia"
+  },
+  {
+    "nombre": "Jordan Pickford",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Jadon Sancho",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Jamie Vardy",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Joao Cancelo",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Joao Felix",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Jordi Alba",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Jorginho",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Karim Benzema",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Kingsley Coman",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Kevin De Bruyne",
+    "nacionalidad": "Bélgica"
+  },
+  {
+    "nombre": "Kai Havertz",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Kalidou Koulibaly",
+    "nacionalidad": "Senegal"
+  },
+  {
+    "nombre": "Kylian Mbappe",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Keylor Navas",
+    "nacionalidad": "Costa Rica"
+  },
+  {
+    "nombre": "Kieran Trippier",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Kyle Walker",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Koke",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Leonardo Bonucci",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Leon Goretzka",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Lucas Hernandez",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Lorenzo Insigne",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Lautaro Martinez",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Lionel Messi",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Luka Modric",
+    "nacionalidad": "Croacia"
+  },
+  {
+    "nombre": "Leroy Sane",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Luke Shaw",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Luis Suarez",
+    "nacionalidad": "Uruguay"
+  },
+  {
+    "nombre": "Marcelo Brozovic",
+    "nacionalidad": "Croacia"
+  },
+  {
+    "nombre": "Matthijs de Ligt",
+    "nacionalidad": "Países Bajos"
+  },
+  {
+    "nombre": "Memphis Depay",
+    "nacionalidad": "Países Bajos"
+  },
+  {
+    "nombre": "Mario Gotze",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Mats Hummels",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Mauro Icardi",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Mike Maignan",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Mason Mount",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Manuel Neuer",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Marcus Rashford",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Marco Reus",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Mohamed Salah",
+    "nacionalidad": "Egipto"
+  },
+  {
+    "nombre": "Marc-Andre ter Stegen",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Marco Verratti",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "Marco Asensio",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Marquinhos",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Morata",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Nicolo Barella",
+    "nacionalidad": "Italia"
+  },
+  {
+    "nombre": "N'Golo Kante",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Neymar Jr",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Ousmane Dembele",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Pierre-Emerick Aubameyang",
+    "nacionalidad": "Gabon"
+  },
+  {
+    "nombre": "Paulo Dybala",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Phil Foden",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Paul Pogba",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Pepe",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Pique",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Rodrigo De Paul",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Robert Lewandowski",
+    "nacionalidad": "Polonia"
+  },
+  {
+    "nombre": "Romelu Lukaku",
+    "nacionalidad": "Bélgica"
+  },
+  {
+    "nombre": "Riyad Mahrez",
+    "nacionalidad": "Argelia"
+  },
+  {
+    "nombre": "Raheem Sterling",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Raphael Varane",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Roberto Firmino",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Rodri",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Ruben Dias",
+    "nacionalidad": "Portugal"
+  },
+  {
+    "nombre": "Sergio Aguero",
+    "nacionalidad": "Argentina"
+  },
+  {
+    "nombre": "Serge Gnabry",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Sadio Mane",
+    "nacionalidad": "Senegal"
+  },
+  {
+    "nombre": "Sergio Busquets",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Sergio Ramos",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Trent Alexander-Arnold",
+    "nacionalidad": "Inglaterra"
+  },
+  {
+    "nombre": "Thibaut Courtois",
+    "nacionalidad": "Bélgica"
+  },
+  {
+    "nombre": "Theo Hernandez",
+    "nacionalidad": "Francia"
+  },
+  {
+    "nombre": "Toni Kroos",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Thomas Muller",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Thomas Partey",
+    "nacionalidad": "Ghana"
+  },
+  {
+    "nombre": "Timo Werner",
+    "nacionalidad": "Alemania"
+  },
+  {
+    "nombre": "Thiago",
+    "nacionalidad": "España"
+  },
+  {
+    "nombre": "Thiago Silva",
+    "nacionalidad": "Brasil"
+  },
+  {
+    "nombre": "Virgil van Dijk",
+    "nacionalidad": "Países Bajos"
+  },
+  {
+    "nombre": "Wojciech Szczesny",
+    "nacionalidad": "Polonia"
+  },
+  {
+    "nombre": "Yassine Bounou",
+    "nacionalidad": "Marruecos"
+  },
+  {
+    "nombre": "Zlatan Ibrahimovic",
+    "nacionalidad": "Suecia"
+  }
+]
