@@ -372,11 +372,25 @@
             <span id="game-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold animate-pulse">● En Vivo</span>
           </div>
 
-          <!-- TARJETA DE ROL -->
-          <div id="role-card" class="p-6 sm:p-8 rounded-2xl border transition-all duration-300 shadow-xl max-w-sm mx-auto">
-            <div id="role-icon" class="text-5xl sm:text-6xl mb-3"></div>
-            <h3 id="role-title" class="text-xl sm:text-2xl font-extrabold uppercase tracking-tight"></h3>
-            <div id="role-description" class="text-xs sm:text-sm mt-2 opacity-90 max-w-xs mx-auto"></div>
+          <!-- TARJETA DE ROL (Tocá para revelar / ocultar) -->
+          <div class="max-w-sm mx-auto" style="perspective: 1400px;">
+            <div id="role-card-flip" onclick="toggleRoleCard()" class="relative w-full min-h-[250px] sm:min-h-[270px] cursor-pointer select-none transition-transform duration-500 ease-out" style="transform-style: preserve-3d; transform: rotateY(0deg);">
+
+              <!-- FRENTE: TAPADA -->
+              <div id="role-card-front" class="absolute inset-0 rounded-2xl border-2 border-blue-800/50 bg-gradient-to-br from-slate-900 to-slate-950 shadow-xl flex flex-col items-center justify-center p-6 sm:p-8" style="backface-visibility: hidden;">
+                <div class="text-5xl sm:text-6xl mb-3">🃏</div>
+                <h3 class="text-sm sm:text-base font-bold text-blue-300 uppercase tracking-widest">Tocá para ver tu rol</h3>
+                <p id="role-card-hint" class="text-[11px] sm:text-xs text-slate-500 mt-2">Volvé a tocar para ocultarlo de nuevo</p>
+              </div>
+
+              <!-- DORSO: ROL REVELADO -->
+              <div id="role-card" class="absolute inset-0 flex flex-col items-center justify-center" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                <div id="role-icon" class="text-5xl sm:text-6xl mb-3"></div>
+                <h3 id="role-title" class="text-xl sm:text-2xl font-extrabold uppercase tracking-tight"></h3>
+                <div id="role-description" class="text-xs sm:text-sm mt-2 opacity-90 max-w-xs mx-auto"></div>
+              </div>
+
+            </div>
           </div>
 
           <!-- BOTONES DE CONTROL EN PARTIDA -->
@@ -448,6 +462,8 @@
     let roomListenerUnsubscribe = null;
     let previousPlayersCount = 0;
     let initialLoadComplete = false;
+    let currentRoleRoundKey = null;
+    let isRoleCardRevealed = false;
 
     const RANCHADA_MEMBERS = [
       { name: 'Perico', img: null },
@@ -1138,7 +1154,30 @@
       });
     }
 
+    window.toggleRoleCard = function() {
+      const flipEl = document.getElementById('role-card-flip');
+      if (!flipEl || flipEl.dataset.locked === 'true') return;
+      isRoleCardRevealed = !isRoleCardRevealed;
+      flipEl.style.transform = isRoleCardRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    }
+
     function renderRoleCard(isImpostor, secretPlayer, isEnded, impostorsList) {
+      const flipEl = document.getElementById('role-card-flip');
+      const roundKey = `${secretPlayer.nombre}|${isEnded}`;
+
+      if (roundKey !== currentRoleRoundKey) {
+        currentRoleRoundKey = roundKey;
+        // La revelación pública (ended) arranca ya destapada; el rol privado arranca tapado.
+        isRoleCardRevealed = isEnded;
+      }
+
+      if (flipEl) {
+        flipEl.style.transform = isRoleCardRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        flipEl.dataset.locked = isEnded ? 'true' : 'false';
+        flipEl.classList.toggle('cursor-pointer', !isEnded);
+        flipEl.classList.toggle('cursor-default', isEnded);
+      }
+
       const card = document.getElementById('role-card');
       const icon = document.getElementById('role-icon');
       const title = document.getElementById('role-title');
@@ -1152,7 +1191,7 @@
         badge.innerText = "🏁 Ronda Finalizada";
         badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-semibold";
 
-        card.className = "p-6 sm:p-8 rounded-2xl border-2 border-amber-500/50 bg-slate-900 text-amber-100 shadow-lg shadow-amber-950/20 max-w-sm mx-auto";
+        card.className = "absolute inset-0 rounded-2xl border-2 border-amber-500/50 bg-slate-900 text-amber-100 shadow-lg shadow-amber-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
         icon.innerText = "🎭";
         title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-amber-400";
         title.innerText = impostorsList.length > 1 ? "LOS IMPOSTORES ERAN:" : "EL IMPOSTOR ERA:";
@@ -1177,13 +1216,13 @@
         returnLobbyBtn.classList.add('hidden');
 
         if (isImpostor) {
-          card.className = "p-6 sm:p-8 rounded-2xl border-2 border-rose-500/50 bg-slate-900 text-rose-200 shadow-lg shadow-rose-950/20 max-w-sm mx-auto";
+          card.className = "absolute inset-0 rounded-2xl border-2 border-rose-500/50 bg-slate-900 text-rose-200 shadow-lg shadow-rose-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
           icon.innerText = "🕵️‍♂️";
           title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-rose-400";
           title.innerText = "ERES EL IMPOSTOR";
           desc.innerText = "Mentí, disimulá y no dejes que descubran que no sabes la palabra secreta.";
         } else {
-          card.className = "p-6 sm:p-8 rounded-2xl border-2 border-blue-500/50 bg-slate-900 text-blue-100 shadow-lg shadow-blue-950/20 max-w-sm mx-auto";
+          card.className = "absolute inset-0 rounded-2xl border-2 border-blue-500/50 bg-slate-900 text-blue-100 shadow-lg shadow-blue-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
           icon.innerText = "⚽";
           title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-blue-400";
           title.innerText = secretPlayer.nombre;
