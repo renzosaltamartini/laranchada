@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#050914] text-slate-100 selection:bg-blue-500 selection:text-slate-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ranchada Impostor Fútbol</title>
+  
+  <!-- CDN Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fuente Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #050914;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(59,130,246,0.20), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 10%, rgba(56,189,248,0.14), transparent),
+        radial-gradient(ellipse 70% 50% at 50% 120%, rgba(37,99,235,0.16), transparent);
+      background-attachment: fixed;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .toast-animate {
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.55); }
+
+    .glow-card {
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
+    }
+
+    .game-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .game-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(59,130,246,0.10), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .game-btn:hover::before {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col justify-between p-4 sm:p-6 lg:p-8 relative">
+
+  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- MODAL SELECTOR DE AVATARES -->
+  <div id="avatar-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <span>🖼️</span> Elegir Logo / Avatar
+        </h3>
+        <button onclick="closeAvatarModal()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl transition font-bold text-sm">
+          ✕
+        </button>
+      </div>
+
+      <div id="avatar-grid" class="grid grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto p-1">
+        <!-- Se genera dinámicamente -->
+      </div>
+
+      <div class="pt-2 border-t border-slate-800 flex justify-end">
+        <button onclick="closeAvatarModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl transition">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE MIEMBROS DE LA RANCHADA -->
+  <div id="members-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5">
+            <span>🔥</span> Miembros de la Ranchada
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Los 13 pibes de siempre</p>
+        </div>
+        <button onclick="closeMembersModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div id="members-grid" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeMembersModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE SALAS ACTIVAS -->
+  <div id="rooms-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-blue-900/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl glow-card space-y-5 max-h-[90vh] flex flex-col">
+
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5">
+            <span>🔎</span> Salas Activas
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Salas creadas ahora mismo por la ranchada</p>
+        </div>
+        <button onclick="closeRoomsModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">
+          ✕
+        </button>
+      </div>
+
+      <div id="rooms-list" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2 min-h-[120px]">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeRoomsModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <h3 id="modal-title" class="text-base sm:text-lg font-bold text-white">¿Estás seguro?</h3>
+      <p id="modal-message" class="text-xs sm:text-sm text-slate-400">Esta acción no se puede deshacer.</p>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="modal-btn-cancel" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs sm:text-sm rounded-xl transition">
+          Cancelar
+        </button>
+        <button id="modal-btn-confirm" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm rounded-xl transition">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="max-w-5xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
+    <div class="flex items-center gap-2">
+      <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 animate-pulse"></div>
+      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-400">En vivo</span>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <button onclick="openMembersModal()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white hover:border-slate-700 transition active:scale-95 flex items-center gap-1.5">
+        <span>🤗</span>
+        <span>¿Miembros?</span>
+      </button>
+
+      <!-- BOTÓN DE TACHO PARA PURGA COMPLETA -->
+      <button onclick="purgeSystem()" title="Limpiar todo el sistema" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-rose-950/40 border border-rose-900/60 rounded-lg text-rose-300 hover:text-rose-100 hover:bg-rose-900/60 transition active:scale-95 flex items-center gap-1">
+        🗑️
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-5xl w-full mx-auto my-auto py-6 sm:py-8">
+    
+    <!-- Branding -->
+    <div class="text-center mb-6 sm:mb-10">
+      <span class="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
+        HECHO POR PERICO
+      </span>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_20px_rgba(37,99,235,0.35)]">
+        LaRanchada <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-300">Impostor</span>
+      </h1>
+    </div>
+
+    <!-- Layout Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start">
+      
+      <!-- COLUMNA 1: Configuración de Jugador -->
+      <section id="profile-section" class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl transition-all">
+        <h2 class="text-base sm:text-lg font-bold text-center text-slate-200 mb-4 sm:mb-6">Configura tu perfil</h2>
+        
+        <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" class="space-y-4 sm:space-y-6">
+          <div class="flex flex-col items-center">
+            
+            <div id="avatar-container" class="relative group cursor-pointer" onclick="openAvatarModal()">
+              
+              <!-- VISUALIZADOR DE AVATAR CON FALLBACK A '?' SI NO CARGA LA IMAGEN -->
+              <div id="avatar-preview-box" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-blue-500/80 shadow-lg bg-slate-950 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-blue-400">
+                <span id="avatar-fallback" class="text-3xl sm:text-4xl font-extrabold text-slate-500">?</span>
+                <img id="avatar-preview-img" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
+              </div>
+              
+              <button id="avatar-edit-btn" type="button" class="absolute bottom-0 right-0 p-2 bg-blue-500 hover:bg-blue-400 text-slate-950 rounded-full border-2 border-slate-900 shadow-md transition transform group-hover:scale-110">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <span id="avatar-hint-text" class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mt-3">
+              Toca la imagen para cambiar de logo
+            </span>
+          </div>
+
+          <div>
+            <label for="nickname" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 sm:mb-2">Tu Apodo</label>
+            <input type="text" id="nickname" required placeholder="Ej: PericoLaDolly..." class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm sm:text-base text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
+          </div>
+
+          <button type="submit" id="btn-save" class="touch-manipulation w-full py-3 sm:py-3.5 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-blue-500/10 transition transform active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+            <span>Confirmar</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- COLUMNA 2: Menú Interactivo de Salas -->
+      <section id="menu-section" class="glow-card relative bg-slate-900/30 border border-slate-800/40 p-4 sm:p-6 rounded-2xl shadow-xl opacity-50 pointer-events-none transition-all duration-300 min-h-[360px] flex flex-col justify-center">
+        
+        <div id="section-loader" class="absolute inset-0 z-20 bg-slate-900/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 gap-3">
+          <div class="w-9 h-9 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-xs font-medium text-slate-400 animate-pulse">Cargando datos de sesión...</p>
+        </div>
+
+        <!-- PANTALLA A: MENÚ PRINCIPAL -->
+        <div id="view-main-menu" class="hidden">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 sm:pb-4 mb-4 sm:mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-slate-200">Modos de juego</h2>
+            <span id="status-badge" class="text-[10px] sm:text-xs bg-slate-800 text-slate-400 px-2 sm:px-2.5 py-1 rounded-full font-medium">Completa tu perfil</span>
+          </div>
+
+          <div class="space-y-2.5 sm:space-y-3">
+            <button onclick="showView('view-create-room')" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-slate-700 transition flex items-center justify-between active:scale-98">
+              <span>Crear sala</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </button>
+
+            <button onclick="showView('view-join-room')" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-slate-700 transition flex items-center justify-between active:scale-98">
+              <span>Unirse a sala</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14"></path></svg>
+            </button>
+
+            <button onclick="openRoomsModal()" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-blue-800/60 transition flex items-center justify-between active:scale-98">
+              <span>Ver salas</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- PANTALLA B: CONFIGURACIÓN DE CREAR SALA -->
+        <div id="view-create-room" class="hidden">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-slate-800">
+            <h3 class="font-bold text-slate-200">Configuración de la Sala</h3>
+            <button onclick="showView('view-main-menu')" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition active:scale-95 group">
+              <svg class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+              <span>Volver</span>
+            </button>
+          </div>
+
+          <form onsubmit="event.preventDefault(); handleCreateRoom();" class="space-y-4">
+            <div>
+              <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase mb-2">Modalidad</label>
+              <select id="room-mode" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500">
+                <option value="Solo jugadores">Solo jugadores</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase mb-2">Cantidad de Jugadores</label>
+              <input type="number" id="expected-players" min="3" placeholder="Mínimo 3" required onchange="updateImpostorsLimit()" oninput="updateImpostorsLimit()" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500" />
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase">Cantidad de Impostores</label>
+                <span id="impostors-limit-label" class="text-[10px] text-blue-400">(Mínimo 1)</span>
+              </div>
+              <input type="number" id="impostor-count" min="1" placeholder="Mínimo 1" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500" />
+            </div>
+
+            <button type="submit" id="btn-create-submit" class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center gap-2">
+              <span id="btn-create-text">Crear Sala</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- PANTALLA C: UNIRSE A SALA -->
+        <div id="view-join-room" class="hidden">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-slate-800">
+            <h3 class="font-bold text-slate-200">Unirse a una Sala</h3>
+            <button onclick="showView('view-main-menu')" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition active:scale-95 group">
+              <svg class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+              <span>Volver</span>
+            </button>
+          </div>
+
+          <form onsubmit="event.preventDefault(); handleJoinRoom();" class="space-y-4">
+            <div>
+              <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase mb-2">Código de la sala</label>
+              <input type="text" id="join-code-input" required placeholder="Ej: RANCHA-1234" class="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white font-mono tracking-widest uppercase focus:outline-none focus:border-blue-500" />
+            </div>
+
+            <button type="submit" id="btn-join-submit" class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center gap-2">
+              <span id="btn-join-text">Unirme</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- PANTALLA D: LOBBY DE LA SALA -->
+        <div id="view-lobby" class="hidden space-y-4">
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Código / Enlace de invitación</span>
+            <div class="flex items-center justify-between gap-2">
+              <input type="text" id="share-link-input" readonly class="bg-transparent text-xs text-blue-400 font-mono w-full focus:outline-none" />
+              <button onclick="copyShareLink()" class="text-xs px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 shrink-0">Copiar</button>
+            </div>
+          </div>
+
+          <div class="flex justify-between text-xs text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/50">
+            <span>Modo: <b id="lobby-mode-text" class="text-slate-200"></b></span>
+            <span>Impostores: <b id="lobby-impostors-text" class="text-slate-200"></b></span>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jugadores en vivo en la sala</h4>
+            <div id="lobby-players-list" class="space-y-2">
+              <!-- Render en tiempo real desde Firebase -->
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <!-- BOTÓN INICIAR (SÓLO ANFITRIÓN) -->
+            <button id="btn-start-game" onclick="startGame()" disabled class="hidden w-full py-3 font-extrabold text-sm rounded-xl transition shadow-lg active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-amber-400/10">
+              🚀 Iniciar Juego
+            </button>
+
+            <!-- BOTÓN ELIMINAR SALA (SÓLO ANFITRIÓN) -->
+            <button id="btn-delete-room" onclick="deleteRoom()" class="hidden w-full py-2.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/80 font-semibold text-xs rounded-xl transition">
+              Eliminar Sala (Solo Anfitrión)
+            </button>
+
+            <!-- BOTÓN SALIR DE SALA -->
+            <button id="btn-leave-room" onclick="leaveRoom()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 font-semibold text-xs rounded-xl transition">
+              Salir de la Sala
+            </button>
+          </div>
+        </div>
+
+        <!-- PANTALLA E: VISTA DE JUEGO EN CURSO -->
+        <div id="view-game-active" class="hidden space-y-5 text-center">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Partida en Curso</span>
+            <span id="game-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold animate-pulse">● En Vivo</span>
+          </div>
+
+          <!-- TARJETA DE ROL (Tocá para revelar / ocultar) -->
+          <div class="max-w-sm mx-auto" style="perspective: 1400px;">
+            <div id="role-card-flip" onclick="toggleRoleCard()" class="relative w-full min-h-[250px] sm:min-h-[270px] cursor-pointer select-none transition-transform duration-500 ease-out" style="transform-style: preserve-3d; transform: rotateY(0deg);">
+
+              <!-- FRENTE: TAPADA -->
+              <div id="role-card-front" class="absolute inset-0 rounded-2xl border-2 border-blue-800/50 bg-gradient-to-br from-slate-900 to-slate-950 shadow-xl flex flex-col items-center justify-center p-6 sm:p-8" style="backface-visibility: hidden;">
+                <div class="text-5xl sm:text-6xl mb-3">🃏</div>
+                <h3 class="text-sm sm:text-base font-bold text-blue-300 uppercase tracking-widest">Tocá para ver tu rol</h3>
+                <p id="role-card-hint" class="text-[11px] sm:text-xs text-slate-500 mt-2">Volvé a tocar para ocultarlo de nuevo</p>
+              </div>
+
+              <!-- DORSO: ROL REVELADO -->
+              <div id="role-card" class="absolute inset-0 flex flex-col items-center justify-center" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                <div id="role-icon" class="text-5xl sm:text-6xl mb-3"></div>
+                <h3 id="role-title" class="text-xl sm:text-2xl font-extrabold uppercase tracking-tight"></h3>
+                <div id="role-description" class="text-xs sm:text-sm mt-2 opacity-90 max-w-xs mx-auto"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- BOTONES DE CONTROL EN PARTIDA -->
+          <div id="game-controls" class="space-y-2 pt-2 border-t border-slate-800 max-w-sm mx-auto">
+            <button id="btn-restart-game" onclick="finishRound()" class="hidden w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition active:scale-98">
+              🏁 Finalizar Ronda
+            </button>
+
+            <!-- BOTÓN DE VOLVER A SALA (SÓLO VISIBLE TRAS REVELAR ROLES) -->
+            <button id="btn-return-lobby" onclick="resetGameToLobby()" class="hidden w-full py-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition active:scale-98">
+              🔙 Volver a la Sala
+            </button>
+
+            <!-- BOTÓN SALIR DE SALA (DEBAJO DE LA CARTA EN JUEGO) -->
+            <button id="btn-leave-in-game" onclick="leaveRoomInGame()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-rose-400 hover:text-rose-300 border border-slate-800 font-semibold text-xs rounded-xl transition">
+              🚪 Salir de la Sala
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="text-center py-3 sm:py-4 text-[10px] sm:text-xs text-slate-600">
+    Ranchada Impostor Fútbol &copy; 2026 — Para jugar con los pibes.
+  </footer>
+
+  <!-- IMPORTACIÓN DE FIREBASE Y LÓGICA COMPLETA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const APP_BUILD_VERSION = "build_2026_08_02_v5";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXGKWZA8kWaN2NWCK2A9jTlGSq-B2bqWA",
+      authDomain: "laranchada-6abd3.firebaseapp.com",
+      projectId: "laranchada-6abd3",
+      storageBucket: "laranchada-6abd3.firebasestorage.app",
+      messagingSenderId: "326750839699",
+      appId: "1:326750839699:web:7d5f46d67b20ad2599fe66",
+      measurementId: "G-0QP3VVQZ0Z"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const AVATAR_IMAGES = [
+      "./avatars/1.webp",
+      "./avatars/2.webp",
+      "./avatars/3.webp",
+      "./avatars/4.webp",
+      "./avatars/5.webp",
+      "./avatars/6.webp",
+      "./avatars/7.webp",
+      "./avatars/8.webp",
+      "./avatars/9.webp",
+      "./avatars/10.webp",
+      "./avatars/11.webp",
+      "./avatars/12.webp",
+    ];
+
+    window.currentProfile = { nickname: '', avatar: null };
+    window.activeRoomCode = null;
+    window.isHost = false;
+    let roomListenerUnsubscribe = null;
+    let previousPlayersCount = 0;
+    let initialLoadComplete = false;
+    let currentRoleRoundKey = null;
+    let isRoleCardRevealed = false;
+
+    const RANCHADA_MEMBERS = [
+      { name: 'Perico', img: null },
+      { name: 'Tito', img: 'https://i.ibb.co/pvJT4Fvv/tito.jpg' },
+      { name: 'Palomo', img: 'https://i.ibb.co/8L9jzr53/palomo.jpg' },
+      { name: 'Ponce', img: 'https://i.ibb.co/7dWKcqfv/ponce.jpg' },
+      { name: 'Ogro', img: 'https://i.ibb.co/8gHkMTCn/ogro.jpg' },
+      { name: 'Bashe', img: null },
+      { name: 'Lolo', img: null },
+      { name: 'Juli', img: null },
+      { name: 'Gabo', img: null },
+      { name: 'Narigon', img: null },
+      { name: 'Nicolais', img: null },
+      { name: 'Tomasa', img: null },
+      { name: 'Lisan', img: null }
+    ];
+
+    function updateAvatarDisplay(url) {
+      const img = document.getElementById('avatar-preview-img');
+      const fallback = document.getElementById('avatar-fallback');
+
+      if (!url) {
+        img.classList.add('hidden');
+        img.src = '';
+        fallback.classList.remove('hidden');
+        return;
+      }
+
+      img.src = url;
+      img.onload = () => {
+        img.classList.remove('hidden');
+        fallback.classList.add('hidden');
+      };
+      img.onerror = () => {
+        img.classList.add('hidden');
+        fallback.classList.remove('hidden');
+      };
+    }
+
+    function listenToSystemEvents() {
+      const buildRef = ref(db, 'system/build_version');
+      get(buildRef).then(snapshot => {
+        if (!snapshot.exists() || snapshot.val() !== APP_BUILD_VERSION) {
+          set(buildRef, APP_BUILD_VERSION);
+        }
+      });
+
+      onValue(buildRef, (snapshot) => {
+        if (!initialLoadComplete) return;
+        const remoteVersion = snapshot.val();
+        if (remoteVersion && remoteVersion !== APP_BUILD_VERSION) {
+          localStorage.clear();
+          window.location.reload();
+        }
+      });
+
+      const purgeRef = ref(db, 'system/last_purge');
+      onValue(purgeRef, (snapshot) => {
+        if (!initialLoadComplete) return;
+        const lastPurgeTime = snapshot.val();
+        if (lastPurgeTime) {
+          const localPurge = localStorage.getItem('ranchada_last_purge');
+          if (!localPurge || parseInt(localPurge) < lastPurgeTime) {
+            localStorage.clear();
+            window.location.reload();
+          }
+        }
+      });
+    }
+
+    window.purgeSystem = async function() {
+      const password = prompt("Ingresa la contraseña para purgar todo el sistema:");
+      if (password === "Renzo123") {
+        try {
+          const now = Date.now();
+          await remove(ref(db, 'rooms'));
+          await set(ref(db, 'system/last_purge'), now);
+          localStorage.clear();
+          localStorage.setItem('ranchada_last_purge', now.toString());
+          alert("¡Sistema purgado correctamente!");
+          window.location.reload();
+        } catch (e) {
+          alert("Error al intentar purgar: " + e.message);
+        }
+      } else if (password !== null) {
+        alert("Contraseña incorrecta.");
+      }
+    }
+
+    function setProfileLockState(isLocked) {
+      const nicknameInput = document.getElementById('nickname');
+      const saveBtn = document.getElementById('btn-save');
+      const avatarContainer = document.getElementById('avatar-container');
+      const avatarEditBtn = document.getElementById('avatar-edit-btn');
+      const avatarHint = document.getElementById('avatar-hint-text');
+
+      nicknameInput.disabled = isLocked;
+      saveBtn.disabled = isLocked;
+
+      if (isLocked) {
+        avatarContainer.onclick = null;
+        avatarContainer.classList.remove('cursor-pointer');
+        avatarEditBtn.classList.add('hidden');
+        avatarHint.innerText = 'ESTAS EN UNA SALA, PERFIL BLOQUEADO';
+        avatarHint.classList.add('text-amber-400');
+      } else {
+        avatarContainer.onclick = () => window.openAvatarModal();
+        avatarContainer.classList.add('cursor-pointer');
+        avatarEditBtn.classList.remove('hidden');
+        avatarHint.innerText = 'Toca la imagen para cambiar de logo';
+        avatarHint.classList.remove('text-amber-400');
+      }
+    }
+
+    function selectAvatarImage(url) {
+      window.currentProfile.avatar = url;
+      updateAvatarDisplay(url);
+      closeAvatarModal();
+    }
+
+    window.openAvatarModal = function() {
+      if (document.getElementById('nickname').disabled) return;
+
+      const grid = document.getElementById('avatar-grid');
+      grid.innerHTML = '';
+
+      AVATAR_IMAGES.forEach((url, index) => {
+        const isSelected = (window.currentProfile.avatar === url);
+        const item = document.createElement('div');
+        item.className = `cursor-pointer rounded-2xl overflow-hidden border-2 transition transform active:scale-95 ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-800 hover:border-slate-600'}`;
+        item.onclick = () => selectAvatarImage(url);
+
+        item.innerHTML = `
+          <img src="${url}" alt="Avatar ${index + 1}" class="w-full h-16 sm:h-20 object-cover bg-slate-950" onerror="this.onerror=null; this.src='';" />
+        `;
+        grid.appendChild(item);
+      });
+
+      document.getElementById('avatar-modal').classList.remove('hidden');
+    }
+
+    window.closeAvatarModal = function() {
+      document.getElementById('avatar-modal').classList.add('hidden');
+    }
+
+    function getTodayCutoffTimestamp() {
+      const now = new Date();
+      const cutoffToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+      if (now < cutoffToday) cutoffToday.setDate(cutoffToday.getDate() - 1);
+      return cutoffToday.getTime();
+    }
+
+    async function checkDailyReset() {
+      const lastCutoff = getTodayCutoffTimestamp();
+      const lastResetInDbRef = ref(db, 'system/last_reset');
+
+      try {
+        const snapshot = await get(lastResetInDbRef);
+        const dbLastReset = snapshot.exists() ? snapshot.val() : 0;
+
+        if (dbLastReset < lastCutoff) {
+          await remove(ref(db, 'rooms'));
+          await set(lastResetInDbRef, Date.now());
+        }
+      } catch (e) {
+        console.error("Error en la limpieza de la base de datos:", e);
+      }
+
+      const savedProfile = localStorage.getItem('ranchada_profile');
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        if ((parsed.timestamp || 0) < lastCutoff) {
+          localStorage.removeItem('ranchada_profile');
+          localStorage.removeItem('ranchada_active_room');
+          window.currentProfile = { nickname: '', avatar: null };
+          document.getElementById('nickname').value = '';
+          updateAvatarDisplay(null);
+          showToast("Se reiniciaron las salas y nombres (Corte diario 12:00 PM).", "info");
+          return true;
+        }
+      }
+      return false;
+    }
+
+    window.openMembersModal = function() {
+      const grid = document.getElementById('members-grid');
+      grid.innerHTML = '';
+
+      RANCHADA_MEMBERS.forEach((member, index) => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition shadow-sm";
+
+        const avatarHtml = member.img
+          ? `<img src="${member.img}" alt="${member.name}" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500/30 shrink-0 shadow-|" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-12 h-12 rounded-full bg-slate-800 text-slate-200 font-bold flex items-center justify-center text-base border border-slate-700 shrink-0\'>${member.name.charAt(0)}</div>'"/>`
+          : `<div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-400 font-bold flex items-center justify-center text-base border border-blue-500/20 shrink-0 shadow-md">${member.name.charAt(0)}</div>`;
+
+        item.innerHTML = `
+          <div class="flex items-center gap-4 overflow-hidden">
+            ${avatarHtml}
+            <div class="overflow-hidden">
+              <span class="text-sm sm:text-base font-bold text-white block truncate">${member.name}</span>
+              <span class="text-xs text-slate-400 block">Miembro de La Ranchada</span>
+            </div>
+          </div>
+          <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 shrink-0">
+            #${index + 1}
+          </span>
+        `;
+        grid.appendChild(item);
+      });
+
+      document.getElementById('members-modal').classList.remove('hidden');
+    }
+
+    window.closeMembersModal = function() {
+      document.getElementById('members-modal').classList.add('hidden');
+    }
+
+    let roomsModalUnsubscribe = null;
+
+    function renderRoomsList(roomsData) {
+      const list = document.getElementById('rooms-list');
+      list.innerHTML = '';
+
+      const rooms = roomsData ? Object.values(roomsData) : [];
+
+      if (rooms.length === 0) {
+        list.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-10 text-center gap-2">
+            <span class="text-3xl">🕳️</span>
+            <p class="text-sm text-slate-400 font-medium">No hay salas activas ahora mismo.</p>
+            <p class="text-xs text-slate-600">Creá una desde "Crear sala" para empezar.</p>
+          </div>
+        `;
+        return;
+      }
+
+      rooms
+        .sort((a, b) => (a.code || '').localeCompare(b.code || ''))
+        .forEach(room => {
+          const playersCount = room.players ? Object.keys(room.players).length : 0;
+          const maxPlayers = room.maxPlayers || null;
+          const isFull = maxPlayers ? playersCount >= maxPlayers : false;
+          const isStarted = !!room.started;
+          const canJoin = !isStarted && !isFull;
+
+          let statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-300">ABIERTA</span>`;
+          if (isStarted) {
+            statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300">EN PARTIDA</span>`;
+          } else if (isFull) {
+            statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300">LLENA</span>`;
+          }
+
+          const item = document.createElement('div');
+          item.className = "flex items-center justify-between gap-3 p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-blue-800/50 transition shadow-sm";
+
+          item.innerHTML = `
+            <div class="flex flex-col gap-1.5 overflow-hidden">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-mono font-bold text-sm text-blue-300 tracking-wider">${room.code || '—'}</span>
+                ${statusBadge}
+              </div>
+              <div class="flex items-center gap-3 text-[11px] sm:text-xs text-slate-400">
+                <span class="flex items-center gap-1">👥 ${playersCount}${maxPlayers ? '/' + maxPlayers : ''}</span>
+                <span class="flex items-center gap-1">🕵️ ${room.impostors || 1} impostor${(room.impostors || 1) > 1 ? 'es' : ''}</span>
+                ${room.host ? `<span class="truncate">Anfitrión: <b class="text-slate-300">${room.host}</b></span>` : ''}
+              </div>
+            </div>
+            <button
+              ${canJoin ? `onclick="selectRoomToJoin('${room.code}')"` : 'disabled'}
+              class="shrink-0 px-3.5 py-2 text-xs font-bold rounded-xl transition active:scale-95 ${canJoin ? 'bg-blue-500 hover:bg-blue-400 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}"
+            >
+              ${canJoin ? 'Unirse' : (isStarted ? 'En curso' : 'Llena')}
+            </button>
+          `;
+          list.appendChild(item);
+        });
+    }
+
+    window.openRoomsModal = function() {
+      document.getElementById('rooms-modal').classList.remove('hidden');
+
+      const roomsRef = ref(db, 'rooms');
+      if (roomsModalUnsubscribe) roomsModalUnsubscribe();
+      roomsModalUnsubscribe = onValue(roomsRef, (snapshot) => {
+        renderRoomsList(snapshot.val());
+      });
+    }
+
+    window.closeRoomsModal = function() {
+      document.getElementById('rooms-modal').classList.add('hidden');
+      if (roomsModalUnsubscribe) {
+        roomsModalUnsubscribe();
+        roomsModalUnsubscribe = null;
+      }
+    }
+
+    window.selectRoomToJoin = function(code) {
+      window.closeRoomsModal();
+      window.showView('view-join-room');
+      document.getElementById('join-code-input').value = code;
+      window.handleJoinRoom();
+    }
+
+    function openModal({ title, message, confirmText = "Confirmar", cancelText = "Cancelar" }) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-message').innerText = message;
+        
+        const btnConfirm = document.getElementById('modal-btn-confirm');
+        const btnCancel = document.getElementById('modal-btn-cancel');
+
+        btnConfirm.innerText = confirmText;
+        btnCancel.innerText = cancelText;
+
+        modal.classList.remove('hidden');
+
+        const handleConfirm = () => { cleanup(); resolve(true); };
+        const handleCancel = () => { cleanup(); resolve(false); };
+
+        const cleanup = () => {
+          modal.classList.add('hidden');
+          btnConfirm.removeEventListener('click', handleConfirm);
+          btnCancel.removeEventListener('click', handleCancel);
+        };
+
+        btnConfirm.addEventListener('click', handleConfirm);
+        btnCancel.addEventListener('click', handleCancel);
+      });
+    }
+
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let bgColors = 'bg-slate-900 border-slate-700 text-slate-200';
+      if (type === 'success') bgColors = 'bg-blue-950/90 border-blue-600/80 text-blue-200';
+      if (type === 'error') bgColors = 'bg-rose-950/90 border-rose-600/80 text-rose-200';
+      if (type === 'warning') bgColors = 'bg-amber-950/90 border-amber-600/80 text-amber-200';
+
+      toast.className = `toast-animate pointer-events-auto p-3.5 rounded-xl border text-xs sm:text-sm font-medium shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 ${bgColors}`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-xs opacity-70 hover:opacity-100 font-bold">✕</button>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    window.saveProfile = async function(isAutoRestore = false) {
+      const nick = document.getElementById('nickname').value.trim();
+      if (!nick) return false;
+
+      window.currentProfile.nickname = nick;
+
+      const sessionData = {
+        ...window.currentProfile,
+        timestamp: Date.now()
+      };
+
+      localStorage.setItem('ranchada_profile', JSON.stringify(sessionData));
+
+      const menuSection = document.getElementById('menu-section');
+      menuSection.classList.remove('opacity-50', 'pointer-events-none', 'bg-slate-900/30', 'border-slate-800/40');
+      menuSection.classList.add('bg-slate-900/60', 'border-blue-900/40');
+
+      const badge = document.getElementById('status-badge');
+      badge.innerText = '¡Listo para jugar!';
+      badge.className = 'text-[10px] sm:text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 sm:px-2.5 py-1 rounded-full font-medium';
+      
+      if (!isAutoRestore) {
+        showToast(`¡Bienvenido, ${nick}!`, "success");
+      }
+
+      const savedRoomCode = localStorage.getItem('ranchada_active_room');
+      const urlParams = new URLSearchParams(window.location.search);
+      const codeFromUrl = urlParams.get('code') || savedRoomCode;
+
+      if (codeFromUrl && !window.activeRoomCode) {
+        document.getElementById('join-code-input').value = codeFromUrl;
+        await handleJoinRoom(isAutoRestore);
+      }
+
+      return true;
+    }
+
+    function hideLoader() {
+      const loader = document.getElementById('section-loader');
+      if (loader) loader.classList.add('hidden');
+    }
+
+    async function restoreSession() {
+      listenToSystemEvents();
+
+      const wasReset = await checkDailyReset();
+
+      if (!wasReset) {
+        const savedProfile = localStorage.getItem('ranchada_profile');
+        if (savedProfile) {
+          const parsed = JSON.parse(savedProfile);
+          document.getElementById('nickname').value = parsed.nickname;
+          window.currentProfile.avatar = parsed.avatar || null;
+          updateAvatarDisplay(window.currentProfile.avatar);
+          await window.saveProfile(true);
+        } else {
+          updateAvatarDisplay(null);
+        }
+
+        if (!window.activeRoomCode) {
+          window.showView('view-main-menu');
+        }
+      } else {
+        window.showView('view-main-menu');
+      }
+
+      initialLoadComplete = true;
+      hideLoader();
+    }
+
+    window.showView = function(viewId) {
+      const views = ['view-main-menu', 'view-create-room', 'view-join-room', 'view-lobby', 'view-game-active'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (id === viewId) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    window.updateImpostorsLimit = function() {
+      const playersInput = document.getElementById('expected-players');
+      const totalPlayers = parseInt(playersInput.value) || 3;
+
+      const maxImpostors = Math.max(1, totalPlayers - 2);
+      const impostorInput = document.getElementById('impostor-count');
+      impostorInput.max = maxImpostors;
+      
+      if (impostorInput.value && parseInt(impostorInput.value) > maxImpostors) {
+        impostorInput.value = maxImpostors;
+      }
+
+      document.getElementById('impostors-limit-label').innerText = `(Máx ${maxImpostors} para ${totalPlayers} jug.)`;
+    }
+
+    window.handleCreateRoom = async function() {
+      const playersVal = document.getElementById('expected-players').value;
+      const impostorsVal = document.getElementById('impostor-count').value;
+
+      if (!playersVal || !impostorsVal) {
+        showToast("Por favor completa la cantidad de jugadores e impostores.", "warning");
+        return;
+      }
+
+      const btn = document.getElementById('btn-create-submit');
+      const btnText = document.getElementById('btn-create-text');
+      
+      btn.disabled = true;
+      btnText.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Creando sala...`;
+
+      const mode = document.getElementById('room-mode').value;
+      const impostors = parseInt(impostorsVal);
+      const roomCode = 'RANCHA-' + Math.floor(1000 + Math.random() * 9000);
+
+      const roomRef = ref(db, 'rooms/' + roomCode);
+
+      const newRoomData = {
+        code: roomCode,
+        mode: mode,
+        impostors: impostors,
+        maxPlayers: parseInt(playersVal),
+        host: window.currentProfile.nickname,
+        started: false,
+        ended: false,
+        impostorsList: [],
+        players: {
+          [window.currentProfile.nickname]: {
+            nickname: window.currentProfile.nickname,
+            avatar: window.currentProfile.avatar || null,
+            isHost: true
+          }
+        }
+      };
+
+      try {
+        await set(roomRef, newRoomData);
+        window.isHost = true;
+        localStorage.setItem('ranchada_active_room', roomCode);
+        setProfileLockState(true);
+        showToast("¡Sala creada con éxito!", "success");
+        listenToRoom(roomCode);
+      } catch (error) {
+        showToast("Error al crear sala: " + error.message, "error");
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Crear Sala";
+      }
+    }
+
+    window.handleJoinRoom = async function(isAutoRestore = false) {
+      const inputCode = document.getElementById('join-code-input').value.trim().toUpperCase();
+      if (!inputCode) {
+        hideLoader();
+        return;
+      }
+
+      const btn = document.getElementById('btn-join-submit');
+      const btnText = document.getElementById('btn-join-text');
+      
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Conectando...`;
+
+      const dbRef = ref(db);
+      try {
+        const snapshot = await get(child(dbRef, `rooms/${inputCode}`));
+        if (snapshot.exists()) {
+          const roomData = snapshot.val();
+          const existingPlayers = roomData.players ? Object.keys(roomData.players) : [];
+          const alreadyInRoom = existingPlayers.includes(window.currentProfile.nickname);
+
+          if (roomData.started && !alreadyInRoom) {
+            showToast("Esa sala ya inició la partida, no podés unirte.", "warning");
+            return;
+          }
+
+          if (!alreadyInRoom && roomData.maxPlayers && existingPlayers.length >= roomData.maxPlayers) {
+            showToast("Esa sala está completa.", "warning");
+            return;
+          }
+
+          const playerRef = ref(db, `rooms/${inputCode}/players/${window.currentProfile.nickname}`);
+          await set(playerRef, {
+            nickname: window.currentProfile.nickname,
+            avatar: window.currentProfile.avatar || null,
+            isHost: (roomData.host === window.currentProfile.nickname)
+          });
+
+          window.isHost = (roomData.host === window.currentProfile.nickname);
+          localStorage.setItem('ranchada_active_room', inputCode);
+          setProfileLockState(true);
+          
+          if (!isAutoRestore) {
+            showToast(`¡Te uniste a la sala ${inputCode}!`, "success");
+          }
+          listenToRoom(inputCode);
+        } else {
+          showToast("El código de sala es inválido o no existe.", "error");
+          localStorage.removeItem('ranchada_active_room');
+          setProfileLockState(false);
+          window.showView('view-main-menu');
+        }
+      } catch (error) {
+        showToast("Error de conexión: " + error.message, "error");
+        setProfileLockState(false);
+        window.showView('view-main-menu');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerText = "Unirme";
+      }
+    }
+
+    function updateStartButtonState(room, playersCount) {
+      const btnStart = document.getElementById('btn-start-game');
+      if (!btnStart) return;
+
+      const requiredImpostors = room.impostors || 1;
+      const minPlayersRequired = Math.max(3, requiredImpostors + 2);
+
+      if (playersCount < 3) {
+        btnStart.disabled = true;
+        btnStart.innerText = `⏳ Faltan Jugadores (${playersCount}/3 Mínimo)`;
+      } else if (playersCount < minPlayersRequired) {
+        btnStart.disabled = true;
+        btnStart.innerText = `⏳ Necesitas ${minPlayersRequired} jug. para ${requiredImpostors} impostor(es)`;
+      } else {
+        btnStart.disabled = false;
+        btnStart.innerText = "🚀 Iniciar Juego";
+      }
+    }
+
+    function listenToRoom(roomCode) {
+      window.activeRoomCode = roomCode;
+      const roomRef = ref(db, 'rooms/' + roomCode);
+
+      if (roomListenerUnsubscribe) roomListenerUnsubscribe();
+
+      roomListenerUnsubscribe = onValue(roomRef, (snapshot) => {
+        const room = snapshot.val();
+        
+        if (!room) {
+          showToast("La sala fue eliminada.", "warning");
+          window.leaveRoom(false);
+          return;
+        }
+
+        const playersList = room.players ? Object.values(room.players) : [];
+        
+        const amIInRoom = playersList.some(p => p.nickname === window.currentProfile.nickname);
+        if (!amIInRoom) {
+          showToast("Has sido expulsado o saliste de la sala.", "error");
+          window.leaveRoom(false);
+          return;
+        }
+
+        if (previousPlayersCount > 0 && playersList.length > previousPlayersCount) {
+          showToast("¡Un nuevo jugador se unió!", "info");
+        }
+        previousPlayersCount = playersList.length;
+
+        // ASIGNACIÓN O TRANSFERENCIA DE ANFITRIÓN SI EL VIEJO SALIÓ
+        if (!room.players[room.host] && playersList.length > 0) {
+          const newHostNickname = playersList[0].nickname;
+          update(ref(db, `rooms/${roomCode}`), { host: newHostNickname });
+          update(ref(db, `rooms/${roomCode}/players/${newHostNickname}`), { isHost: true });
+        }
+
+        window.isHost = (room.host === window.currentProfile.nickname);
+
+        // VALIDAR CONTINUIDAD DE LA PARTIDA SI HAY ALGUIEN JUGANDO Y ALGUIEN SALIÓ
+        if (room.started && !room.ended) {
+          const activeImpostors = (room.impostorsList || []).filter(imp => room.players[imp]);
+          const currentTotalPlayers = playersList.length;
+
+          // ESCENARIO 1: Menos de 3 jugadores | ESCENARIO 2: No quedan impostores en juego
+          if (currentTotalPlayers < 3 || activeImpostors.length === 0) {
+            update(ref(db, `rooms/${roomCode}`), {
+              started: false,
+              ended: false,
+              impostorsList: []
+            });
+            showToast("Partida cancelada: Se requieren mín. 3 jugadores e impostor presente.", "warning");
+            return;
+          }
+        }
+
+        if (room.started) {
+          const impostorsList = room.impostorsList || [];
+          const isImpostor = impostorsList.includes(window.currentProfile.nickname);
+          const secretPlayer = room.secretPlayer || { nombre: "Desconocido", nacionalidad: "Desconocida" };
+          
+          renderRoleCard(isImpostor, secretPlayer, room.ended, impostorsList);
+          window.showView('view-game-active');
+        } else {
+          document.getElementById('btn-start-game').classList.toggle('hidden', !window.isHost);
+          document.getElementById('btn-delete-room').classList.toggle('hidden', !window.isHost);
+          document.getElementById('btn-leave-room').classList.toggle('hidden', window.isHost);
+
+          if (window.isHost) {
+            updateStartButtonState(room, playersList.length);
+          }
+
+          const shareUrl = `${window.location.origin}${window.location.pathname}?code=${room.code}`;
+          document.getElementById('share-link-input').value = shareUrl;
+          document.getElementById('lobby-mode-text').innerText = room.mode;
+          document.getElementById('lobby-impostors-text').innerText = room.impostors;
+
+          renderPlayersList(playersList);
+          window.showView('view-lobby');
+        }
+      });
+    }
+
+    function renderPlayersList(players) {
+      const listContainer = document.getElementById('lobby-players-list');
+      listContainer.innerHTML = '';
+
+      players.forEach(p => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800";
+        
+        const isMe = (p.nickname === window.currentProfile.nickname);
+        
+        const playerAvatarHtml = p.avatar 
+          ? `<img src="${p.avatar}" alt="${p.nickname}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border border-slate-700 bg-slate-900 shrink-0" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center font-bold text-slate-500 text-sm shrink-0\'>?</div>';"/>`
+          : `<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center font-bold text-slate-500 text-sm shrink-0">?</div>`;
+
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            ${playerAvatarHtml}
+            <span class="font-semibold text-sm text-white">${p.nickname} ${isMe ? '<span class="text-xs text-slate-500 font-normal">(Tú)</span>' : ''}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            ${p.isHost ? '<span class="text-[10px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-full">ANFITRIÓN</span>' : ''}
+            ${(window.isHost && !p.isHost) ? `<button onclick="kickPlayer('${p.nickname}')" title="Expulsar jugador" class="text-xs px-2 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded transition">❌</button>` : ''}
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    window.toggleRoleCard = function() {
+      const flipEl = document.getElementById('role-card-flip');
+      if (!flipEl || flipEl.dataset.locked === 'true') return;
+      isRoleCardRevealed = !isRoleCardRevealed;
+      flipEl.style.transform = isRoleCardRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    }
+
+    function renderRoleCard(isImpostor, secretPlayer, isEnded, impostorsList) {
+      const flipEl = document.getElementById('role-card-flip');
+      const roundKey = `${secretPlayer.nombre}|${isEnded}`;
+
+      if (roundKey !== currentRoleRoundKey) {
+        currentRoleRoundKey = roundKey;
+        // La revelación pública (ended) arranca ya destapada; el rol privado arranca tapado.
+        isRoleCardRevealed = isEnded;
+      }
+
+      if (flipEl) {
+        flipEl.style.transform = isRoleCardRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        flipEl.dataset.locked = isEnded ? 'true' : 'false';
+        flipEl.classList.toggle('cursor-pointer', !isEnded);
+        flipEl.classList.toggle('cursor-default', isEnded);
+      }
+
+      const card = document.getElementById('role-card');
+      const icon = document.getElementById('role-icon');
+      const title = document.getElementById('role-title');
+      const desc = document.getElementById('role-description');
+      const restartBtn = document.getElementById('btn-restart-game');
+      const returnLobbyBtn = document.getElementById('btn-return-lobby');
+      const badge = document.getElementById('game-status-badge');
+
+      if (isEnded) {
+        // PANTALLA DE REVELACIÓN TRAS FINALIZAR RONDA
+        badge.innerText = "🏁 Ronda Finalizada";
+        badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-semibold";
+
+        card.className = "absolute inset-0 rounded-2xl border-2 border-amber-500/50 bg-slate-900 text-amber-100 shadow-lg shadow-amber-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
+        icon.innerText = "🎭";
+        title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-amber-400";
+        title.innerText = impostorsList.length > 1 ? "LOS IMPOSTORES ERAN:" : "EL IMPOSTOR ERA:";
+
+        const impostorsNames = impostorsList.map(name => `<span class="inline-block bg-rose-950/80 border border-rose-800 px-3 py-1 rounded-xl text-rose-300 font-bold my-1 text-sm">${name}</span>`).join(" ");
+
+        desc.innerHTML = `
+          <div class="my-3 flex flex-wrap gap-1 justify-center">${impostorsNames}</div>
+          <div class="pt-3 border-t border-slate-800 text-xs text-slate-300">
+            Jugador secreto: <b class="text-blue-400">${secretPlayer.nombre}</b> (${secretPlayer.nacionalidad})
+          </div>
+        `;
+
+        restartBtn.classList.add('hidden');
+        returnLobbyBtn.classList.toggle('hidden', !window.isHost);
+      } else {
+        // PANTALLA NORMAL DE JUEGO
+        badge.innerText = "● En Vivo";
+        badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold animate-pulse";
+
+        restartBtn.classList.toggle('hidden', !window.isHost);
+        returnLobbyBtn.classList.add('hidden');
+
+        if (isImpostor) {
+          card.className = "absolute inset-0 rounded-2xl border-2 border-rose-500/50 bg-slate-900 text-rose-200 shadow-lg shadow-rose-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
+          icon.innerText = "🕵️‍♂️";
+          title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-rose-400";
+          title.innerText = "ERES EL IMPOSTOR";
+          desc.innerText = "Mentí, disimulá y no dejes que descubran que no sabes la palabra secreta.";
+        } else {
+          card.className = "absolute inset-0 rounded-2xl border-2 border-blue-500/50 bg-slate-900 text-blue-100 shadow-lg shadow-blue-950/20 flex flex-col items-center justify-center p-6 sm:p-8";
+          icon.innerText = "⚽";
+          title.className = "text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-blue-400";
+          title.innerText = secretPlayer.nombre;
+          
+          desc.innerHTML = `
+            <span class="block text-sm font-semibold text-blue-200 uppercase tracking-widest mt-1 mb-3">
+              📍 ${secretPlayer.nacionalidad}
+            </span>
+            <span class="text-xs text-slate-300 block">
+              Sos un jugador verdadero. Descubrí quiénes son los impostores de la ranchada.
+            </span>
+          `;
+        }
+      }
+    }
+
+    const PLAYERS_DATA = [
+      { "nombre": "Angel Di Maria", "nacionalidad": "Argentina" },
+      { "nombre": "Alejandro Gomez", "nacionalidad": "Argentina" },
+      { "nombre": "Antoine Griezmann", "nacionalidad": "Francia" },
+      { "nombre": "Achraf Hakimi", "nacionalidad": "Marruecos" },
+      { "nombre": "Alexandre Lacazette", "nacionalidad": "Francia" },
+      { "nombre": "Aymeric Laporte", "nacionalidad": "España" },
+      { "nombre": "Andrew Robertson", "nacionalidad": "Scotland" },
+      { "nombre": "Antonio Rudiger", "nacionalidad": "Alemania" },
+      { "nombre": "Alisson", "nacionalidad": "Brasil" },
+      { "nombre": "Azpilicueta", "nacionalidad": "España" },
+      { "nombre": "Alexander Isak", "nacionalidad": "Suecia" },
+      { "nombre": "Ademola Lookman", "nacionalidad": "Nigeria" },
+      { "nombre": "Bernardo Silva", "nacionalidad": "Portugal" },
+      { "nombre": "Bruno Fernandes", "nacionalidad": "Portugal" },
+      { "nombre": "Bukayo Saka", "nacionalidad": "Inglaterra" },
+      { "nombre": "Bruno Guimaraes", "nacionalidad": "Brasil" },
+      { "nombre": "Bradley Barcola", "nacionalidad": "Francia" },
+      { "nombre": "Bremer", "nacionalidad": "Brasil" },
+      { "nombre": "Christian Eriksen", "nacionalidad": "Dinamarca" },
+      { "nombre": "Ciro Immobile", "nacionalidad": "Italia" },
+      { "nombre": "Carvajal", "nacionalidad": "España" },
+      { "nombre": "Casemiro", "nacionalidad": "Brasil" },
+      { "nombre": "Coutinho", "nacionalidad": "Brasil" },
+      { "nombre": "Cristiano Ronaldo", "nacionalidad": "Portugal" },
+      { "nombre": "Christian Pulisic", "nacionalidad": "Estados Unidos" },
+      { "nombre": "Cody Gakpo", "nacionalidad": "Países Bajos" },
+      { "nombre": "Cole Palmer", "nacionalidad": "Inglaterra" },
+      { "nombre": "David Alaba", "nacionalidad": "Austria" },
+      { "nombre": "Dries Mertens", "nacionalidad": "Bélgica" },
+      { "nombre": "David Silva", "nacionalidad": "España" },
+      { "nombre": "De Gea", "nacionalidad": "España" },
+      { "nombre": "Declan Rice", "nacionalidad": "Inglaterra" },
+      { "nombre": "Dani Olmo", "nacionalidad": "España" },
+      { "nombre": "Dusan Vlahovic", "nacionalidad": "Serbia" },
+      { "nombre": "Dayot Upamecano", "nacionalidad": "Francia" },
+      { "nombre": "Edinson Cavani", "nacionalidad": "Uruguay" },
+      { "nombre": "Edin Dzeko", "nacionalidad": "Bosnia and Herzegovina" },
+      { "nombre": "Erling Haaland", "nacionalidad": "Noruega" },
+      { "nombre": "Eden Hazard", "nacionalidad": "Bélgica" },
+      { "nombre": "Emiliano Martinez", "nacionalidad": "Argentina" },
+      { "nombre": "Ederson", "nacionalidad": "Brasil" },
+      { "nombre": "Enzo Fernandez", "nacionalidad": "Argentina" },
+      { "nombre": "Eduardo Camavinga", "nacionalidad": "Francia" },
+      { "nombre": "Endrick", "nacionalidad": "Brasil" },
+      { "nombre": "Federico Chiesa", "nacionalidad": "Italia" },
+      { "nombre": "Frenkie de Jong", "nacionalidad": "Países Bajos" },
+      { "nombre": "Federico Valverde", "nacionalidad": "Uruguay" },
+      { "nombre": "Fabinho", "nacionalidad": "Brasil" },
+      { "nombre": "Ferran Torres", "nacionalidad": "España" },
+      { "nombre": "Florian Wirtz", "nacionalidad": "Alemania" },
+      { "nombre": "Gareth Bale", "nacionalidad": "Wales" },
+      { "nombre": "Giorgio Chiellini", "nacionalidad": "Italia" },
+      { "nombre": "Gianluigi Donnarumma", "nacionalidad": "Italia" },
+      { "nombre": "Georginio Wijnaldum", "nacionalidad": "Países Bajos" },
+      { "nombre": "Gabriel Jesus", "nacionalidad": "Brasil" },
+      { "nombre": "Gavi", "nacionalidad": "España" },
+      { "nombre": "Granit Xhaka", "nacionalidad": "Suiza" },
+      { "nombre": "Hakan Calhanoglu", "nacionalidad": "Turquía" },
+      { "nombre": "Harry Kane", "nacionalidad": "Inglaterra" },
+      { "nombre": "Hugo Lloris", "nacionalidad": "Francia" },
+      { "nombre": "Harry Maguire", "nacionalidad": "Inglaterra" },
+      { "nombre": "Heung-min Son", "nacionalidad": "Corea del Sur" },
+      { "nombre": "Ilkay Gundogan", "nacionalidad": "Alemania" },
+      { "nombre": "Isco", "nacionalidad": "España" },
+      { "nombre": "Ivan Toney", "nacionalidad": "Inglaterra" },
+      { "nombre": "Jack Grealish", "nacionalidad": "Inglaterra" },
+      { "nombre": "Jordan Henderson", "nacionalidad": "Inglaterra" },
+      { "nombre": "Joshua Kimmich", "nacionalidad": "Alemania" },
+      { "nombre": "Jan Oblak", "nacionalidad": "Eslovenia" },
+      { "nombre": "Jordan Pickford", "nacionalidad": "Inglaterra" },
+      { "nombre": "Jadon Sancho", "nacionalidad": "Inglaterra" },
+      { "nombre": "Jamie Vardy", "nacionalidad": "Inglaterra" },
+      { "nombre": "Joao Cancelo", "nacionalidad": "Portugal" },
+      { "nombre": "Joao Felix", "nacionalidad": "Portugal" },
+      { "nombre": "Jordi Alba", "nacionalidad": "España" },
+      { "nombre": "Jorginho", "nacionalidad": "Italia" },
+      { "nombre": "Jude Bellingham", "nacionalidad": "Inglaterra" },
+      { "nombre": "Jamal Musiala", "nacionalidad": "Alemania" },
+      { "nombre": "Julian Alvarez", "nacionalidad": "Argentina" },
+      { "nombre": "Jules Kounde", "nacionalidad": "Francia" },
+      { "nombre": "Karim Benzema", "nacionalidad": "Francia" },
+      { "nombre": "Kingsley Coman", "nacionalidad": "Francia" },
+      { "nombre": "Kevin De Bruyne", "nacionalidad": "Bélgica" },
+      { "nombre": "Kai Havertz", "nacionalidad": "Alemania" },
+      { "nombre": "Kalidou Koulibaly", "nacionalidad": "Senegal" },
+      { "nombre": "Kylian Mbappe", "nacionalidad": "Francia" },
+      { "nombre": "Keylor Navas", "nacionalidad": "Costa Rica" },
+      { "nombre": "Kieran Trippier", "nacionalidad": "Inglaterra" },
+      { "nombre": "Kyle Walker", "nacionalidad": "Inglaterra" },
+      { "nombre": "Koke", "nacionalidad": "España" },
+      { "nombre": "Khvicha Kvaratskhelia", "nacionalidad": "Georgia" },
+      { "nombre": "Kaoru Mitoma", "nacionalidad": "Japón" },
+      { "nombre": "Leonardo Bonucci", "nacionalidad": "Italia" },
+      { "nombre": "Leon Goretzka", "nacionalidad": "Alemania" },
+      { "nombre": "Lucas Hernandez", "nacionalidad": "Francia" },
+      { "nombre": "Lorenzo Insigne", "nacionalidad": "Italia" },
+      { "nombre": "Lautaro Martinez", "nacionalidad": "Argentina" },
+      { "nombre": "Lionel Messi", "nacionalidad": "Argentina" },
+      { "nombre": "Luka Modric", "nacionalidad": "Croacia" },
+      { "nombre": "Leroy Sane", "nacionalidad": "Alemania" },
+      { "nombre": "Luke Shaw", "nacionalidad": "Inglaterra" },
+      { "nombre": "Luis Suarez", "nacionalidad": "Uruguay" },
+      { "nombre": "Lamine Yamal", "nacionalidad": "España" },
+      { "nombre": "Lucas Paqueta", "nacionalidad": "Brasil" },
+      { "nombre": "Marcelo Brozovic", "nacionalidad": "Croacia" },
+      { "nombre": "Matthijs de Ligt", "nacionalidad": "Países Bajos" },
+      { "nombre": "Memphis Depay", "nacionalidad": "Países Bajos" },
+      { "nombre": "Mario Gotze", "nacionalidad": "Alemania" },
+      { "nombre": "Mats Hummels", "nacionalidad": "Alemania" },
+      { "nombre": "Mauro Icardi", "nacionalidad": "Argentina" },
+      { "nombre": "Mike Maignan", "nacionalidad": "Francia" },
+      { "nombre": "Mason Mount", "nacionalidad": "Inglaterra" },
+      { "nombre": "Manuel Neuer", "nacionalidad": "Alemania" },
+      { "nombre": "Marcus Rashford", "nacionalidad": "Inglaterra" },
+      { "nombre": "Marco Reus", "nacionalidad": "Alemania" },
+      { "nombre": "Mohamed Salah", "nacionalidad": "Egipto" },
+      { "nombre": "Marc-Andre ter Stegen", "nacionalidad": "Alemania" },
+      { "nombre": "Marco Verratti", "nacionalidad": "Italia" },
+      { "nombre": "Marco Asensio", "nacionalidad": "España" },
+      { "nombre": "Marquinhos", "nacionalidad": "Brasil" },
+      { "nombre": "Morata", "nacionalidad": "España" },
+      { "nombre": "Martin Odegaard", "nacionalidad": "Noruega" },
+      { "nombre": "Mikel Oyarzabal", "nacionalidad": "España" },
+      { "nombre": "Michael Olise", "nacionalidad": "Francia" },
+      { "nombre": "Moises Caicedo", "nacionalidad": "Ecuador" },
+      { "nombre": "Manuel Akanji", "nacionalidad": "Suiza" },
+      { "nombre": "Nicolo Barella", "nacionalidad": "Italia" },
+      { "nombre": "N'Golo Kante", "nacionalidad": "Francia" },
+      { "nombre": "Neymar Jr", "nacionalidad": "Brasil" },
+      { "nombre": "Nico Williams", "nacionalidad": "España" },
+      { "nombre": "Nicolas Jackson", "nacionalidad": "Senegal" },
+      { "nombre": "Nuno Mendes", "nacionalidad": "Portugal" },
+      { "nombre": "Ousmane Dembele", "nacionalidad": "Francia" },
+      { "nombre": "Pierre-Emerick Aubameyang", "nacionalidad": "Gabon" },
+      { "nombre": "Paulo Dybala", "nacionalidad": "Argentina" },
+      { "nombre": "Phil Foden", "nacionalidad": "Inglaterra" },
+      { "nombre": "Paul Pogba", "nacionalidad": "Francia" },
+      { "nombre": "Pepe", "nacionalidad": "Portugal" },
+      { "nombre": "Pique", "nacionalidad": "España" },
+      { "nombre": "Pedri", "nacionalidad": "España" },
+      { "nombre": "Pau Torres", "nacionalidad": "España" },
+      { "nombre": "Rodrigo De Paul", "nacionalidad": "Argentina" },
+      { "nombre": "Robert Lewandowski", "nacionalidad": "Polonia" },
+      { "nombre": "Romelu Lukaku", "nacionalidad": "Bélgica" },
+      { "nombre": "Riyad Mahrez", "nacionalidad": "Argelia" },
+      { "nombre": "Raheem Sterling", "nacionalidad": "Inglaterra" },
+      { "nombre": "Raphael Varane", "nacionalidad": "Francia" },
+      { "nombre": "Roberto Firmino", "nacionalidad": "Brasil" },
+      { "nombre": "Rodri", "nacionalidad": "España" },
+      { "nombre": "Ruben Dias", "nacionalidad": "Portugal" },
+      { "nombre": "Rafael Leao", "nacionalidad": "Portugal" },
+      { "nombre": "Rodrygo", "nacionalidad": "Brasil" },
+      { "nombre": "Ronald Araujo", "nacionalidad": "Uruguay" },
+      { "nombre": "Randal Kolo Muani", "nacionalidad": "Francia" },
+      { "nombre": "Sergio Aguero", "nacionalidad": "Argentina" },
+      { "nombre": "Serge Gnabry", "nacionalidad": "Alemania" },
+      { "nombre": "Sadio Mane", "nacionalidad": "Senegal" },
+      { "nombre": "Sergio Busquets", "nacionalidad": "España" },
+      { "nombre": "Sergio Ramos", "nacionalidad": "España" },
+      { "nombre": "Sandro Tonali", "nacionalidad": "Italia" },
+      { "nombre": "Trent Alexander-Arnold", "nacionalidad": "Inglaterra" },
+      { "nombre": "Thibaut Courtois", "nacionalidad": "Bélgica" },
+      { "nombre": "Theo Hernandez", "nacionalidad": "Francia" },
+      { "nombre": "Toni Kroos", "nacionalidad": "Alemania" },
+      { "nombre": "Thomas Muller", "nacionalidad": "Alemania" },
+      { "nombre": "Thomas Partey", "nacionalidad": "Ghana" },
+      { "nombre": "Timo Werner", "nacionalidad": "Alemania" },
+      { "nombre": "Thiago", "nacionalidad": "España" },
+      { "nombre": "Thiago Silva", "nacionalidad": "Brasil" },
+      { "nombre": "Virgil van Dijk", "nacionalidad": "Países Bajos" },
+      { "nombre": "Vinicius Jr", "nacionalidad": "Brasil" },
+      { "nombre": "Vitinha", "nacionalidad": "Portugal" },
+      { "nombre": "Wojciech Szczesny", "nacionalidad": "Polonia" },
+      { "nombre": "William Saliba", "nacionalidad": "Francia" },
+      { "nombre": "Warren Zaire-Emery", "nacionalidad": "Francia" },
+      { "nombre": "Weston McKennie", "nacionalidad": "Estados Unidos" },
+      { "nombre": "Xavi Simons", "nacionalidad": "Países Bajos" },
+      { "nombre": "Yassine Bounou", "nacionalidad": "Marruecos" },
+      { "nombre": "Zlatan Ibrahimovic", "nacionalidad": "Suecia" }
+    ];
+
+    window.startGame = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+
+      try {
+        const snapshot = await get(child(ref(db), `rooms/${window.activeRoomCode}`));
+        if (!snapshot.exists()) return;
+
+        const roomData = snapshot.val();
+        const playersList = roomData.players ? Object.keys(roomData.players) : [];
+        const requiredImpostors = Math.min(roomData.impostors || 1, playersList.length - 1);
+
+        if (playersList.length < 3) {
+          showToast("Se necesitan al menos 3 jugadores para iniciar la partida.", "warning");
+          return;
+        }
+
+        let usedPlayers = roomData.usedPlayers || [];
+        let availablePlayers = PLAYERS_DATA.filter(p => !usedPlayers.includes(p.nombre));
+
+        if (availablePlayers.length === 0) {
+          usedPlayers = [];
+          availablePlayers = [...PLAYERS_DATA];
+        }
+
+        const selectedSecretPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
+
+        const shuffled = [...playersList];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        const selectedImpostors = shuffled.slice(0, requiredImpostors);
+        usedPlayers.push(selectedSecretPlayer.nombre);
+
+        await update(ref(db, `rooms/${window.activeRoomCode}`), {
+          started: true,
+          ended: false,
+          impostorsList: selectedImpostors,
+          secretPlayer: selectedSecretPlayer,
+          usedPlayers: usedPlayers
+        });
+
+        showToast("¡Partida Iniciada! Asignando roles...", "success");
+
+      } catch (error) {
+        showToast("Error al iniciar partida: " + error.message, "error");
+      }
+    }
+
+    // FINALIZAR RONDA: REVELA LOS IMPOSTORES EN TODOS LOS DISPOSITIVOS
+    window.finishRound = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+
+      try {
+        await update(ref(db, `rooms/${window.activeRoomCode}`), {
+          ended: true
+        });
+        showToast("Ronda finalizada. Se revelaron los impostores.", "info");
+      } catch (error) {
+        showToast("Error al finalizar la ronda: " + error.message, "error");
+      }
+    }
+
+    // REGRESAR A LA SALA (LOBBY) TRAS HABER VISTO LA REVELACIÓN
+    window.resetGameToLobby = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+
+      try {
+        await update(ref(db, `rooms/${window.activeRoomCode}`), {
+          started: false,
+          ended: false,
+          impostorsList: []
+        });
+        showToast("Regresaron a la sala para una nueva partida.", "info");
+      } catch (error) {
+        showToast("Error al regresar a la sala: " + error.message, "error");
+      }
+    }
+
+    // SALIR DE SALA ESTANDO DENTRO DE UNA PARTIDA
+    window.leaveRoomInGame = async function() {
+      const confirmed = await openModal({
+        title: "Salir de la Sala",
+        message: "¿Seguro que quieres abandonar la partida en curso?",
+        confirmText: "Salir",
+        cancelText: "Cancelar"
+      });
+
+      if (confirmed) {
+        await window.leaveRoom(true);
+      }
+    }
+
+    window.kickPlayer = async function(targetNickname) {
+      if (!window.isHost || !window.activeRoomCode) return;
+      
+      const confirmed = await openModal({
+        title: "Expulsar Jugador",
+        message: `¿Estás seguro de que quieres expulsar a "${targetNickname}" de la sala?`,
+        confirmText: "Expulsar",
+        cancelText: "Cancelar"
+      });
+
+      if (confirmed) {
+        try {
+          const playerRef = ref(db, `rooms/${window.activeRoomCode}/players/${targetNickname}`);
+          await remove(playerRef);
+          showToast(`Expulsaste a ${targetNickname}`, "warning");
+        } catch (e) {
+          showToast("Error al expulsar: " + e.message, "error");
+        }
+      }
+    }
+
+    window.deleteRoom = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+
+      const confirmed = await openModal({
+        title: "Eliminar Sala",
+        message: "¿Quieres eliminar la sala por completo? Todos los miembros serán desconectados inmediatamente.",
+        confirmText: "Eliminar Sala",
+        cancelText: "Cancelar"
+      });
+
+      if (confirmed) {
+        try {
+          const roomRef = ref(db, `rooms/${window.activeRoomCode}`);
+          await remove(roomRef);
+          localStorage.removeItem('ranchada_active_room');
+          setProfileLockState(false);
+          showToast("Sala eliminada", "info");
+        } catch (e) {
+          showToast("Error al eliminar la sala: " + e.message, "error");
+        }
+      }
+    }
+
+    window.copyShareLink = function() {
+      const copyInput = document.getElementById('share-link-input');
+      copyInput.select();
+      navigator.clipboard.writeText(copyInput.value);
+      showToast("¡Enlace copiado al portapapeles!", "success");
+    }
+
+    window.leaveRoom = async function(removeFromDb = true) {
+      if (removeFromDb && window.activeRoomCode && window.currentProfile.nickname) {
+        const playerRef = ref(db, `rooms/${window.activeRoomCode}/players/${window.currentProfile.nickname}`);
+        await remove(playerRef);
+        showToast("Saliste de la sala", "info");
+      }
+
+      if (roomListenerUnsubscribe) {
+        roomListenerUnsubscribe();
+        roomListenerUnsubscribe = null;
+      }
+
+      localStorage.removeItem('ranchada_active_room');
+      setProfileLockState(false);
+      previousPlayersCount = 0;
+      window.activeRoomCode = null;
+      window.isHost = false;
+      window.showView('view-main-menu');
+    }
+
+    window.addEventListener('DOMContentLoaded', restoreSession);
+  </script>
+
+</body>
+</html>
