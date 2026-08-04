@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Blackjack Multijugador · LaRanchada Web</title>
+  <title>Blackjack · LaRanchada Web</title>
 
   <!-- CDN Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,11 +48,18 @@
     }
     .game-btn:hover::before { transform: translateX(100%); }
 
+    /* Animación mejorada de reparto */
     @keyframes dealCard {
-      from { opacity: 0; transform: translateY(-24px) scale(0.85) rotate(-6deg); }
-      to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+      from { 
+        opacity: 0; 
+        transform: translateY(-80px) scale(0.6) rotate(-15deg); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1) rotate(0deg); 
+      }
     }
-    .card-deal { animation: dealCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .card-deal { animation: dealCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
 
     @keyframes flipReveal {
       0% { transform: rotateY(180deg); }
@@ -332,9 +339,6 @@
 
     const APP_BUILD_VERSION = "bj_build_2026_08_03_v1";
 
-    // Mismo proyecto de Firebase que el resto de LaRanchada, pero con nodos
-    // propios (bj_rooms / bj_system) para que este juego no choque con
-    // "rooms" / "system" que usa el Impostor.
     const firebaseConfig = {
       apiKey: "AIzaSyAXGKWZA8kWaN2NWCK2A9jTlGSq-B2bqWA",
       authDomain: "laranchada-6abd3.firebaseapp.com",
@@ -384,7 +388,6 @@
       }
       return d;
     }
-    // Usamos 2 mazos juntos (shoe de 104 cartas) para que no se agote en mesas con varios jugadores.
     function createShoe() { return [...createDeck(), ...createDeck()]; }
 
     function shuffleDeck(d) {
@@ -423,17 +426,20 @@
     }
 
     // ================== RENDER DE CARTAS ==================
-    function cardHTML(card, faceDown, animClass, size) {
+    // Se añade `delaySec` para secuenciar las animaciones de reparto de cartas
+    function cardHTML(card, faceDown, animClass, size, delaySec = 0) {
       const sizeClasses = size === 'small' ? 'w-10 h-14 sm:w-12 sm:h-16 rounded-lg' : 'w-16 h-24 sm:w-20 sm:h-28 rounded-xl';
       const textSize = size === 'small' ? 'text-[10px] sm:text-xs' : 'text-sm sm:text-base';
       const symbolBig = size === 'small' ? 'text-lg sm:text-xl' : 'text-2xl sm:text-3xl';
+      const delayStyle = (animClass && delaySec > 0) ? `style="animation-delay: ${delaySec}s;"` : '';
+
       if (faceDown) {
-        return `<div class="${animClass} card-back ${sizeClasses} shadow-lg border border-white/10 flex items-center justify-center shrink-0">
+        return `<div ${delayStyle} class="${animClass} card-back ${sizeClasses} shadow-lg border border-white/10 flex items-center justify-center shrink-0">
           <span class="${symbolBig} opacity-40">🃏</span>
         </div>`;
       }
       const colorClass = card.color === 'red' ? 'text-rose-600' : 'text-slate-900';
-      return `<div class="${animClass} card-face ${sizeClasses} shadow-lg border border-slate-300 relative p-1 sm:p-1.5 shrink-0">
+      return `<div ${delayStyle} class="${animClass} card-face ${sizeClasses} shadow-lg border border-slate-300 relative p-1 sm:p-1.5 shrink-0">
         <div class="${colorClass} font-extrabold ${textSize} leading-none">${card.rank}</div>
         <div class="${colorClass} ${textSize} leading-none">${card.symbol}</div>
         <div class="${colorClass} absolute inset-0 flex items-center justify-center ${symbolBig} opacity-90">${card.symbol}</div>
@@ -450,7 +456,7 @@
 
     function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-    // ================== SESIÓN / PERFIL (sin avatar) ==================
+    // ================== SESIÓN / PERFIL ==================
     function setProfileLockState(isLocked) {
       const nicknameInput = document.getElementById('nickname');
       const saveBtn = document.getElementById('btn-save');
@@ -1053,7 +1059,6 @@
       await update(ref(db), updates);
     }
 
-    // Si alguien se va de la mesa mientras juega, el anfitrión corrige el turno.
     async function hostValidateTurnContinuity(room) {
       if (!window.isHost || !room.started || room.phase !== 'playing') return;
       const code = window.activeRoomCode;
@@ -1072,7 +1077,7 @@
         } else if (nextIdx !== room.currentTurnIndex) {
           await update(ref(db, `${ROOMS_PATH}/${code}`), { currentTurnIndex: nextIdx });
         }
-      } catch (e) { /* silencioso: se reintentará en el próximo tick */ }
+      } catch (e) { }
     }
 
     // ================== FASE DEL DEALER ==================
@@ -1154,12 +1159,16 @@
       let html = '';
 
       hand.forEach((c, i) => {
+        // Asignar retraso por carta para que se repartan una tras otra
+        const newCardIndex = i - prevLen;
+        const delaySec = newCardIndex >= 0 ? (newCardIndex * 0.22) : 0;
+
         if (i === 1 && room.dealerHidden) {
-          html += cardHTML(null, true, i >= prevLen ? 'card-deal' : '', 'normal');
+          html += cardHTML(null, true, i >= prevLen ? 'card-deal' : '', 'normal', delaySec);
         } else if (i === 1 && !room.dealerHidden && justRevealed) {
-          html += cardHTML(c, false, 'card-flip', 'normal');
+          html += cardHTML(c, false, 'card-flip', 'normal', 0);
         } else {
-          html += cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'normal');
+          html += cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'normal', delaySec);
         }
       });
 
@@ -1185,7 +1194,14 @@
       const isTurn = room.phase === 'playing' && room.turnOrder && room.turnOrder[room.currentTurnIndex] === nick;
       const hand = p.hand || [];
       const prevLen = prevHandLengths[nick] || 0;
-      const cardsHtml = hand.map((c, i) => cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'small')).join('');
+
+      // Retraso para secuenciar animación carta por carta en el inicio del turno
+      const cardsHtml = hand.map((c, i) => {
+        const newCardIndex = i - prevLen;
+        const delaySec = newCardIndex >= 0 ? (newCardIndex * 0.22) : 0;
+        return cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'small', delaySec);
+      }).join('');
+
       prevHandLengths[nick] = hand.length;
       const score = calcScore(hand);
 
