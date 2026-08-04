@@ -163,7 +163,7 @@
   <header class="max-w-5xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
     <div class="flex items-center gap-2">
       <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 animate-pulse"></div>
-      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-400">En vivo</span>
+      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-400">Servidor conectado</span>
     </div>
     
     <div class="flex items-center gap-2">
@@ -1209,7 +1209,7 @@
         returnLobbyBtn.classList.toggle('hidden', !window.isHost);
       } else {
         // PANTALLA NORMAL DE JUEGO
-        badge.innerText = "● En Vivo";
+        badge.innerText = "● En vivo";
         badge.className = "text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold animate-pulse";
 
         restartBtn.classList.toggle('hidden', !window.isHost);

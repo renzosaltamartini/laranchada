@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#050914] text-slate-100 selection:bg-blue-500 selection:text-slate-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Anotador de Truco · LaRanchada Web</title>
+
+  <!-- CDN Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fuente Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #050914;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(59,130,246,0.20), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 10%, rgba(56,189,248,0.14), transparent),
+        radial-gradient(ellipse 70% 50% at 50% 120%, rgba(37,99,235,0.16), transparent);
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.55); }
+
+    .glow-card {
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
+    }
+
+    .game-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .game-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.10), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+    .game-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .float-in { animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes markPop {
+      from { opacity: 0; stroke-dashoffset: 40; }
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+    .fosforo-mark {
+      stroke-dasharray: 40;
+      animation: markPop 0.35s ease-out forwards;
+    }
+
+    @keyframes scorePop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+    .score-pop { animation: scorePop 0.35s ease-out; }
+
+    .team-blue { color: #60a5fa; }
+    .team-amber { color: #fbbf24; }
+</style>
+</head>
+<body class="min-h-full flex flex-col justify-between p-4 sm:p-6 lg:p-8 relative">
+
+  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- MODAL DE HISTORIAL -->
+  <div id="history-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-blue-900/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl glow-card space-y-5 max-h-[85vh] flex flex-col">
+
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5">
+            <span>🕓</span> Historial de puntos
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Cada suma y resta, con su horario</p>
+        </div>
+        <button onclick="closeHistoryModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold shrink-0">
+          ✕
+        </button>
+      </div>
+
+      <div id="history-list" class="flex flex-col gap-2 overflow-y-auto pr-2 my-1 min-h-[120px]">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeHistoryModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <h3 id="modal-title" class="text-base sm:text-lg font-bold text-white">¿Estás seguro?</h3>
+      <p id="modal-message" class="text-xs sm:text-sm text-slate-400">Esta acción no se puede deshacer.</p>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="modal-btn-cancel" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs sm:text-sm rounded-xl transition">
+          Cancelar
+        </button>
+        <button id="modal-btn-confirm" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm rounded-xl transition">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="max-w-4xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
+    <a href="index.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition group">
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase">Inicio</span>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <button onclick="openHistoryModal()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white hover:border-slate-700 transition active:scale-95 flex items-center gap-1.5">
+        <span>🕓</span>
+        <span>Historial</span>
+      </button>
+      <button onclick="confirmClearMatch()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-rose-950/40 border border-rose-900/60 rounded-lg text-rose-300 hover:text-rose-100 hover:bg-rose-900/60 transition active:scale-95 flex items-center gap-1.5">
+        <span>🗑️</span>
+        <span class="hidden sm:inline">Borrar partida</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-4xl w-full mx-auto my-auto py-8 sm:py-12">
+
+    <!-- Branding -->
+    <div class="text-center mb-6 sm:mb-8 float-in">
+      <span class="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
+        HECHO POR PERICO
+      </span>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_20px_rgba(37,99,235,0.35)]">
+        Anotador de <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-300">Truco</span>
+      </h1>
+    </div>
+
+    <!-- Selector de puntaje objetivo -->
+    <div class="flex items-center justify-center gap-2 mb-6 sm:mb-8 float-in" style="animation-delay:0.05s;">
+      <span class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Jugamos a:</span>
+      <div class="flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
+        <button id="btn-target-15" onclick="setTarget(15)" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition">15</button>
+        <button id="btn-target-30" onclick="setTarget(30)" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition">30</button>
+      </div>
+    </div>
+
+    <!-- Banner de ganador -->
+    <div id="winner-banner" class="hidden mb-6 sm:mb-8 text-center float-in">
+      <div class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/40 rounded-2xl shadow-[0_0_30px_-8px_rgba(59,130,246,0.7)]">
+        <span class="text-lg sm:text-xl">🏆</span>
+        <span id="winner-text" class="text-sm sm:text-base font-bold text-white"></span>
+      </div>
+    </div>
+
+    <!-- Marcador -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+
+      <!-- EQUIPO 1 -->
+      <section class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl float-in" style="animation-delay:0.1s;">
+        <input id="name-1" type="text" maxlength="18" value="Nosotros" oninput="renameTeam(1, this.value)"
+          class="w-full bg-transparent text-center text-sm sm:text-base font-bold text-blue-300 placeholder-slate-600 focus:outline-none border-b border-transparent focus:border-blue-500/50 pb-1.5 mb-3 transition" />
+
+        <div class="text-center mb-4">
+          <span id="score-1" class="score-pop inline-block text-6xl sm:text-7xl font-extrabold text-white tabular-nums">0</span>
+        </div>
+
+        <div id="boxes-1" class="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-5 min-h-[44px]"></div>
+
+        <div class="grid grid-cols-4 gap-2 mb-2.5">
+          <button onclick="addPoint(1,1)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+1</button>
+          <button onclick="addPoint(1,2)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+2</button>
+          <button onclick="addPoint(1,3)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+3</button>
+          <button onclick="addPoint(1,4)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+4</button>
+        </div>
+        <button onclick="subtractPoint(1)" class="touch-manipulation w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-1.5">
+          <span>−1</span><span class="text-slate-500 font-normal">· corregir error</span>
+        </button>
+      </section>
+
+      <!-- EQUIPO 2 -->
+      <section class="glow-card bg-slate-900/60 border border-amber-900/30 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl float-in" style="animation-delay:0.15s;">
+        <input id="name-2" type="text" maxlength="18" value="Ellos" oninput="renameTeam(2, this.value)"
+          class="w-full bg-transparent text-center text-sm sm:text-base font-bold text-amber-300 placeholder-slate-600 focus:outline-none border-b border-transparent focus:border-amber-500/50 pb-1.5 mb-3 transition" />
+
+        <div class="text-center mb-4">
+          <span id="score-2" class="score-pop inline-block text-6xl sm:text-7xl font-extrabold text-white tabular-nums">0</span>
+        </div>
+
+        <div id="boxes-2" class="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-5 min-h-[44px]"></div>
+
+        <div class="grid grid-cols-4 gap-2 mb-2.5">
+          <button onclick="addPoint(2,1)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+1</button>
+          <button onclick="addPoint(2,2)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+2</button>
+          <button onclick="addPoint(2,3)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+3</button>
+          <button onclick="addPoint(2,4)" class="team-add-btn game-btn touch-manipulation py-2.5 bg-amber-600/80 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition active:scale-95">+4</button>
+        </div>
+        <button onclick="subtractPoint(2)" class="touch-manipulation w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs sm:text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-1.5">
+          <span>−1</span><span class="text-slate-500 font-normal">· corregir error</span>
+        </button>
+      </section>
+
+    </div>
+
+    <p class="text-center text-[10px] sm:text-xs text-slate-600 mt-6 sm:mt-8">
+      Los fosforitos se completan de a 5 puntos, como en la mesa de siempre. Todo se guarda solo en este dispositivo.
+    </p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-4xl w-full mx-auto pt-4 sm:pt-6 border-t border-slate-800 text-center">
+    <p class="text-[10px] sm:text-xs text-slate-600">LaRanchada Web &middot; Hecho con 💙 por Perico</p>
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'ranchada_truco_anotador';
+
+    let state = {
+      team1: { name: 'Nosotros', score: 0 },
+      team2: { name: 'Ellos', score: 0 },
+      target: 30,
+      history: []
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = Object.assign(state, parsed);
+        }
+      } catch (e) {
+        console.error('No se pudo cargar el marcador guardado:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('No se pudo guardar el marcador:', e);
+      }
+    }
+
+    // --- TOASTS ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        info: 'bg-slate-800 border-slate-700 text-slate-200',
+        success: 'bg-blue-950/90 border-blue-700 text-blue-200',
+        warning: 'bg-amber-950/90 border-amber-700 text-amber-200',
+        error: 'bg-rose-950/90 border-rose-700 text-rose-200'
+      };
+      const toast = document.createElement('div');
+      toast.className = `toast-anim pointer-events-auto px-4 py-2.5 rounded-xl border shadow-lg text-xs sm:text-sm font-medium ${colors[type] || colors.info}`;
+      toast.style.animation = 'floatIn 0.25s ease-out';
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s ease';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2200);
+    }
+
+    // --- FOSFORITOS (SVG) ---
+    function matchBoxSVG(marks, strokeHex) {
+      const lines = [
+        { key: 1, x1: 6, y1: 6, x2: 38, y2: 6 },   // arriba
+        { key: 2, x1: 38, y1: 6, x2: 38, y2: 38 }, // derecha
+        { key: 3, x1: 38, y1: 38, x2: 6, y2: 38 }, // abajo
+        { key: 4, x1: 6, y1: 38, x2: 6, y2: 6 },   // izquierda
+        { key: 5, x1: 6, y1: 38, x2: 38, y2: 6 }   // diagonal (cierra el fosforito)
+      ];
+      let svg = `<svg viewBox="0 0 44 44" class="w-full h-full">
+        <rect x="3" y="3" width="38" height="38" rx="6" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="2"/>`;
+      for (let i = 0; i < marks; i++) {
+        const l = lines[i];
+        svg += `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" stroke="${strokeHex}" stroke-width="4" stroke-linecap="round" class="fosforo-mark" style="animation-delay:${i * 0.05}s"/>`;
+      }
+      svg += `</svg>`;
+      return svg;
+    }
+
+    function renderBoxes(containerId, score, target, strokeHex) {
+      const container = document.getElementById(containerId);
+      const totalBoxes = target / 5;
+      let html = '';
+      for (let i = 0; i < totalBoxes; i++) {
+        const boxStart = i * 5;
+        const marks = Math.max(0, Math.min(5, score - boxStart));
+        html += `<div class="w-9 h-9 sm:w-11 sm:h-11 shrink-0">${matchBoxSVG(marks, strokeHex)}</div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    // --- RENDER GENERAL ---
+    function renderAll() {
+      document.getElementById('name-1').value = state.team1.name;
+      document.getElementById('name-2').value = state.team2.name;
+      document.getElementById('score-1').innerText = state.team1.score;
+      document.getElementById('score-2').innerText = state.team2.score;
+
+      renderBoxes('boxes-1', state.team1.score, state.target, '#60a5fa');
+      renderBoxes('boxes-2', state.team2.score, state.target, '#fbbf24');
+
+      document.getElementById('btn-target-15').className = state.target === 15
+        ? 'px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition bg-blue-600 text-white'
+        : 'px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white';
+      document.getElementById('btn-target-30').className = state.target === 30
+        ? 'px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition bg-blue-600 text-white'
+        : 'px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition text-slate-400 hover:text-white';
+
+      const winner = state.team1.score >= state.target ? 1 : (state.team2.score >= state.target ? 2 : null);
+      const banner = document.getElementById('winner-banner');
+      const addButtons = document.querySelectorAll('.team-add-btn');
+      if (winner) {
+        const winnerName = winner === 1 ? state.team1.name : state.team2.name;
+        document.getElementById('winner-text').innerText = `¡${winnerName} ganó la partida!`;
+        banner.classList.remove('hidden');
+        addButtons.forEach(btn => { btn.disabled = true; btn.classList.add('opacity-40', 'pointer-events-none'); });
+      } else {
+        banner.classList.add('hidden');
+        addButtons.forEach(btn => { btn.disabled = false; btn.classList.remove('opacity-40', 'pointer-events-none'); });
+      }
+
+      renderHistory();
+    }
+
+    function pulseScore(teamNum) {
+      const el = document.getElementById(`score-${teamNum}`);
+      el.classList.remove('score-pop');
+      void el.offsetWidth; // reinicia la animación
+      el.classList.add('score-pop');
+    }
+
+    // --- ACCIONES ---
+    window.addPoint = function (teamNum, amount) {
+      const team = teamNum === 1 ? state.team1 : state.team2;
+      team.score = Math.min(state.target, team.score + amount);
+
+      state.history.unshift({
+        teamName: team.name,
+        teamNum: teamNum,
+        delta: amount,
+        resultScore: team.score,
+        time: new Date().toISOString()
+      });
+
+      saveState();
+      renderAll();
+      pulseScore(teamNum);
+    };
+
+    window.subtractPoint = function (teamNum) {
+      const team = teamNum === 1 ? state.team1 : state.team2;
+      if (team.score <= 0) {
+        showToast('Ese equipo ya está en 0.', 'warning');
+        return;
+      }
+      team.score = team.score - 1;
+
+      state.history.unshift({
+        teamName: team.name,
+        teamNum: teamNum,
+        delta: -1,
+        resultScore: team.score,
+        time: new Date().toISOString()
+      });
+
+      saveState();
+      renderAll();
+      pulseScore(teamNum);
+    };
+
+    window.renameTeam = function (teamNum, value) {
+      const name = value.trim() || (teamNum === 1 ? 'Nosotros' : 'Ellos');
+      if (teamNum === 1) state.team1.name = name; else state.team2.name = name;
+      saveState();
+      renderHistory();
+    };
+
+    window.setTarget = function (value) {
+      state.target = value;
+      state.team1.score = Math.min(state.team1.score, value);
+      state.team2.score = Math.min(state.team2.score, value);
+      saveState();
+      renderAll();
+    };
+
+    // --- HISTORIAL ---
+    function formatTime(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString('es-AR', {
+        day: '2-digit', month: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      if (!state.history.length) {
+        list.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-10 text-center gap-2">
+            <span class="text-3xl">🃏</span>
+            <p class="text-sm text-slate-400 font-medium">Todavía no hay puntos anotados.</p>
+            <p class="text-xs text-slate-600">Cada suma y resta va a aparecer acá.</p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = state.history.map(entry => {
+        const isAdd = entry.delta > 0;
+        const colorClass = entry.teamNum === 1 ? 'text-blue-300' : 'text-amber-300';
+        const deltaClass = isAdd ? 'text-emerald-400' : 'text-rose-400';
+        const deltaText = isAdd ? `+${entry.delta}` : `${entry.delta}`;
+        return `
+          <div class="flex items-center justify-between p-3 bg-slate-950/90 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <span class="text-lg shrink-0">${isAdd ? '➕' : '➖'}</span>
+              <div class="overflow-hidden">
+                <span class="text-sm font-bold ${colorClass} block truncate">${entry.teamName}</span>
+                <span class="text-[11px] text-slate-500 block">${formatTime(entry.time)}</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-sm font-bold ${deltaClass} block">${deltaText}</span>
+              <span class="text-[11px] text-slate-500 block">total: ${entry.resultScore}</span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    window.openHistoryModal = function () {
+      renderHistory();
+      document.getElementById('history-modal').classList.remove('hidden');
+    };
+    window.closeHistoryModal = function () {
+      document.getElementById('history-modal').classList.add('hidden');
+    };
+
+    // --- MODAL DE CONFIRMACIÓN (reutilizable) ---
+    function openConfirmModal({ title, message, confirmText = 'Confirmar', cancelText = 'Cancelar' }) {
+      return new Promise((resolve) => {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-message').innerText = message;
+        const confirmBtn = document.getElementById('modal-btn-confirm');
+        const cancelBtn = document.getElementById('modal-btn-cancel');
+        confirmBtn.innerText = confirmText;
+        cancelBtn.innerText = cancelText;
+
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('hidden');
+
+        const cleanup = (result) => {
+          modal.classList.add('hidden');
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+          resolve(result);
+        };
+        confirmBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+      });
+    }
+
+    window.confirmClearMatch = async function () {
+      const confirmed = await openConfirmModal({
+        title: 'Borrar la partida',
+        message: '¿Seguro que quieres borrar el marcador y todo el historial? Esta acción no se puede deshacer.',
+        confirmText: 'Borrar todo',
+        cancelText: 'Cancelar'
+      });
+
+      if (confirmed) {
+        state.team1.score = 0;
+        state.team2.score = 0;
+        state.history = [];
+        saveState();
+        renderAll();
+        showToast('Partida borrada. ¡A jugar de nuevo!', 'info');
+      }
+    };
+
+    // --- INICIO ---
+    loadState();
+    renderAll();
+  </script>
+
+</body>
+</html>
