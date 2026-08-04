@@ -24,6 +24,24 @@
       background-attachment: fixed;
     }
 
+    body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        repeating-radial-gradient(
+            circle at 0 0,
+            rgba(255,255,255,.015) 0,
+            rgba(255,255,255,.015) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+
+    opacity: .7;
+}
+
     @keyframes slideIn {
       from { transform: translateY(-100%); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
