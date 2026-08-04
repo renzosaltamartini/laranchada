@@ -33,7 +33,6 @@
       box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
     }
 
-    /* Efecto de brillo que recorre los botones/tarjetas al pasar el mouse */
     .game-btn {
       position: relative;
       overflow: hidden;
@@ -92,8 +91,8 @@
   <!-- Header -->
   <header class="max-w-4xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
     <div class="flex items-center gap-2">
-      <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 animate-pulse"></div>
-      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-400">Servidor conectado</span>
+      <div id="status-indicator" class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-600"></div>
+      <span id="status-text" class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-slate-400">Conectando...</span>
     </div>
 
     <div class="flex items-center gap-2">
@@ -105,13 +104,17 @@
   </header>
 
   <!-- Contenido Principal -->
-  <main class="max-w-4xl w-full mx-auto my-auto py-10 sm:py-14">
+  <main class="max-w-4xl w-full mx-auto my-auto py-8 sm:py-12 space-y-6 sm:space-y-8">
 
     <!-- Branding -->
-    <div class="text-center mb-10 sm:mb-14 float-in">
-      <span class="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
-        HECHO POR PERICO
-      </span>
+    <div class="text-center float-in">
+      <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+        </span>
+        Hecho por Perico
+      </div>
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_20px_rgba(37,99,235,0.35)]">
         LaRanchada <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-300">Web</span>
       </h1>
@@ -120,25 +123,47 @@
       </p>
     </div>
 
+    <!-- SECCIÓN: GRID DE USUARIOS CONECTADOS -->
+    <section class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-5 sm:p-6 rounded-3xl shadow-xl float-in">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <h2 class="text-sm sm:text-base font-bold text-slate-100">En la ranchada ahora</h2>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <span id="online-count" class="text-[10px] sm:text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">
+            0 conectados
+          </span>
+          <!-- Botón de Purgar (Tachito de Basura) -->
+          <button onclick="purgeSystem()" title="Purgar usuarios" class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 rounded-lg transition active:scale-95 text-xs flex items-center justify-center">
+            🗑️
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid responsive para los usuarios conectados -->
+      <div id="online-users-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <p class="text-xs text-slate-500 col-span-full py-2">Buscando pibes online...</p>
+      </div>
+    </section>
+
     <!-- Menú de Actividades -->
     <section class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-5 sm:p-8 rounded-3xl shadow-xl float-in" style="animation-delay: 0.1s;">
-
       <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 sm:pb-4 mb-5 sm:mb-6">
         <h2 class="text-base sm:text-xl font-bold text-slate-100">Actividades para hacer</h2>
         <span class="text-[10px] sm:text-xs bg-slate-800 text-slate-400 px-2 sm:px-2.5 py-1 rounded-full font-medium">Elegí una opción</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-
         <!-- Opción: Impostor -->
         <a href="/juego/impostor/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/25 text-xl sm:text-2xl">
-              🕵️
-            </div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/25 text-xl sm:text-2xl">🕵️</div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Impostor</h3>
@@ -149,12 +174,8 @@
         <!-- Opción: Anotador -->
         <a href="/juego/anotador/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
-              📝
-            </div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">📝</div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Anotador</h3>
@@ -165,12 +186,8 @@
         <!-- Opción: Blackjack -->
         <a href="/juego/blackjack/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
-              🃏
-            </div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">🃏</div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Blackjack</h3>
@@ -178,6 +195,17 @@
           </div>
         </a>
 
+        <!-- Opción: Juntada -->
+        <a href="/juego/juntada/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
+          <div class="flex items-start justify-between mb-6 sm:mb-10">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">💿</div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white mb-1">Juntada</h3>
+            <p class="text-xs sm:text-sm text-slate-400">Modalidades clasicas de una ranchada.</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -188,8 +216,154 @@
     <p class="text-[10px] sm:text-xs text-slate-600">LaRanchada Web &middot; Hecho con 💙 por Perico</p>
   </footer>
 
+  <!-- SCRIPT DE FIREBASE EN TIEMPO REAL -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, push, onDisconnect, set, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // 1. Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXGKWZA8kWaN2NWCK2A9jTlGSq-B2bqWA",
+      authDomain: "laranchada-6abd3.firebaseapp.com",
+      projectId: "laranchada-6abd3",
+      storageBucket: "laranchada-6abd3.firebasestorage.app",
+      messagingSenderId: "326750839699",
+      appId: "1:326750839699:web:7d5f46d67b20ad2599fe66",
+      measurementId: "G-0QP3VVQZ0Z",
+      databaseURL: "https://laranchada-6abd3-default-rtdb.firebaseio.com"
+    };
+
+    // Emojis asignados aleatoriamente a los usuarios
+    const USER_EMOJIS = ['😎', '🤖', '👾', '🔥', '🥷', '🦁', '🦊', '🚀', '⭐', '🥑', '🎯', '⚡', '👻'];
+
+    // Asigna un emoji único por sesión local
+    let myEmoji = localStorage.getItem('ranchada_emoji');
+    if (!myEmoji) {
+      myEmoji = USER_EMOJIS[Math.floor(Math.random() * USER_EMOJIS.length)];
+      localStorage.setItem('ranchada_emoji', myEmoji);
+    }
+
+    // Inicializar App y Database
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Rutas para Purgar y Manejo de Datos
+    const ROOMS_PATH = "online_users";
+    const SYSTEM_PATH = "system";
+
+    const connectedRef = ref(db, ".info/connected");
+    const onlineUsersRef = ref(db, ROOMS_PATH);
+
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusText = document.getElementById('status-text');
+
+    // Función global para purgar usuarios del sistema
+    window.purgeSystem = async function() {
+      const password = prompt("Ingresá la contraseña para purgar el sistema de Usuarios:");
+      if (password === "Renzo123") {
+        try {
+          const now = Date.now();
+          await remove(ref(db, ROOMS_PATH));
+          await set(ref(db, `${SYSTEM_PATH}/last_purge`), now);
+          if (typeof clearBjLocalStorage === 'function') clearBjLocalStorage();
+          localStorage.setItem('bj_last_purge', now.toString());
+          alert("¡Sistema de usuarios purgado correctamente!");
+          window.location.reload();
+        } catch (e) { alert("Error al intentar purgar: " + e.message); }
+      } else if (password !== null) {
+        alert("Contraseña incorrecta.");
+      }
+    };
+
+    // Manejo del estado de conexión local
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        statusIndicator.className = "w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 animate-pulse";
+        statusText.textContent = "Servidor Conectado";
+
+        const userRef = push(onlineUsersRef);
+        onDisconnect(userRef).remove();
+
+        set(userRef, {
+          emoji: myEmoji,
+          joinedAt: serverTimestamp()
+        });
+      } else {
+        statusIndicator.className = "w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-600";
+        statusText.textContent = "Desconectado";
+      }
+    });
+
+    let currentUsersList = [];
+
+    // Escuchar cambios en la lista de usuarios online
+    onValue(onlineUsersRef, (snapshot) => {
+      const data = snapshot.val();
+      currentUsersList = [];
+
+      if (data) {
+        Object.keys(data).forEach(key => {
+          currentUsersList.push(data[key]);
+        });
+      }
+
+      renderOnlineGrid();
+    });
+
+    // Calcula el tiempo formateado desde el timestamp de ingreso
+    function formatTimeOnline(joinedAt) {
+      if (!joinedAt) return "Conectando...";
+      const diffMs = Date.now() - joinedAt;
+      const totalSecs = Math.floor(diffMs / 1000);
+      if (totalSecs < 60) {
+        return `Hace ${totalSecs <= 0 ? 1 : totalSecs} sec`;
+      }
+      const mins = Math.floor(totalSecs / 60);
+      if (mins < 60) {
+        return `Conectado ${mins} min${mins > 1 ? 's' : ''}`;
+      }
+      const hrs = Math.floor(mins / 60);
+      return `Conectado ${hrs} h${hrs > 1 ? 's' : ''}`;
+    }
+
+    // Renderizar los usuarios en la interfaz
+    function renderOnlineGrid() {
+      const grid = document.getElementById('online-users-grid');
+      const countLabel = document.getElementById('online-count');
+      
+      grid.innerHTML = '';
+      countLabel.textContent = `${currentUsersList.length} conectado${currentUsersList.length !== 1 ? 's' : ''}`;
+
+      if (currentUsersList.length === 0) {
+        grid.innerHTML = `<p class="text-xs text-slate-500 col-span-full py-2">No hay nadie por acá...</p>`;
+        return;
+      }
+
+      currentUsersList.forEach(user => {
+        const card = document.createElement('div');
+        card.className = "flex flex-col items-center justify-center p-3 bg-slate-950/80 border border-slate-800/80 rounded-2xl transition hover:border-slate-700 float-in text-center gap-1.5";
+        card.innerHTML = `
+          <div class="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-2xl shadow-inner">
+            ${user.emoji || '😎'}
+            <span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-slate-950 rounded-full"></span>
+          </div>
+          <span class="text-[11px] font-semibold text-slate-300">${formatTimeOnline(user.joinedAt)}</span>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Actualiza la diferencia de tiempo relativo cada segundo
+    setInterval(() => {
+      if (currentUsersList.length > 0) {
+        renderOnlineGrid();
+      }
+    }, 1000);
+  </script>
+
+  <!-- Script para el Modal de Miembros -->
   <script>
-    const RANCHADA_MEMBERS = [
+    const RANCHADA_MEMBERS_MODAL = [
       { name: 'Perico', img: null },
       { name: 'Tito', img: 'https://i.ibb.co/pvJT4Fvv/tito.jpg' },
       { name: 'Palomo', img: 'https://i.ibb.co/8L9jzr53/palomo.jpg' },
@@ -209,7 +383,7 @@
       const grid = document.getElementById('members-grid');
       grid.innerHTML = '';
 
-      RANCHADA_MEMBERS.forEach((member, index) => {
+      RANCHADA_MEMBERS_MODAL.forEach((member, index) => {
         const item = document.createElement('div');
         item.className = "flex items-center justify-between p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition shadow-sm";
 
