@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Blackjack · LaRanchada Web</title>
+  <title>Blackjack Multijugador · LaRanchada Web</title>
 
   <!-- CDN Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,14 +24,18 @@
       background-attachment: fixed;
     }
 
+    @keyframes slideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .toast-animate { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 999px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.55); }
 
-    .glow-card {
-      box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
-    }
+    .glow-card { box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35); }
 
     .game-btn { position: relative; overflow: hidden; }
     .game-btn::before {
@@ -44,17 +48,11 @@
     }
     .game-btn:hover::before { transform: translateX(100%); }
 
-    @keyframes floatIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .float-in { animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
     @keyframes dealCard {
       from { opacity: 0; transform: translateY(-24px) scale(0.85) rotate(-6deg); }
       to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
     }
-    .card-deal { animation: dealCard 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .card-deal { animation: dealCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
     @keyframes flipReveal {
       0% { transform: rotateY(180deg); }
@@ -69,16 +67,12 @@
     }
     .score-pop { animation: scorePop 0.3s ease-out; }
 
-    .card-face {
-      background: #f8fafc;
-      color: #0f172a;
-    }
+    .card-face { background: #f8fafc; color: #0f172a; }
     .card-back {
       background:
         repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 2px, transparent 2px, transparent 10px),
         linear-gradient(135deg, #2563eb, #0891b2);
     }
-
     .table-felt {
       background:
         radial-gradient(ellipse 90% 70% at 50% 0%, rgba(59,130,246,0.14), transparent),
@@ -88,120 +82,291 @@
 </head>
 <body class="min-h-full flex flex-col justify-between p-4 sm:p-6 lg:p-8 relative">
 
+  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- MODAL DE SALAS ACTIVAS -->
+  <div id="rooms-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-blue-900/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl glow-card space-y-5 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5"><span>🃏</span> Mesas Activas</h3>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Mesas de blackjack abiertas ahora mismo</p>
+        </div>
+        <button onclick="closeRoomsModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">✕</button>
+      </div>
+      <div id="rooms-list" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2 min-h-[120px]"></div>
+      <div class="pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeRoomsModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL DE CONFIRMACIÓN -->
   <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
       <h3 id="modal-title" class="text-base sm:text-lg font-bold text-white">¿Estás seguro?</h3>
       <p id="modal-message" class="text-xs sm:text-sm text-slate-400">Esta acción no se puede deshacer.</p>
       <div class="flex items-center justify-end gap-3 pt-2">
-        <button id="modal-btn-cancel" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs sm:text-sm rounded-xl transition">
-          Cancelar
-        </button>
-        <button id="modal-btn-confirm" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm rounded-xl transition">
-          Confirmar
-        </button>
+        <button id="modal-btn-cancel" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs sm:text-sm rounded-xl transition">Cancelar</button>
+        <button id="modal-btn-confirm" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm rounded-xl transition">Confirmar</button>
       </div>
     </div>
   </div>
 
   <!-- Header -->
-  <header class="max-w-4xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
+  <header class="max-w-5xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
     <a href="/" class="flex items-center gap-2 text-slate-400 hover:text-white transition group">
       <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
       <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase">Inicio</span>
     </a>
-
     <div class="flex items-center gap-2">
-      <div id="stats-bar" class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-300">
-        <span class="text-emerald-400">V:<span id="stat-wins">0</span></span>
-        <span class="text-slate-700">|</span>
-        <span class="text-rose-400">D:<span id="stat-losses">0</span></span>
-        <span class="text-slate-700">|</span>
-        <span class="text-slate-400">E:<span id="stat-pushes">0</span></span>
-      </div>
-      <button onclick="confirmResetStats()" title="Reiniciar estadísticas" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-rose-950/40 border border-rose-900/60 rounded-lg text-rose-300 hover:text-rose-100 hover:bg-rose-900/60 transition active:scale-95">
-        🗑️
-      </button>
+      <button onclick="purgeSystem()" title="Limpiar todo el sistema de BlackJack" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-rose-950/40 border border-rose-900/60 rounded-lg text-rose-300 hover:text-rose-100 hover:bg-rose-900/60 transition active:scale-95 flex items-center gap-1">🗑️</button>
     </div>
   </header>
 
   <!-- Contenido Principal -->
-  <main class="max-w-4xl w-full mx-auto my-auto py-8 sm:py-10">
+  <main class="max-w-5xl w-full mx-auto my-auto py-6 sm:py-8">
 
     <!-- Branding -->
-    <div class="text-center mb-6 sm:mb-8 float-in">
-      <span class="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
-        HECHO POR PERICO
-      </span>
+    <div class="text-center mb-6 sm:mb-10">
+      <span class="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">HECHO POR PERICO</span>
       <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_20px_rgba(37,99,235,0.35)]">
-        Black<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-300">jack</span>
+        LaRanchada <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-400 to-cyan-300">BlackJack</span>
       </h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-2">Multijugador · Todos ven las cartas de la mesa</p>
     </div>
 
-    <!-- Mesa de juego -->
-    <section class="glow-card table-felt border border-blue-900/40 rounded-3xl p-4 sm:p-8 shadow-xl float-in" style="animation-delay:0.1s;">
+    <!-- Layout Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start">
 
-      <!-- Dealer -->
-      <div class="mb-6 sm:mb-8">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400">🂠 Dealer</h2>
-          <span id="dealer-score" class="score-pop text-sm sm:text-base font-extrabold text-slate-200 bg-slate-900/80 border border-slate-800 px-2.5 py-1 rounded-lg min-w-[2.5rem] text-center">0</span>
+      <!-- COLUMNA 1: Configuración de Jugador -->
+      <section id="profile-section" class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl transition-all">
+        <h2 class="text-base sm:text-lg font-bold text-center text-slate-200 mb-4 sm:mb-6">Configura tu perfil</h2>
+        <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" class="space-y-4 sm:space-y-6">
+          <div class="flex flex-col items-center">
+            <div id="avatar-preview-box" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-blue-500/80 shadow-lg bg-slate-950 flex items-center justify-center overflow-hidden">
+              <span id="avatar-fallback" class="text-3xl sm:text-4xl font-extrabold text-blue-400">🂡</span>
+            </div>
+            <span class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mt-3">Tu asiento en la mesa</span>
+          </div>
+          <div>
+            <label for="nickname" class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 sm:mb-2">Tu Apodo</label>
+            <input type="text" id="nickname" required placeholder="Ej: PericoLaDolly..." class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm sm:text-base text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
+          </div>
+          <button type="submit" id="btn-save" class="touch-manipulation w-full py-3 sm:py-3.5 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-blue-500/10 transition transform active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+            <span>Confirmar</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- COLUMNA 2: Menú Interactivo de Mesas -->
+      <section id="menu-section" class="glow-card relative bg-slate-900/30 border border-slate-800/40 p-4 sm:p-6 rounded-2xl shadow-xl opacity-50 pointer-events-none transition-all duration-300 min-h-[360px] flex flex-col justify-center">
+
+        <div id="section-loader" class="absolute inset-0 z-20 bg-slate-900/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 gap-3">
+          <div class="w-9 h-9 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-xs font-medium text-slate-400 animate-pulse">Cargando datos de sesión...</p>
         </div>
-        <div id="dealer-hand" class="flex flex-wrap gap-2 sm:gap-3 min-h-[7rem] sm:min-h-[8.5rem]"></div>
-      </div>
 
-      <div class="border-t border-dashed border-slate-800/80 my-5 sm:my-7"></div>
-
-      <!-- Jugador -->
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-300">🙋 Vos</h2>
-          <span id="player-score" class="score-pop text-sm sm:text-base font-extrabold text-white bg-blue-950/60 border border-blue-800/60 px-2.5 py-1 rounded-lg min-w-[2.5rem] text-center">0</span>
+        <!-- PANTALLA A: MENÚ PRINCIPAL -->
+        <div id="view-main-menu" class="hidden">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 sm:pb-4 mb-4 sm:mb-6">
+            <h2 class="text-base sm:text-lg font-bold text-slate-200">Modos de juego</h2>
+            <span id="status-badge" class="text-[10px] sm:text-xs bg-slate-800 text-slate-400 px-2 sm:px-2.5 py-1 rounded-full font-medium">Completa tu perfil</span>
+          </div>
+          <div class="space-y-2.5 sm:space-y-3">
+            <button onclick="showView('view-create-room')" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-slate-700 transition flex items-center justify-between active:scale-98">
+              <span>Crear mesa</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </button>
+            <button onclick="showView('view-join-room')" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-slate-700 transition flex items-center justify-between active:scale-98">
+              <span>Unirse a mesa</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14"></path></svg>
+            </button>
+            <button onclick="openRoomsModal()" class="game-btn touch-manipulation w-full py-3.5 sm:py-4 px-4 sm:px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-800 hover:border-blue-800/60 transition flex items-center justify-between active:scale-98">
+              <span>Ver mesas</span>
+              <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </button>
+          </div>
         </div>
-        <div id="player-hand" class="flex flex-wrap gap-2 sm:gap-3 min-h-[7rem] sm:min-h-[8.5rem]"></div>
-      </div>
 
-      <!-- Mensaje antes de la primera mano -->
-      <div id="idle-message" class="text-center mt-6 sm:mt-8">
-        <p class="text-slate-400 text-sm sm:text-base">Presioná <span class="text-blue-300 font-semibold">Jugar</span> para que se repartan las cartas.</p>
-      </div>
-
-      <!-- Mensaje de resultado -->
-      <div id="result-banner" class="hidden mt-6 sm:mt-8 text-center">
-        <div id="result-pill" class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl border">
-          <span id="result-icon" class="text-lg sm:text-xl"></span>
-          <span id="result-text" class="text-sm sm:text-base font-bold"></span>
+        <!-- PANTALLA B: CONFIGURACIÓN DE CREAR MESA -->
+        <div id="view-create-room" class="hidden">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-slate-800">
+            <h3 class="font-bold text-slate-200">Configuración de la Mesa</h3>
+            <button onclick="showView('view-main-menu')" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition active:scale-95 group">
+              <svg class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+              <span>Volver</span>
+            </button>
+          </div>
+          <form onsubmit="event.preventDefault(); handleCreateRoom();" class="space-y-4">
+            <div>
+              <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase mb-2">Cantidad de Asientos</label>
+              <input type="number" id="expected-players" min="1" max="6" placeholder="Ej: 4" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500" />
+              <p class="text-[10px] text-slate-500 mt-1.5">Máximo recomendado: 6 jugadores por mesa.</p>
+            </div>
+            <button type="submit" id="btn-create-submit" class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center gap-2">
+              <span id="btn-create-text">Crear Mesa</span>
+            </button>
+          </form>
         </div>
-      </div>
 
-      <!-- Controles -->
-      <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8">
-        <button id="btn-hit" onclick="playerHit()" disabled class="game-btn touch-manipulation py-3.5 sm:py-4 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm sm:text-base rounded-xl transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
-          <span>🃏</span><span>Pedir carta</span>
-        </button>
-        <button id="btn-stand" onclick="playerStand()" disabled class="game-btn touch-manipulation py-3.5 sm:py-4 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm sm:text-base rounded-xl border border-slate-700 transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
-          <span>✋</span><span>Plantarse</span>
-        </button>
-      </div>
+        <!-- PANTALLA C: UNIRSE A MESA -->
+        <div id="view-join-room" class="hidden">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-slate-800">
+            <h3 class="font-bold text-slate-200">Unirse a una Mesa</h3>
+            <button onclick="showView('view-main-menu')" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition active:scale-95 group">
+              <svg class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+              <span>Volver</span>
+            </button>
+          </div>
+          <form onsubmit="event.preventDefault(); handleJoinRoom();" class="space-y-4">
+            <div>
+              <label class="block text-[10px] sm:text-xs font-semibold text-slate-400 uppercase mb-2">Código de la mesa</label>
+              <input type="text" id="join-code-input" required placeholder="Ej: BJ-1234" class="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white font-mono tracking-widest uppercase focus:outline-none focus:border-blue-500" />
+            </div>
+            <button type="submit" id="btn-join-submit" class="w-full py-3 bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center gap-2">
+              <span id="btn-join-text">Unirme</span>
+            </button>
+          </form>
+        </div>
 
-      <button id="btn-new-hand" onclick="handlePlayClick()" class="game-btn touch-manipulation w-full mt-3 sm:mt-4 py-3.5 sm:py-4 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-blue-500/10 transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
-        <span id="btn-new-hand-icon">🎲</span><span id="btn-new-hand-text">Jugar</span>
-      </button>
-    </section>
+        <!-- PANTALLA D: LOBBY DE LA MESA -->
+        <div id="view-lobby" class="hidden space-y-4">
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Código / Enlace de invitación</span>
+            <div class="flex items-center justify-between gap-2">
+              <input type="text" id="share-link-input" readonly class="bg-transparent text-xs text-blue-400 font-mono w-full focus:outline-none" />
+              <button onclick="copyShareLink()" class="text-xs px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 shrink-0">Copiar</button>
+            </div>
+          </div>
 
-    <p class="text-center text-[10px] sm:text-xs text-slate-600 mt-6">
-      El dealer pide carta hasta llegar a 17 y se planta. El As vale 11 o 1, lo que más convenga.
-    </p>
+          <div class="flex justify-between text-xs text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/50">
+            <span>Modo: <b class="text-slate-200">BlackJack Multijugador</b></span>
+            <span>Asientos máx: <b id="lobby-max-text" class="text-slate-200"></b></span>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jugadores sentados en vivo</h4>
+            <div id="lobby-players-list" class="space-y-2"></div>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <button id="btn-start-game" onclick="startGame()" disabled class="hidden w-full py-3 font-extrabold text-sm rounded-xl transition shadow-lg active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-amber-400/10">
+              🚀 Repartir Cartas
+            </button>
+            <button id="btn-delete-room" onclick="deleteRoom()" class="hidden w-full py-2.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/80 font-semibold text-xs rounded-xl transition">
+              Eliminar Mesa (Solo Anfitrión)
+            </button>
+            <button id="btn-leave-room" onclick="leaveRoom()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 font-semibold text-xs rounded-xl transition">
+              Salir de la Mesa
+            </button>
+          </div>
+        </div>
+
+        <!-- PANTALLA E: MESA DE JUEGO EN CURSO -->
+        <div id="view-game-active" class="hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Mesa en Curso</span>
+            <span id="game-status-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 font-semibold animate-pulse">● En Vivo</span>
+          </div>
+
+          <!-- Dealer -->
+          <div class="table-felt border border-blue-900/40 rounded-2xl p-3.5 sm:p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400">🂠 Dealer</h3>
+              <span id="dealer-score" class="score-pop text-sm sm:text-base font-extrabold text-slate-200 bg-slate-900/80 border border-slate-800 px-2.5 py-1 rounded-lg min-w-[2.5rem] text-center">0</span>
+            </div>
+            <div id="dealer-hand" class="flex flex-wrap gap-2 min-h-[6.5rem]"></div>
+          </div>
+
+          <!-- Asientos de jugadores -->
+          <div>
+            <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">🪑 Jugadores en la mesa</h4>
+            <div id="seats-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3"></div>
+          </div>
+
+          <!-- Panel de MI turno -->
+          <div id="my-turn-panel" class="hidden bg-blue-950/40 border border-blue-800/60 rounded-2xl p-4 text-center space-y-3">
+            <p class="text-sm font-bold text-blue-300">🎯 ¡Es tu turno!</p>
+            <div class="grid grid-cols-2 gap-3">
+              <button id="btn-hit" onclick="playerHit()" class="game-btn touch-manipulation py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                <span>🃏</span><span>Pedir carta</span>
+              </button>
+              <button id="btn-stand" onclick="playerStand()" class="game-btn touch-manipulation py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700 transition active:scale-95 flex items-center justify-center gap-2">
+                <span>✋</span><span>Plantarse</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Panel de espera -->
+          <div id="wait-panel" class="hidden text-center text-xs sm:text-sm text-slate-400 bg-slate-950/40 border border-slate-800/60 rounded-xl py-3 px-4"></div>
+
+          <!-- Controles de anfitrión al terminar la mano -->
+          <div id="host-end-controls" class="hidden space-y-2 pt-2 border-t border-slate-800">
+            <button onclick="startGame()" class="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-slate-950 font-bold text-sm rounded-xl transition active:scale-98">
+              🔄 Nueva Mano
+            </button>
+            <button onclick="resetGameToLobby()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm rounded-xl transition active:scale-98">
+              🔙 Volver a la Mesa (Lobby)
+            </button>
+          </div>
+
+          <button id="btn-leave-in-game" onclick="leaveRoomInGame()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-rose-400 hover:text-rose-300 border border-slate-800 font-semibold text-xs rounded-xl transition">
+            🚪 Salir de la Mesa
+          </button>
+        </div>
+
+      </section>
+    </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="max-w-4xl w-full mx-auto pt-4 sm:pt-6 border-t border-slate-800 text-center">
-    <p class="text-[10px] sm:text-xs text-slate-600">LaRanchada Web &middot; Hecho con 💙 por Perico</p>
+  <footer class="text-center py-3 sm:py-4 text-[10px] sm:text-xs text-slate-600">
+    LaRanchada BlackJack &copy; 2026 — Para jugar con los pibes.
   </footer>
 
-  <script>
-    const STORAGE_STATS_KEY = 'ranchada_blackjack_stats';
+  <!-- IMPORTACIÓN DE FIREBASE Y LÓGICA COMPLETA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child, onValue, remove, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    const APP_BUILD_VERSION = "bj_build_2026_08_03_v1";
+
+    // Mismo proyecto de Firebase que el resto de LaRanchada, pero con nodos
+    // propios (bj_rooms / bj_system) para que este juego no choque con
+    // "rooms" / "system" que usa el Impostor.
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXGKWZA8kWaN2NWCK2A9jTlGSq-B2bqWA",
+      authDomain: "laranchada-6abd3.firebaseapp.com",
+      projectId: "laranchada-6abd3",
+      storageBucket: "laranchada-6abd3.firebasestorage.app",
+      messagingSenderId: "326750839699",
+      appId: "1:326750839699:web:7d5f46d67b20ad2599fe66",
+      measurementId: "G-0QP3VVQZ0Z"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const ROOMS_PATH = 'bj_rooms';
+    const SYSTEM_PATH = 'bj_system';
+
+    window.currentProfile = { nickname: '' };
+    window.activeRoomCode = null;
+    window.isHost = false;
+    window.lastRoomSnapshot = null;
+
+    let roomListenerUnsubscribe = null;
+    let previousPlayersCount = 0;
+    let initialLoadComplete = false;
+    let dealerResolvingLock = false;
+
+    // --- Tracking para animar SOLO las cartas nuevas en cada actualización ---
+    let prevHandLengths = {};
+    let lastRenderedRound = null;
+    let prevDealerHidden = true;
+
+    // ================== BARAJA Y PUNTAJE ==================
     const SUITS = [
       { symbol: '♠', color: 'black' },
       { symbol: '♥', color: 'red' },
@@ -210,32 +375,6 @@
     ];
     const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
-    let deck = [];
-    let playerHand = [];
-    let dealerHand = [];
-    let dealerHidden = true;
-    let roundOver = true;
-    let isDealerPlaying = false;
-
-    let stats = { wins: 0, losses: 0, pushes: 0 };
-
-    function loadStats() {
-      try {
-        const saved = localStorage.getItem(STORAGE_STATS_KEY);
-        if (saved) stats = Object.assign(stats, JSON.parse(saved));
-      } catch (e) { console.error('No se pudieron cargar las estadísticas:', e); }
-    }
-    function saveStats() {
-      try { localStorage.setItem(STORAGE_STATS_KEY, JSON.stringify(stats)); }
-      catch (e) { console.error('No se pudieron guardar las estadísticas:', e); }
-    }
-    function renderStats() {
-      document.getElementById('stat-wins').innerText = stats.wins;
-      document.getElementById('stat-losses').innerText = stats.losses;
-      document.getElementById('stat-pushes').innerText = stats.pushes;
-    }
-
-    // --- MAZO ---
     function createDeck() {
       const d = [];
       for (const suit of SUITS) {
@@ -245,16 +384,15 @@
       }
       return d;
     }
+    // Usamos 2 mazos juntos (shoe de 104 cartas) para que no se agote en mesas con varios jugadores.
+    function createShoe() { return [...createDeck(), ...createDeck()]; }
+
     function shuffleDeck(d) {
       for (let i = d.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [d[i], d[j]] = [d[j], d[i]];
       }
       return d;
-    }
-    function drawCard() {
-      if (deck.length === 0) deck = shuffleDeck(createDeck());
-      return deck.pop();
     }
 
     function cardValue(rank) {
@@ -264,78 +402,47 @@
     }
 
     function calcScore(hand) {
-      let total = 0;
-      let aces = 0;
-      hand.forEach(c => {
+      let total = 0, aces = 0;
+      (hand || []).forEach(c => {
         total += cardValue(c.rank);
         if (c.rank === 'A') aces++;
       });
-      while (total > 21 && aces > 0) {
-        total -= 10;
-        aces--;
-      }
+      while (total > 21 && aces > 0) { total -= 10; aces--; }
       return total;
     }
 
-    // --- RENDER ---
-    let dealerRevealed = false;
+    async function drawCardFromDeck(roomCode) {
+      const deckRef = ref(db, `${ROOMS_PATH}/${roomCode}/deck`);
+      let poppedCard = null;
+      await runTransaction(deckRef, (currentDeck) => {
+        let arr = (currentDeck && currentDeck.length > 0) ? currentDeck.slice() : shuffleDeck(createShoe());
+        poppedCard = arr.pop();
+        return arr;
+      });
+      return poppedCard;
+    }
 
-    function cardHTML(card, faceDown = false, animClass = 'card-deal') {
+    // ================== RENDER DE CARTAS ==================
+    function cardHTML(card, faceDown, animClass, size) {
+      const sizeClasses = size === 'small' ? 'w-10 h-14 sm:w-12 sm:h-16 rounded-lg' : 'w-16 h-24 sm:w-20 sm:h-28 rounded-xl';
+      const textSize = size === 'small' ? 'text-[10px] sm:text-xs' : 'text-sm sm:text-base';
+      const symbolBig = size === 'small' ? 'text-lg sm:text-xl' : 'text-2xl sm:text-3xl';
       if (faceDown) {
-        return `<div class="${animClass} card-back w-16 h-24 sm:w-20 sm:h-28 rounded-xl shadow-lg border border-white/10 flex items-center justify-center">
-          <span class="text-2xl sm:text-3xl opacity-40">🃏</span>
+        return `<div class="${animClass} card-back ${sizeClasses} shadow-lg border border-white/10 flex items-center justify-center shrink-0">
+          <span class="${symbolBig} opacity-40">🃏</span>
         </div>`;
       }
       const colorClass = card.color === 'red' ? 'text-rose-600' : 'text-slate-900';
-      return `<div class="${animClass} card-face w-16 h-24 sm:w-20 sm:h-28 rounded-xl shadow-lg border border-slate-300 relative p-1.5 sm:p-2">
-        <div class="${colorClass} font-extrabold text-sm sm:text-base leading-none">${card.rank}</div>
-        <div class="${colorClass} text-xs sm:text-sm leading-none">${card.symbol}</div>
-        <div class="${colorClass} absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl opacity-90">${card.symbol}</div>
-        <div class="${colorClass} font-extrabold text-sm sm:text-base leading-none absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 rotate-180">${card.rank}</div>
+      return `<div class="${animClass} card-face ${sizeClasses} shadow-lg border border-slate-300 relative p-1 sm:p-1.5 shrink-0">
+        <div class="${colorClass} font-extrabold ${textSize} leading-none">${card.rank}</div>
+        <div class="${colorClass} ${textSize} leading-none">${card.symbol}</div>
+        <div class="${colorClass} absolute inset-0 flex items-center justify-center ${symbolBig} opacity-90">${card.symbol}</div>
       </div>`;
     }
 
-    function clearTable() {
-      document.getElementById('player-hand').innerHTML = '';
-      document.getElementById('dealer-hand').innerHTML = '';
-      dealerRevealed = false;
-    }
-
-    // Agrega UNA carta nueva a la mesa, sin tocar (ni re-animar) las que ya están
-    function dealCardTo(hand, containerId, faceDown = false) {
-      const card = drawCard();
-      hand.push(card);
-      document.getElementById(containerId).insertAdjacentHTML('beforeend', cardHTML(card, faceDown));
-      updateScores();
-      return card;
-    }
-
-    function revealDealerHiddenCard() {
-      if (dealerRevealed) return;
-      dealerRevealed = true;
-      const container = document.getElementById('dealer-hand');
-      const hiddenEl = container.children[1];
-      if (hiddenEl && dealerHand[1]) {
-        hiddenEl.outerHTML = cardHTML(dealerHand[1], false, 'card-flip');
-      }
-    }
-
-function updateScores() {
-  const playerScore = calcScore(playerHand);
-  document.getElementById('player-score').innerText = playerScore;
-
-  // Si el dealer aún no tiene cartas repartidas
-  if (dealerHand.length === 0) {
-    document.getElementById('dealer-score').innerText = '0';
-    return;
-  }
-
-  const dealerScore = dealerHidden ? calcScore([dealerHand[0]]) : calcScore(dealerHand);
-  document.getElementById('dealer-score').innerText = dealerHidden ? `${dealerScore} + ?` : dealerScore;
-}
-
     function pulse(id) {
       const el = document.getElementById(id);
+      if (!el) return;
       el.classList.remove('score-pop');
       void el.offsetWidth;
       el.classList.add('score-pop');
@@ -343,219 +450,908 @@ function updateScores() {
 
     function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-    function setControlsEnabled(enabled) {
-      document.getElementById('btn-hit').disabled = !enabled;
-      document.getElementById('btn-stand').disabled = !enabled;
+    // ================== SESIÓN / PERFIL (sin avatar) ==================
+    function setProfileLockState(isLocked) {
+      const nicknameInput = document.getElementById('nickname');
+      const saveBtn = document.getElementById('btn-save');
+      nicknameInput.disabled = isLocked;
+      saveBtn.disabled = isLocked;
     }
 
-    function setPlayButton({ visible, label, icon, enabled = true }) {
-      const btn = document.getElementById('btn-new-hand');
-      btn.classList.toggle('hidden', !visible);
-      btn.disabled = !enabled;
-      document.getElementById('btn-new-hand-text').innerText = label;
-      document.getElementById('btn-new-hand-icon').innerText = icon;
+    function clearBjLocalStorage() {
+      localStorage.removeItem('bj_profile');
+      localStorage.removeItem('bj_active_room');
+      localStorage.removeItem('bj_last_purge');
     }
 
-    const DEAL_DELAY = 1000;
-
-    function showResult({ icon, text, tone }) {
-      const tones = {
-        win: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300',
-        lose: 'bg-rose-500/15 border-rose-500/40 text-rose-300',
-        push: 'bg-slate-700/30 border-slate-600/60 text-slate-300',
-        blackjack: 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/40 text-white'
-      };
-      const banner = document.getElementById('result-banner');
-      const pill = document.getElementById('result-pill');
-      pill.className = `inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl border ${tones[tone]}`;
-      document.getElementById('result-icon').innerText = icon;
-      document.getElementById('result-text').innerText = text;
-      banner.classList.remove('hidden');
+    function getTodayCutoffTimestamp() {
+      const now = new Date();
+      const cutoffToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+      if (now < cutoffToday) cutoffToday.setDate(cutoffToday.getDate() - 1);
+      return cutoffToday.getTime();
     }
 
-    function hideResult() {
-      document.getElementById('result-banner').classList.add('hidden');
-    }
+    async function checkDailyReset() {
+      const lastCutoff = getTodayCutoffTimestamp();
+      const lastResetRef = ref(db, `${SYSTEM_PATH}/last_reset`);
+      try {
+        const snapshot = await get(lastResetRef);
+        const dbLastReset = snapshot.exists() ? snapshot.val() : 0;
+        if (dbLastReset < lastCutoff) {
+          await remove(ref(db, ROOMS_PATH));
+          await set(lastResetRef, Date.now());
+        }
+      } catch (e) { console.error("Error en la limpieza de la base de datos:", e); }
 
-    // --- FLUJO DEL JUEGO ---
-    window.handlePlayClick = function () {
-      if (roundOver) startNewHand();
-    };
-
-    window.startNewHand = async function () {
-      deck = shuffleDeck(createDeck());
-      playerHand = [];
-      dealerHand = [];
-      dealerHidden = true;
-      roundOver = false;
-      isDealerPlaying = false;
-
-      hideResult();
-      document.getElementById('idle-message').classList.add('hidden');
-      clearTable();
-      setControlsEnabled(false);
-      setPlayButton({ visible: true, label: 'Repartiendo...', icon: '🂠', enabled: false });
-      updateScores();
-
-      // Reparto clásico y animado, carta por carta: jugador, dealer, jugador, dealer (oculta)
-      await delay(300);
-      dealCardTo(playerHand, 'player-hand');
-      pulse('player-score');
-      await delay(DEAL_DELAY);
-
-      dealCardTo(dealerHand, 'dealer-hand');
-      pulse('dealer-score');
-      await delay(DEAL_DELAY);
-
-      dealCardTo(playerHand, 'player-hand');
-      pulse('player-score');
-      await delay(DEAL_DELAY);
-
-      dealCardTo(dealerHand, 'dealer-hand', true);
-      await delay(DEAL_DELAY);
-
-      setPlayButton({ visible: false, label: 'Nueva mano', icon: '🔄' });
-
-      const playerScore = calcScore(playerHand);
-      const dealerFullScore = calcScore(dealerHand);
-
-      if (playerScore === 21 || dealerFullScore === 21) {
-        // Blackjack natural: se revela todo y se termina la mano
-        await delay(400);
-        endRound(true);
-      } else {
-        setControlsEnabled(true);
+      const savedProfile = localStorage.getItem('bj_profile');
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        if ((parsed.timestamp || 0) < lastCutoff) {
+          localStorage.removeItem('bj_profile');
+          localStorage.removeItem('bj_active_room');
+          window.currentProfile = { nickname: '' };
+          document.getElementById('nickname').value = '';
+          showToast("Se reiniciaron las mesas y nombres (Corte diario 12:00 PM).", "info");
+          return true;
+        }
       }
-    };
-
-    window.playerHit = function () {
-      if (roundOver) return;
-      dealCardTo(playerHand, 'player-hand');
-      pulse('player-score');
-
-      const score = calcScore(playerHand);
-      if (score > 21) {
-        endRound(false, true);
-      } else if (score === 21) {
-        playerStand();
-      }
-    };
-
-    window.playerStand = async function () {
-      if (roundOver || isDealerPlaying) return;
-      setControlsEnabled(false);
-      await dealerPlay();
-    };
-
-async function dealerPlay() {
-  isDealerPlaying = true;
-  dealerHidden = false;
-  revealDealerHiddenCard();
-  updateScores();
-  pulse('dealer-score');
-  
-  // Tiempo de espera tras dar vuelta la carta oculta (de 650ms a 1200ms)
-  await delay(1200); 
-
-  let dealerScore = calcScore(dealerHand);
-
-  while (dealerScore < 17) {
-    dealCardTo(dealerHand, 'dealer-hand');
-    pulse('dealer-score');
-    dealerScore = calcScore(dealerHand);
-    
-    // Tiempo entre cada carta extra que pide el dealer (de 700ms a 1200ms)
-    await delay(1200); 
-  }
-
-  endRound(false);
-}
-
-    function endRound(isNaturalCheck, playerBust = false) {
-      roundOver = true;
-      dealerHidden = false;
-      setControlsEnabled(false);
-      revealDealerHiddenCard();
-      updateScores();
-
-      const playerScore = calcScore(playerHand);
-      const dealerScore = calcScore(dealerHand);
-      const playerBJ = playerScore === 21 && playerHand.length === 2;
-      const dealerBJ = dealerScore === 21 && dealerHand.length === 2;
-
-      let outcome;
-
-      if (playerBust) {
-        outcome = { icon: '💥', text: '¡Te pasaste! Ganó el dealer.', tone: 'lose', result: 'lose' };
-      } else if (dealerScore > 21) {
-        outcome = { icon: '🎉', text: 'El dealer se pasó. ¡Ganaste!', tone: 'win', result: 'win' };
-      } else if (playerBJ && dealerBJ) {
-        outcome = { icon: '🤝', text: 'Empate: los dos tienen Blackjack.', tone: 'push', result: 'push' };
-      } else if (playerBJ) {
-        outcome = { icon: '🂡', text: '¡Blackjack! Ganaste con 21 de entrada.', tone: 'blackjack', result: 'win' };
-      } else if (dealerBJ) {
-        outcome = { icon: '🂡', text: 'Blackjack del dealer. Perdiste.', tone: 'lose', result: 'lose' };
-      } else if (playerScore > dealerScore) {
-        outcome = { icon: '🎉', text: `¡Ganaste! ${playerScore} contra ${dealerScore}.`, tone: 'win', result: 'win' };
-      } else if (playerScore < dealerScore) {
-        outcome = { icon: '😔', text: `Perdiste. ${dealerScore} contra ${playerScore}.`, tone: 'lose', result: 'lose' };
-      } else {
-        outcome = { icon: '🤝', text: `Empate en ${playerScore}.`, tone: 'push', result: 'push' };
-      }
-
-      showResult(outcome);
-
-      if (outcome.result === 'win') stats.wins++;
-      else if (outcome.result === 'lose') stats.losses++;
-      else stats.pushes++;
-      saveStats();
-      renderStats();
-
-      setPlayButton({ visible: true, label: 'Nueva mano', icon: '🔄' });
+      return false;
     }
 
-    // --- MODAL DE CONFIRMACIÓN ---
-    function openConfirmModal({ title, message, confirmText = 'Confirmar', cancelText = 'Cancelar' }) {
+    function listenToSystemEvents() {
+      const buildRef = ref(db, `${SYSTEM_PATH}/build_version`);
+      get(buildRef).then(snapshot => {
+        if (!snapshot.exists() || snapshot.val() !== APP_BUILD_VERSION) set(buildRef, APP_BUILD_VERSION);
+      });
+      onValue(buildRef, (snapshot) => {
+        if (!initialLoadComplete) return;
+        const remoteVersion = snapshot.val();
+        if (remoteVersion && remoteVersion !== APP_BUILD_VERSION) {
+          clearBjLocalStorage();
+          window.location.reload();
+        }
+      });
+
+      const purgeRef = ref(db, `${SYSTEM_PATH}/last_purge`);
+      onValue(purgeRef, (snapshot) => {
+        if (!initialLoadComplete) return;
+        const lastPurgeTime = snapshot.val();
+        if (lastPurgeTime) {
+          const localPurge = localStorage.getItem('bj_last_purge');
+          if (!localPurge || parseInt(localPurge) < lastPurgeTime) {
+            clearBjLocalStorage();
+            window.location.reload();
+          }
+        }
+      });
+    }
+
+    window.purgeSystem = async function() {
+      const password = prompt("Ingresá la contraseña para purgar el sistema de BlackJack:");
+      if (password === "Renzo123") {
+        try {
+          const now = Date.now();
+          await remove(ref(db, ROOMS_PATH));
+          await set(ref(db, `${SYSTEM_PATH}/last_purge`), now);
+          clearBjLocalStorage();
+          localStorage.setItem('bj_last_purge', now.toString());
+          alert("¡Sistema de BlackJack purgado correctamente!");
+          window.location.reload();
+        } catch (e) { alert("Error al intentar purgar: " + e.message); }
+      } else if (password !== null) {
+        alert("Contraseña incorrecta.");
+      }
+    }
+
+    async function restoreSession(isAutoRestore) {
+      const savedRoomCode = localStorage.getItem('bj_active_room');
+      const urlParams = new URLSearchParams(window.location.search);
+      const codeFromUrl = urlParams.get('code') || savedRoomCode;
+      if (codeFromUrl && !window.activeRoomCode) {
+        document.getElementById('join-code-input').value = codeFromUrl;
+        await handleJoinRoom(isAutoRestore);
+      }
+      return true;
+    }
+
+    function hideLoader() {
+      const loader = document.getElementById('section-loader');
+      if (loader) loader.classList.add('hidden');
+    }
+
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let bgColors = 'bg-slate-900 border-slate-700 text-slate-200';
+      if (type === 'success') bgColors = 'bg-blue-950/90 border-blue-600/80 text-blue-200';
+      if (type === 'error') bgColors = 'bg-rose-950/90 border-rose-600/80 text-rose-200';
+      if (type === 'warning') bgColors = 'bg-amber-950/90 border-amber-600/80 text-amber-200';
+      toast.className = `toast-animate pointer-events-auto p-3.5 rounded-xl border text-xs sm:text-sm font-medium shadow-2xl backdrop-blur-md flex items-center justify-between gap-3 ${bgColors}`;
+      toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" class="text-xs opacity-70 hover:opacity-100 font-bold">✕</button>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    function openModal({ title, message, confirmText = "Confirmar", cancelText = "Cancelar" }) {
       return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
         document.getElementById('modal-title').innerText = title;
         document.getElementById('modal-message').innerText = message;
-        const confirmBtn = document.getElementById('modal-btn-confirm');
-        const cancelBtn = document.getElementById('modal-btn-cancel');
-        confirmBtn.innerText = confirmText;
-        cancelBtn.innerText = cancelText;
-
-        const modal = document.getElementById('confirm-modal');
+        const btnConfirm = document.getElementById('modal-btn-confirm');
+        const btnCancel = document.getElementById('modal-btn-cancel');
+        btnConfirm.innerText = confirmText;
+        btnCancel.innerText = cancelText;
         modal.classList.remove('hidden');
-
-        const cleanup = (result) => {
+        const handleConfirm = () => { cleanup(); resolve(true); };
+        const handleCancel = () => { cleanup(); resolve(false); };
+        const cleanup = () => {
           modal.classList.add('hidden');
-          confirmBtn.onclick = null;
-          cancelBtn.onclick = null;
-          resolve(result);
+          btnConfirm.removeEventListener('click', handleConfirm);
+          btnCancel.removeEventListener('click', handleCancel);
         };
-        confirmBtn.onclick = () => cleanup(true);
-        cancelBtn.onclick = () => cleanup(false);
+        btnConfirm.addEventListener('click', handleConfirm);
+        btnCancel.addEventListener('click', handleCancel);
       });
     }
 
-    window.confirmResetStats = async function () {
-      const confirmed = await openConfirmModal({
-        title: 'Reiniciar estadísticas',
-        message: '¿Seguro que quieres borrar el historial de victorias, derrotas y empates?',
-        confirmText: 'Reiniciar',
-        cancelText: 'Cancelar'
+    window.saveProfile = async function(isAutoRestore = false) {
+      const nick = document.getElementById('nickname').value.trim();
+      if (!nick) return false;
+      window.currentProfile.nickname = nick;
+      localStorage.setItem('bj_profile', JSON.stringify({ nickname: nick, timestamp: Date.now() }));
+
+      const menuSection = document.getElementById('menu-section');
+      menuSection.classList.remove('opacity-50', 'pointer-events-none', 'bg-slate-900/30', 'border-slate-800/40');
+      menuSection.classList.add('bg-slate-900/60', 'border-blue-900/40');
+
+      const badge = document.getElementById('status-badge');
+      badge.innerText = '¡Listo para jugar!';
+      badge.className = 'text-[10px] sm:text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 sm:px-2.5 py-1 rounded-full font-medium';
+
+      if (!isAutoRestore) showToast(`¡Bienvenido, ${nick}!`, "success");
+
+      await restoreSession(isAutoRestore);
+      if (!window.activeRoomCode) window.showView('view-main-menu');
+      return true;
+    }
+
+    window.showView = function(viewId) {
+      const views = ['view-main-menu', 'view-create-room', 'view-join-room', 'view-lobby', 'view-game-active'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (id === viewId) el.classList.remove('hidden'); else el.classList.add('hidden');
+      });
+    }
+
+    // ================== SALAS ACTIVAS (MODAL) ==================
+    let roomsModalUnsubscribe = null;
+
+    function renderRoomsList(roomsData) {
+      const list = document.getElementById('rooms-list');
+      list.innerHTML = '';
+      const rooms = roomsData ? Object.values(roomsData) : [];
+
+      if (rooms.length === 0) {
+        list.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-10 text-center gap-2">
+            <span class="text-3xl">🕳️</span>
+            <p class="text-sm text-slate-400 font-medium">No hay mesas activas ahora mismo.</p>
+            <p class="text-xs text-slate-600">Creá una desde "Crear mesa" para empezar.</p>
+          </div>`;
+        return;
+      }
+
+      rooms.sort((a, b) => (a.code || '').localeCompare(b.code || '')).forEach(room => {
+        const playersCount = room.players ? Object.keys(room.players).length : 0;
+        const maxPlayers = room.maxPlayers || null;
+        const isFull = maxPlayers ? playersCount >= maxPlayers : false;
+        const isStarted = !!room.started;
+        const canJoin = !isStarted && !isFull;
+
+        let statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-300">ABIERTA</span>`;
+        if (isStarted) statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300">EN PARTIDA</span>`;
+        else if (isFull) statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300">LLENA</span>`;
+
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between gap-3 p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-blue-800/50 transition shadow-sm";
+        item.innerHTML = `
+          <div class="flex flex-col gap-1.5 overflow-hidden">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-mono font-bold text-sm text-blue-300 tracking-wider">${room.code || '—'}</span>
+              ${statusBadge}
+            </div>
+            <div class="flex items-center gap-3 text-[11px] sm:text-xs text-slate-400">
+              <span class="flex items-center gap-1">👥 ${playersCount}${maxPlayers ? '/' + maxPlayers : ''}</span>
+              ${room.host ? `<span class="truncate">Anfitrión: <b class="text-slate-300">${room.host}</b></span>` : ''}
+            </div>
+          </div>
+          <button ${canJoin ? `onclick="selectRoomToJoin('${room.code}')"` : 'disabled'}
+            class="shrink-0 px-3.5 py-2 text-xs font-bold rounded-xl transition active:scale-95 ${canJoin ? 'bg-blue-500 hover:bg-blue-400 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+            ${canJoin ? 'Unirse' : (isStarted ? 'En curso' : 'Llena')}
+          </button>`;
+        list.appendChild(item);
+      });
+    }
+
+    window.openRoomsModal = function() {
+      document.getElementById('rooms-modal').classList.remove('hidden');
+      const roomsRef = ref(db, ROOMS_PATH);
+      if (roomsModalUnsubscribe) roomsModalUnsubscribe();
+      roomsModalUnsubscribe = onValue(roomsRef, (snapshot) => renderRoomsList(snapshot.val()));
+    }
+
+    window.closeRoomsModal = function() {
+      document.getElementById('rooms-modal').classList.add('hidden');
+      if (roomsModalUnsubscribe) { roomsModalUnsubscribe(); roomsModalUnsubscribe = null; }
+    }
+
+    window.selectRoomToJoin = function(code) {
+      window.closeRoomsModal();
+      window.showView('view-join-room');
+      document.getElementById('join-code-input').value = code;
+      window.handleJoinRoom();
+    }
+
+    // ================== CREAR / UNIRSE / SALIR ==================
+    window.handleCreateRoom = async function() {
+      const playersVal = document.getElementById('expected-players').value;
+      if (!playersVal) { showToast("Ingresá la cantidad de asientos.", "warning"); return; }
+
+      const btn = document.getElementById('btn-create-submit');
+      const btnText = document.getElementById('btn-create-text');
+      btn.disabled = true;
+      btnText.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Creando mesa...`;
+
+      const roomCode = 'BJ-' + Math.floor(1000 + Math.random() * 9000);
+      const roomRef = ref(db, `${ROOMS_PATH}/${roomCode}`);
+
+      const newRoomData = {
+        code: roomCode,
+        maxPlayers: parseInt(playersVal),
+        host: window.currentProfile.nickname,
+        started: false,
+        phase: 'lobby',
+        round: 0,
+        turnOrder: [],
+        currentTurnIndex: 0,
+        deck: [],
+        dealerHand: [],
+        dealerHidden: true,
+        players: {
+          [window.currentProfile.nickname]: {
+            nickname: window.currentProfile.nickname,
+            isHost: true,
+            hand: [],
+            status: 'waiting',
+            outcomeText: null,
+            outcomeTone: null,
+            stats: { wins: 0, losses: 0, pushes: 0 }
+          }
+        }
+      };
+
+      try {
+        await set(roomRef, newRoomData);
+        window.isHost = true;
+        localStorage.setItem('bj_active_room', roomCode);
+        setProfileLockState(true);
+        showToast("¡Mesa creada con éxito!", "success");
+        listenToRoom(roomCode);
+      } catch (error) {
+        showToast("Error al crear la mesa: " + error.message, "error");
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Crear Mesa";
+      }
+    }
+
+    window.handleJoinRoom = async function(isAutoRestore = false) {
+      const inputEl = document.getElementById('join-code-input');
+      const inputCode = inputEl ? inputEl.value.trim().toUpperCase() : '';
+      if (!inputCode) { hideLoader(); return; }
+
+      const btn = document.getElementById('btn-join-submit');
+      const btnText = document.getElementById('btn-join-text');
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Conectando...`;
+
+      try {
+        const snapshot = await get(child(ref(db), `${ROOMS_PATH}/${inputCode}`));
+        if (snapshot.exists()) {
+          const roomData = snapshot.val();
+          const existingPlayers = roomData.players ? Object.keys(roomData.players) : [];
+          const alreadyInRoom = existingPlayers.includes(window.currentProfile.nickname);
+
+          if (roomData.started && !alreadyInRoom) {
+            showToast("Esa mesa ya está jugando, no podés sentarte ahora.", "warning");
+            return;
+          }
+          if (!alreadyInRoom && roomData.maxPlayers && existingPlayers.length >= roomData.maxPlayers) {
+            showToast("Esa mesa está completa.", "warning");
+            return;
+          }
+
+          if (!alreadyInRoom) {
+            const playerRef = ref(db, `${ROOMS_PATH}/${inputCode}/players/${window.currentProfile.nickname}`);
+            await set(playerRef, {
+              nickname: window.currentProfile.nickname,
+              isHost: (roomData.host === window.currentProfile.nickname),
+              hand: [],
+              status: 'waiting',
+              outcomeText: null,
+              outcomeTone: null,
+              stats: { wins: 0, losses: 0, pushes: 0 }
+            });
+          }
+
+          window.isHost = (roomData.host === window.currentProfile.nickname);
+          localStorage.setItem('bj_active_room', inputCode);
+          setProfileLockState(true);
+          if (!isAutoRestore) showToast(`¡Te sentaste en la mesa ${inputCode}!`, "success");
+          listenToRoom(inputCode);
+        } else {
+          showToast("El código de mesa es inválido o no existe.", "error");
+          localStorage.removeItem('bj_active_room');
+          setProfileLockState(false);
+          window.showView('view-main-menu');
+        }
+      } catch (error) {
+        showToast("Error de conexión: " + error.message, "error");
+        setProfileLockState(false);
+        window.showView('view-main-menu');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerText = "Unirme";
+        hideLoader();
+      }
+    }
+
+    window.copyShareLink = function() {
+      const copyInput = document.getElementById('share-link-input');
+      copyInput.select();
+      navigator.clipboard.writeText(copyInput.value);
+      showToast("¡Enlace copiado al portapapeles!", "success");
+    }
+
+    window.leaveRoom = async function(removeFromDb = true) {
+      if (removeFromDb && window.activeRoomCode && window.currentProfile.nickname) {
+        const playerRef = ref(db, `${ROOMS_PATH}/${window.activeRoomCode}/players/${window.currentProfile.nickname}`);
+        await remove(playerRef);
+        showToast("Saliste de la mesa", "info");
+      }
+      if (roomListenerUnsubscribe) { roomListenerUnsubscribe(); roomListenerUnsubscribe = null; }
+      localStorage.removeItem('bj_active_room');
+      setProfileLockState(false);
+      previousPlayersCount = 0;
+      window.activeRoomCode = null;
+      window.isHost = false;
+      window.lastRoomSnapshot = null;
+      lastRenderedRound = null;
+      prevHandLengths = {};
+      window.showView('view-main-menu');
+    }
+
+    window.leaveRoomInGame = async function() {
+      const confirmed = await openModal({
+        title: "Salir de la Mesa",
+        message: "¿Seguro que quieres abandonar la partida en curso?",
+        confirmText: "Salir",
+        cancelText: "Cancelar"
+      });
+      if (confirmed) await window.leaveRoom(true);
+    }
+
+    window.kickPlayer = async function(targetNickname) {
+      if (!window.isHost || !window.activeRoomCode) return;
+      const confirmed = await openModal({
+        title: "Expulsar Jugador",
+        message: `¿Estás seguro de que quieres expulsar a "${targetNickname}" de la mesa?`,
+        confirmText: "Expulsar",
+        cancelText: "Cancelar"
       });
       if (confirmed) {
-        stats = { wins: 0, losses: 0, pushes: 0 };
-        saveStats();
-        renderStats();
+        try {
+          await remove(ref(db, `${ROOMS_PATH}/${window.activeRoomCode}/players/${targetNickname}`));
+          showToast(`Expulsaste a ${targetNickname}`, "warning");
+        } catch (e) { showToast("Error al expulsar: " + e.message, "error"); }
       }
+    }
+
+    window.deleteRoom = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+      const confirmed = await openModal({
+        title: "Eliminar Mesa",
+        message: "¿Quieres eliminar la mesa por completo? Todos los jugadores serán desconectados inmediatamente.",
+        confirmText: "Eliminar Mesa",
+        cancelText: "Cancelar"
+      });
+      if (confirmed) {
+        try {
+          await remove(ref(db, `${ROOMS_PATH}/${window.activeRoomCode}`));
+          localStorage.removeItem('bj_active_room');
+          setProfileLockState(false);
+          showToast("Mesa eliminada", "info");
+        } catch (e) { showToast("Error al eliminar la mesa: " + e.message, "error"); }
+      }
+    }
+
+    // ================== LOBBY ==================
+    function updateStartButtonState(room, playersCount) {
+      const btnStart = document.getElementById('btn-start-game');
+      if (!btnStart) return;
+      if (playersCount < 1) {
+        btnStart.disabled = true;
+        btnStart.innerText = '⏳ Esperando jugadores...';
+      } else {
+        btnStart.disabled = false;
+        btnStart.innerText = '🚀 Repartir Cartas';
+      }
+    }
+
+    function renderPlayersList(players) {
+      const listContainer = document.getElementById('lobby-players-list');
+      listContainer.innerHTML = '';
+      players.forEach(p => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800";
+        const isMe = (p.nickname === window.currentProfile.nickname);
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center font-bold text-blue-300 text-sm shrink-0">${(p.nickname || '?').charAt(0).toUpperCase()}</div>
+            <span class="font-semibold text-sm text-white">${p.nickname} ${isMe ? '<span class="text-xs text-slate-500 font-normal">(Tú)</span>' : ''}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            ${p.isHost ? '<span class="text-[10px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-full">ANFITRIÓN</span>' : ''}
+            ${(window.isHost && !p.isHost) ? `<button onclick="kickPlayer('${p.nickname}')" title="Expulsar jugador" class="text-xs px-2 py-1 bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded transition">❌</button>` : ''}
+          </div>`;
+        listContainer.appendChild(item);
+      });
+    }
+
+    // ================== INICIAR / REPARTIR ==================
+    window.startGame = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+      try {
+        const snapshot = await get(child(ref(db), `${ROOMS_PATH}/${window.activeRoomCode}`));
+        if (!snapshot.exists()) return;
+        const room = snapshot.val();
+        const playerNicks = room.players ? Object.keys(room.players) : [];
+        if (playerNicks.length < 1) { showToast("Necesitás al menos 1 jugador para repartir.", "warning"); return; }
+
+        let shoe = shuffleDeck(createShoe());
+        const playersUpdate = {};
+
+        playerNicks.forEach(nick => {
+          const hand = [shoe.pop(), shoe.pop()];
+          const score = calcScore(hand);
+          const isBJ = score === 21;
+          playersUpdate[nick] = {
+            ...room.players[nick],
+            hand,
+            status: isBJ ? 'blackjack' : 'playing',
+            outcomeText: null,
+            outcomeTone: null,
+            stats: room.players[nick].stats || { wins: 0, losses: 0, pushes: 0 }
+          };
+        });
+
+        const dealerHand = [shoe.pop(), shoe.pop()];
+        const round = (room.round || 0) + 1;
+
+        let phase = 'playing';
+        let currentTurnIndex = playerNicks.findIndex(n => playersUpdate[n].status === 'playing');
+        if (currentTurnIndex === -1) { phase = 'dealer'; currentTurnIndex = -1; }
+
+        await update(ref(db, `${ROOMS_PATH}/${window.activeRoomCode}`), {
+          started: true,
+          phase,
+          round,
+          deck: shoe,
+          turnOrder: playerNicks,
+          currentTurnIndex,
+          dealerHand,
+          dealerHidden: true,
+          players: playersUpdate
+        });
+
+        showToast("¡Repartiendo cartas!", "success");
+      } catch (error) {
+        showToast("Error al repartir: " + error.message, "error");
+      }
+    }
+
+    window.resetGameToLobby = async function() {
+      if (!window.isHost || !window.activeRoomCode) return;
+      try {
+        const snap = await get(child(ref(db), `${ROOMS_PATH}/${window.activeRoomCode}`));
+        const room = snap.val();
+        if (!room) return;
+        const players = room.players || {};
+        const resetPlayers = {};
+        Object.keys(players).forEach(n => {
+          resetPlayers[n] = { ...players[n], hand: [], status: 'waiting', outcomeText: null, outcomeTone: null };
+        });
+        await update(ref(db, `${ROOMS_PATH}/${window.activeRoomCode}`), {
+          started: false,
+          phase: 'lobby',
+          turnOrder: [],
+          currentTurnIndex: 0,
+          dealerHand: [],
+          dealerHidden: true,
+          players: resetPlayers
+        });
+        showToast("Volvieron al lobby de la mesa.", "info");
+      } catch (error) {
+        showToast("Error al volver a la mesa: " + error.message, "error");
+      }
+    }
+
+    // ================== TURNOS ==================
+    function isMyTurn(room) {
+      return room.phase === 'playing' && room.turnOrder && room.turnOrder[room.currentTurnIndex] === window.currentProfile.nickname;
+    }
+
+    function findNextPlayingIndex(turnOrder, playersObj, fromIndex) {
+      for (let i = fromIndex + 1; i < turnOrder.length; i++) {
+        const nick = turnOrder[i];
+        if (playersObj[nick] && playersObj[nick].status === 'playing') return i;
+      }
+      return -1;
+    }
+
+    window.playerHit = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+
+      const card = await drawCardFromDeck(code);
+      if (!card) return;
+
+      const myPlayer = room.players[nick];
+      const newHand = [...(myPlayer.hand || []), card];
+      const score = calcScore(newHand);
+      let status = 'playing';
+      if (score > 21) status = 'bust';
+      else if (score === 21) status = 'stand';
+
+      const updates = {};
+      updates[`${ROOMS_PATH}/${code}/players/${nick}/hand`] = newHand;
+      updates[`${ROOMS_PATH}/${code}/players/${nick}/status`] = status;
+
+      if (status !== 'playing') {
+        const projectedPlayers = { ...room.players, [nick]: { ...myPlayer, status } };
+        const nextIdx = findNextPlayingIndex(room.turnOrder, projectedPlayers, room.currentTurnIndex);
+        if (nextIdx === -1) {
+          updates[`${ROOMS_PATH}/${code}/phase`] = 'dealer';
+          updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = -1;
+        } else {
+          updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = nextIdx;
+        }
+      }
+      await update(ref(db), updates);
+    }
+
+    window.playerStand = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+      const myPlayer = room.players[nick];
+
+      const updates = {};
+      updates[`${ROOMS_PATH}/${code}/players/${nick}/status`] = 'stand';
+
+      const projectedPlayers = { ...room.players, [nick]: { ...myPlayer, status: 'stand' } };
+      const nextIdx = findNextPlayingIndex(room.turnOrder, projectedPlayers, room.currentTurnIndex);
+      if (nextIdx === -1) {
+        updates[`${ROOMS_PATH}/${code}/phase`] = 'dealer';
+        updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = -1;
+      } else {
+        updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = nextIdx;
+      }
+      await update(ref(db), updates);
+    }
+
+    // Si alguien se va de la mesa mientras juega, el anfitrión corrige el turno.
+    async function hostValidateTurnContinuity(room) {
+      if (!window.isHost || !room.started || room.phase !== 'playing') return;
+      const code = window.activeRoomCode;
+      const turnOrder = room.turnOrder || [];
+      const turnNick = turnOrder[room.currentTurnIndex];
+      if (turnNick && room.players[turnNick] && room.players[turnNick].status === 'playing') return;
+
+      let nextIdx = -1;
+      for (let i = room.currentTurnIndex; i < turnOrder.length; i++) {
+        const n = turnOrder[i];
+        if (room.players[n] && room.players[n].status === 'playing') { nextIdx = i; break; }
+      }
+      try {
+        if (nextIdx === -1) {
+          await update(ref(db, `${ROOMS_PATH}/${code}`), { phase: 'dealer', currentTurnIndex: -1 });
+        } else if (nextIdx !== room.currentTurnIndex) {
+          await update(ref(db, `${ROOMS_PATH}/${code}`), { currentTurnIndex: nextIdx });
+        }
+      } catch (e) { /* silencioso: se reintentará en el próximo tick */ }
+    }
+
+    // ================== FASE DEL DEALER ==================
+    async function maybeResolveDealer(room) {
+      if (!window.isHost) return;
+      if (room.phase !== 'dealer') return;
+      if (dealerResolvingLock) return;
+      dealerResolvingLock = true;
+      try {
+        await runDealerSequence(room);
+      } catch (e) {
+        showToast("Error en el turno del dealer: " + e.message, "error");
+      } finally {
+        dealerResolvingLock = false;
+      }
+    }
+
+    async function runDealerSequence(room) {
+      const code = window.activeRoomCode;
+
+      await delay(700);
+      await update(ref(db, `${ROOMS_PATH}/${code}`), { dealerHidden: false });
+      await delay(1000);
+
+      let dealerHand = (room.dealerHand || []).slice();
+      let dealerScore = calcScore(dealerHand);
+
+      while (dealerScore < 17) {
+        const card = await drawCardFromDeck(code);
+        dealerHand.push(card);
+        dealerScore = calcScore(dealerHand);
+        await set(ref(db, `${ROOMS_PATH}/${code}/dealerHand`), dealerHand);
+        await delay(1100);
+      }
+
+      const playersSnap = (await get(child(ref(db), `${ROOMS_PATH}/${code}/players`))).val() || {};
+      const playerUpdates = {};
+
+      Object.keys(playersSnap).forEach(nick => {
+        const p = playersSnap[nick];
+        const pScore = calcScore(p.hand || []);
+        const pBJ = pScore === 21 && (p.hand || []).length === 2;
+        const dBJ = dealerScore === 21 && dealerHand.length === 2;
+
+        let outcome, text, tone;
+        if (p.status === 'bust') { outcome = 'lose'; text = '💥 Te pasaste'; tone = 'lose'; }
+        else if (dealerScore > 21) { outcome = 'win'; text = '🎉 El dealer se pasó'; tone = 'win'; }
+        else if (pBJ && dBJ) { outcome = 'push'; text = '🤝 Empate (Blackjack)'; tone = 'push'; }
+        else if (pBJ) { outcome = 'win'; text = '🂡 ¡Blackjack!'; tone = 'blackjack'; }
+        else if (dBJ) { outcome = 'lose'; text = '🂡 Blackjack del dealer'; tone = 'lose'; }
+        else if (pScore > dealerScore) { outcome = 'win'; text = `🎉 Ganaste ${pScore} vs ${dealerScore}`; tone = 'win'; }
+        else if (pScore < dealerScore) { outcome = 'lose'; text = `😔 Perdiste ${pScore} vs ${dealerScore}`; tone = 'lose'; }
+        else { outcome = 'push'; text = `🤝 Empate en ${pScore}`; tone = 'push'; }
+
+        const stats = p.stats || { wins: 0, losses: 0, pushes: 0 };
+        if (outcome === 'win') stats.wins = (stats.wins || 0) + 1;
+        else if (outcome === 'lose') stats.losses = (stats.losses || 0) + 1;
+        else stats.pushes = (stats.pushes || 0) + 1;
+
+        playerUpdates[nick] = { ...p, outcomeText: text, outcomeTone: tone, stats };
+      });
+
+      await update(ref(db, `${ROOMS_PATH}/${code}`), { phase: 'ended', players: playerUpdates });
+    }
+
+    // ================== RENDER DE LA MESA ==================
+    function maybeResetRoundTracking(room) {
+      if (room.round !== lastRenderedRound) {
+        lastRenderedRound = room.round;
+        prevHandLengths = {};
+        prevDealerHidden = true;
+      }
+    }
+
+    function renderDealer(room, justRevealed) {
+      const container = document.getElementById('dealer-hand');
+      const hand = room.dealerHand || [];
+      const prevLen = prevHandLengths['dealer'] || 0;
+      let html = '';
+
+      hand.forEach((c, i) => {
+        if (i === 1 && room.dealerHidden) {
+          html += cardHTML(null, true, i >= prevLen ? 'card-deal' : '', 'normal');
+        } else if (i === 1 && !room.dealerHidden && justRevealed) {
+          html += cardHTML(c, false, 'card-flip', 'normal');
+        } else {
+          html += cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'normal');
+        }
+      });
+
+      container.innerHTML = html;
+      prevHandLengths['dealer'] = hand.length;
+
+      const scoreEl = document.getElementById('dealer-score');
+      if (hand.length === 0) { scoreEl.innerText = '0'; return; }
+      const dealerScore = room.dealerHidden ? calcScore([hand[0]]) : calcScore(hand);
+      scoreEl.innerText = room.dealerHidden ? `${dealerScore} + ?` : String(dealerScore);
+      if (justRevealed) pulse('dealer-score');
+    }
+
+    const TONE_CLASSES = {
+      win: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300',
+      lose: 'bg-rose-500/15 border-rose-500/40 text-rose-300',
+      push: 'bg-slate-700/30 border-slate-600/60 text-slate-300',
+      blackjack: 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/40 text-white'
     };
 
-    // --- INICIO ---
-    loadStats();
-    renderStats();
-    setPlayButton({ visible: true, label: 'Jugar', icon: '🎲' });
+    function renderSeat(nick, p, room) {
+      const isMe = nick === window.currentProfile.nickname;
+      const isTurn = room.phase === 'playing' && room.turnOrder && room.turnOrder[room.currentTurnIndex] === nick;
+      const hand = p.hand || [];
+      const prevLen = prevHandLengths[nick] || 0;
+      const cardsHtml = hand.map((c, i) => cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'small')).join('');
+      prevHandLengths[nick] = hand.length;
+      const score = calcScore(hand);
+
+      let statusBadge = '';
+      if (room.phase === 'ended' && p.outcomeText) {
+        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${TONE_CLASSES[p.outcomeTone] || TONE_CLASSES.push}">${p.outcomeText}</span>`;
+      } else if (p.status === 'bust') {
+        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300">💥 Se pasó</span>`;
+      } else if (p.status === 'blackjack') {
+        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/40 text-blue-300">🂡 Blackjack</span>`;
+      } else if (p.status === 'stand') {
+        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">✋ Plantado</span>`;
+      } else if (isTurn) {
+        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 animate-pulse">🎯 Jugando...</span>`;
+      }
+
+      const stats = p.stats || { wins: 0, losses: 0, pushes: 0 };
+
+      return `
+        <div class="rounded-2xl border p-3 transition ${isTurn ? 'border-amber-400/70 shadow-lg shadow-amber-500/10 bg-slate-900/80' : 'border-slate-800 bg-slate-900/50'}">
+          <div class="flex items-center justify-between mb-2 gap-2">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <div class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">${(nick || '?').charAt(0).toUpperCase()}</div>
+              <span class="text-xs sm:text-sm font-bold text-white truncate">${nick}${isMe ? ' <span class="text-slate-500 font-normal">(Vos)</span>' : ''}</span>
+              ${p.isHost ? '<span class="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full shrink-0">HOST</span>' : ''}
+            </div>
+            <span class="text-xs font-extrabold text-white bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-lg shrink-0">${score}</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 min-h-[4.5rem] mb-2">${cardsHtml}</div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[9px] text-slate-500 shrink-0">V:${stats.wins || 0} D:${stats.losses || 0} E:${stats.pushes || 0}</span>
+            ${statusBadge}
+          </div>
+        </div>`;
+    }
+
+    function renderGameTable(room) {
+      maybeResetRoundTracking(room);
+      const justRevealed = (prevDealerHidden === true && room.dealerHidden === false);
+      renderDealer(room, justRevealed);
+      prevDealerHidden = room.dealerHidden;
+
+      const order = (room.turnOrder && room.turnOrder.length) ? room.turnOrder : Object.keys(room.players);
+      const seatsContainer = document.getElementById('seats-container');
+      seatsContainer.innerHTML = order.map(nick => {
+        const p = room.players[nick];
+        if (!p) return '';
+        return renderSeat(nick, p, room);
+      }).join('');
+
+      const myTurnPanel = document.getElementById('my-turn-panel');
+      const waitPanel = document.getElementById('wait-panel');
+      const hostEndControls = document.getElementById('host-end-controls');
+
+      if (room.phase === 'playing') {
+        const myTurn = isMyTurn(room);
+        myTurnPanel.classList.toggle('hidden', !myTurn);
+        hostEndControls.classList.add('hidden');
+        if (myTurn) {
+          waitPanel.classList.add('hidden');
+        } else {
+          const me = room.players[window.currentProfile.nickname];
+          let waitMsg = 'Esperando tu turno...';
+          if (me && me.status === 'bust') waitMsg = '💥 Te pasaste. Esperando al resto...';
+          else if (me && me.status === 'blackjack') waitMsg = '🂡 ¡Blackjack! Esperando al resto...';
+          else if (me && me.status === 'stand') waitMsg = '✋ Estás plantado. Esperando al resto...';
+          else {
+            const turnNick = room.turnOrder ? room.turnOrder[room.currentTurnIndex] : null;
+            if (turnNick) waitMsg = `Turno de ${turnNick}...`;
+          }
+          waitPanel.innerText = waitMsg;
+          waitPanel.classList.remove('hidden');
+        }
+      } else if (room.phase === 'dealer') {
+        myTurnPanel.classList.add('hidden');
+        hostEndControls.classList.add('hidden');
+        waitPanel.innerText = '🂠 El dealer está jugando...';
+        waitPanel.classList.remove('hidden');
+      } else if (room.phase === 'ended') {
+        myTurnPanel.classList.add('hidden');
+        waitPanel.classList.add('hidden');
+        hostEndControls.classList.toggle('hidden', !window.isHost);
+      } else {
+        myTurnPanel.classList.add('hidden');
+        waitPanel.classList.add('hidden');
+        hostEndControls.classList.add('hidden');
+      }
+    }
+
+    // ================== LISTENER PRINCIPAL DE LA MESA ==================
+    function listenToRoom(roomCode) {
+      window.activeRoomCode = roomCode;
+      const roomRef = ref(db, `${ROOMS_PATH}/${roomCode}`);
+      if (roomListenerUnsubscribe) roomListenerUnsubscribe();
+
+      roomListenerUnsubscribe = onValue(roomRef, (snapshot) => {
+        const room = snapshot.val();
+        if (!room) {
+          showToast("La mesa fue eliminada.", "warning");
+          window.leaveRoom(false);
+          return;
+        }
+        room.players = room.players || {};
+        room.turnOrder = room.turnOrder || [];
+        window.lastRoomSnapshot = room;
+
+        const playersList = Object.values(room.players);
+        const amIInRoom = playersList.some(p => p.nickname === window.currentProfile.nickname);
+        if (!amIInRoom) {
+          showToast("Has sido expulsado o saliste de la mesa.", "error");
+          window.leaveRoom(false);
+          return;
+        }
+
+        if (previousPlayersCount > 0 && playersList.length > previousPlayersCount) {
+          showToast("¡Un nuevo jugador se sentó en la mesa!", "info");
+        }
+        previousPlayersCount = playersList.length;
+
+        if (!room.players[room.host] && playersList.length > 0) {
+          const newHost = playersList[0].nickname;
+          update(ref(db, `${ROOMS_PATH}/${roomCode}`), { host: newHost });
+          update(ref(db, `${ROOMS_PATH}/${roomCode}/players/${newHost}`), { isHost: true });
+        }
+        window.isHost = (room.host === window.currentProfile.nickname);
+
+        if (!room.started) {
+          document.getElementById('btn-start-game').classList.toggle('hidden', !window.isHost);
+          document.getElementById('btn-delete-room').classList.toggle('hidden', !window.isHost);
+          document.getElementById('btn-leave-room').classList.toggle('hidden', window.isHost);
+
+          if (window.isHost) updateStartButtonState(room, playersList.length);
+
+          const shareUrl = `${window.location.origin}${window.location.pathname}?code=${room.code}`;
+          document.getElementById('share-link-input').value = shareUrl;
+          document.getElementById('lobby-max-text').innerText = room.maxPlayers || '—';
+
+          renderPlayersList(playersList);
+          window.showView('view-lobby');
+        } else {
+          hostValidateTurnContinuity(room);
+          maybeResolveDealer(room);
+          renderGameTable(room);
+          window.showView('view-game-active');
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      listenToSystemEvents();
+      const wasReset = await checkDailyReset();
+      if (!wasReset) {
+        const savedProfile = localStorage.getItem('bj_profile');
+        if (savedProfile) {
+          const parsed = JSON.parse(savedProfile);
+          document.getElementById('nickname').value = parsed.nickname;
+          await window.saveProfile(true);
+        } else {
+          if (!window.activeRoomCode) window.showView('view-main-menu');
+        }
+      } else {
+        window.showView('view-main-menu');
+      }
+      initialLoadComplete = true;
+      hideLoader();
+    });
   </script>
 
 </body>
