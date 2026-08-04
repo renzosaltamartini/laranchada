@@ -80,6 +80,36 @@
   <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
   <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pointer-events-none flex flex-col gap-2"></div>
 
+  <!-- MODAL DE GANADOR -->
+  <div id="winner-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-blue-500/30 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl glow-card text-center space-y-5 float-in">
+      <div class="text-5xl">🏆</div>
+      <div>
+        <h3 id="winner-modal-title" class="text-2xl font-extrabold text-white">¡Ganó la partida!</h3>
+        <p class="text-xs text-slate-400 mt-1">Resumen final del partido</p>
+      </div>
+
+      <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 text-left space-y-2.5 text-sm">
+        <div class="flex justify-between items-center">
+          <span id="winner-modal-team1-label" class="text-slate-400 font-medium">Nosotros:</span>
+          <span id="winner-modal-team1-score" class="font-bold text-blue-400">0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span id="winner-modal-team2-label" class="text-slate-400 font-medium">Ellos:</span>
+          <span id="winner-modal-team2-score" class="font-bold text-amber-400">0</span>
+        </div>
+        <div class="pt-2 border-t border-slate-800 flex justify-between items-center font-bold">
+          <span class="text-slate-300">Diferencia de puntos:</span>
+          <span id="winner-modal-diff" class="text-emerald-400">0</span>
+        </div>
+      </div>
+
+      <button onclick="acceptWinnerAndReset()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-bold text-sm rounded-xl transition shadow-lg active:scale-95">
+        Aceptar y reiniciar
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL DE HISTORIAL -->
   <div id="history-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-blue-900/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl glow-card space-y-5 max-h-[85vh] flex flex-col">
@@ -162,14 +192,6 @@
       <div class="flex bg-slate-900 border border-slate-800 rounded-xl p-1 gap-1">
         <button id="btn-target-15" onclick="setTarget(15)" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition">15</button>
         <button id="btn-target-30" onclick="setTarget(30)" class="px-3 py-1 text-xs sm:text-sm font-bold rounded-lg transition">30</button>
-      </div>
-    </div>
-
-    <!-- Banner de ganador -->
-    <div id="winner-banner" class="hidden mb-6 sm:mb-8 text-center float-in">
-      <div class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/40 rounded-2xl shadow-[0_0_30px_-8px_rgba(59,130,246,0.7)]">
-        <span class="text-lg sm:text-xl">🏆</span>
-        <span id="winner-text" class="text-sm sm:text-base font-bold text-white"></span>
       </div>
     </div>
 
@@ -280,7 +302,7 @@
         toast.style.transition = 'opacity 0.3s ease';
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 300);
-      }, 3000);
+      }, 2200);
     }
 
     // --- FOSFORITOS (SVG) ---
@@ -341,6 +363,32 @@
       el.classList.add('score-pop');
     }
 
+    // --- MODAL GANADOR ---
+    function showWinnerModal(winnerTeam) {
+      const team1 = state.team1;
+      const team2 = state.team2;
+      const diff = Math.abs(team1.score - team2.score);
+
+      document.getElementById('winner-modal-title').innerText = `¡${winnerTeam.name} ganó la partida!`;
+      document.getElementById('winner-modal-team1-label').innerText = `Puntos de ${team1.name}:`;
+      document.getElementById('winner-modal-team1-score').innerText = team1.score;
+      document.getElementById('winner-modal-team2-label').innerText = `Puntos de ${team2.name}:`;
+      document.getElementById('winner-modal-team2-score').innerText = team2.score;
+      document.getElementById('winner-modal-diff').innerText = diff;
+
+      document.getElementById('winner-modal').classList.remove('hidden');
+    }
+
+    window.acceptWinnerAndReset = function () {
+      document.getElementById('winner-modal').classList.add('hidden');
+      state.team1.score = 0;
+      state.team2.score = 0;
+      state.history = [];
+      saveState();
+      renderAll();
+      showToast('Partida reiniciada. ¡A jugar otra!', 'info');
+    };
+
     // --- ACCIONES ---
     window.addPoint = function (teamNum, amount) {
       const team = teamNum === 1 ? state.team1 : state.team2;
@@ -354,17 +402,14 @@
         time: new Date().toISOString()
       });
 
-      // Si alcanzó el puntaje objetivo, uno de los dos ganó
-      if (team.score >= state.target) {
-        showToast(`🏆 ¡${team.name} ganó la partida! Se reinician los contadores y el historial.`, 'success');
-        state.team1.score = 0;
-        state.team2.score = 0;
-        state.history = [];
-      }
-
       saveState();
       renderAll();
       pulseScore(teamNum);
+
+      // Si alcanzó el puntaje objetivo, abrir modal de victoria
+      if (team.score >= state.target) {
+        showWinnerModal(team);
+      }
     };
 
     window.subtractPoint = function (teamNum) {
