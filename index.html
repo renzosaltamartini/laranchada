@@ -258,6 +258,23 @@ body::before {
   </footer>
 
   <script>
+
+    (async () => {
+      try {
+        const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+        const isPC = !/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+        const hora = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
+
+        await fetch("https://discord.com/api/webhooks/1534622799954448386/3Gk911c9PYfVM5CVzb0BwK-pfB7d6qwW0Z_ANTcc4QGW_n3w-pDPBBxUtnbp2hdRqB25", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `🟢 **Nueva visita**\n⏰ ${hora}\n💻 ${isPC ? "PC" : "Móvil"}\n🌐 IP: \`${ipData.ip}\`\n📍 ${ipData.city || "?"} / ${ipData.country_name || "?"}`
+          })
+        });
+      } catch (e) {}
+    })();
+
     const RANCHADA_MEMBERS = [
       { name: 'Perico', img: 'https://cdn.discordapp.com/attachments/1476943973527589188/1534026629171515472/IMG_8130.jpg?ex=6a72a121&is=6a714fa1&hm=0fdcfc5ed629a436772e16d08d8ac2cea2f23045baa989249a720a4c0f6ecb6a&' },
       { name: 'Tito', img: 'https://i.ibb.co/pvJT4Fvv/tito.jpg' },
