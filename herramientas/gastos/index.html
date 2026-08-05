@@ -69,14 +69,26 @@
     <section class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-sm font-bold text-white">Participantes</h2>
-        <button onclick="toggleEditPeople()" class="text-xs text-blue-400 hover:text-blue-300">Editar</button>
+        <button onclick="toggleEditPeople()" class="text-xs text-blue-400 hover:text-blue-300 font-medium">
+          + Agregar
+        </button>
       </div>
-      <div id="people-chips" class="flex flex-wrap gap-2"></div>
+
+      <div id="people-chips" class="flex flex-wrap gap-2 min-h-[32px]"></div>
+
+      <p id="no-people-msg" class="text-center text-slate-500 text-sm py-3 hidden">
+        Todavía no hay nadie. Agregá a los que van a dividir.
+      </p>
+
       <div id="edit-people" class="hidden mt-3 space-y-2">
-        <input id="new-person" type="text" placeholder="Nombre nuevo..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+        <input id="new-person" type="text" placeholder="Nombre..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500" autocomplete="off">
         <div class="flex gap-2">
-          <button onclick="addPerson()" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl">Agregar</button>
-          <button onclick="toggleEditPeople()" class="px-4 py-2 bg-slate-800 text-slate-300 text-sm rounded-xl">Listo</button>
+          <button onclick="addPerson()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition">
+            Agregar persona
+          </button>
+          <button onclick="toggleEditPeople()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm rounded-xl transition">
+            Listo
+          </button>
         </div>
       </div>
     </section>
@@ -87,9 +99,11 @@
       <input id="expense-desc" type="text" placeholder="¿Qué se compró? (ej: Asado, Birras, Uber)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
       <div class="grid grid-cols-2 gap-3">
         <input id="expense-amount" type="number" inputmode="decimal" placeholder="Monto $" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
-        <select id="expense-payer" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500"></select>
+        <select id="expense-payer" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+          <option value="" disabled selected>¿Quién pagó?</option>
+        </select>
       </div>
-      <button onclick="addExpense()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold rounded-xl transition">
+      <button id="add-expense-btn" onclick="addExpense()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
         + Agregar gasto
       </button>
     </section>
@@ -120,18 +134,13 @@
   </footer>
 
   <script>
-    const DEFAULT_PEOPLE = [
-      "Perico", "Tito", "Palomo", "Ponce", "Ogro", "Degas",
-      "Bashe", "Lolo", "Juli", "Gabo", "Narigon", "Nicolais", "Tomasa"
-    ];
-
     let people = [];
     let expenses = [];
 
     function load() {
       const savedPeople = localStorage.getItem("ranchada_people");
       const savedExpenses = localStorage.getItem("ranchada_expenses");
-      people = savedPeople ? JSON.parse(savedPeople) : [...DEFAULT_PEOPLE];
+      people = savedPeople ? JSON.parse(savedPeople) : [];
       expenses = savedExpenses ? JSON.parse(savedExpenses) : [];
       render();
     }
@@ -143,16 +152,39 @@
 
     function render() {
       const chips = document.getElementById("people-chips");
-      chips.innerHTML = people.map(p => `
-        <span class="inline-flex items-center gap-1 px-3 py-1 bg-slate-800 border border-slate-700 rounded-full text-xs font-medium">
-          ${p}
-          <button onclick="removePerson('${p}')" class="text-slate-500 hover:text-red-400 ml-1">×</button>
-        </span>
-      `).join("");
-
+      const noPeopleMsg = document.getElementById("no-people-msg");
+      const addBtn = document.getElementById("add-expense-btn");
       const select = document.getElementById("expense-payer");
-      select.innerHTML = people.map(p => `<option value="${p}">${p}</option>`).join("");
 
+      // Chips de personas
+      if (people.length === 0) {
+        chips.innerHTML = "";
+        noPeopleMsg.classList.remove("hidden");
+      } else {
+        noPeopleMsg.classList.add("hidden");
+        chips.innerHTML = people.map(p => `
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-xs font-medium">
+            ${p}
+            <button onclick="removePerson('${p}')" class="text-slate-500 hover:text-red-400 leading-none text-sm">×</button>
+          </span>
+        `).join("");
+      }
+
+      // Select de pagador (se actualiza solo con los participantes actuales)
+      const currentValue = select.value;
+      select.innerHTML = people.length === 0
+        ? `<option value="" disabled selected>Agregá participantes primero</option>`
+        : people.map(p => `<option value="${p}">${p}</option>`).join("");
+
+      // Restaurar selección si sigue existiendo
+      if (people.includes(currentValue)) {
+        select.value = currentValue;
+      }
+
+      // Deshabilitar botón de agregar gasto si no hay gente
+      addBtn.disabled = people.length === 0;
+
+      // Lista de gastos
       const list = document.getElementById("expenses-list");
       const noExp = document.getElementById("no-expenses");
       if (expenses.length === 0) {
@@ -178,6 +210,15 @@
     }
 
     function calculateBalances() {
+      const balDiv = document.getElementById("balances");
+      const setDiv = document.getElementById("settlements");
+
+      if (people.length === 0 || expenses.length === 0) {
+        balDiv.innerHTML = `<p class="text-center text-slate-500 text-sm">Agregá personas y gastos para ver el resumen</p>`;
+        setDiv.innerHTML = "";
+        return;
+      }
+
       const balances = {};
       people.forEach(p => balances[p] = 0);
 
@@ -192,7 +233,6 @@
         });
       });
 
-      const balDiv = document.getElementById("balances");
       balDiv.innerHTML = people.map(p => {
         const b = balances[p];
         const color = b > 0.5 ? "text-emerald-400" : b < -0.5 ? "text-red-400" : "text-slate-400";
@@ -201,6 +241,7 @@
         return `<div class="flex justify-between text-sm"><span>${p}</span><span class="${color} font-semibold">${text}</span></div>`;
       }).join("");
 
+      // Settlements
       const debtors = [];
       const creditors = [];
       Object.entries(balances).forEach(([name, amount]) => {
@@ -226,7 +267,6 @@
         if (creditors[j].amount < 0.5) j++;
       }
 
-      const setDiv = document.getElementById("settlements");
       if (settlements.length === 0) {
         setDiv.innerHTML = `<p class="text-center text-slate-500 text-sm">Todo saldado 🎉</p>`;
       } else {
@@ -241,12 +281,21 @@
     }
 
     function addExpense() {
+      if (people.length === 0) {
+        alert("Primero agregá al menos un participante");
+        return;
+      }
+
       const desc = document.getElementById("expense-desc").value.trim();
       const amount = parseFloat(document.getElementById("expense-amount").value);
       const payer = document.getElementById("expense-payer").value;
 
       if (!desc || isNaN(amount) || amount <= 0) {
         alert("Completá la descripción y un monto válido");
+        return;
+      }
+      if (!payer) {
+        alert("Elegí quién pagó");
         return;
       }
 
@@ -264,35 +313,51 @@
     }
 
     function addPerson() {
-      const name = document.getElementById("new-person").value.trim();
-      if (!name || people.includes(name)) return;
+      const input = document.getElementById("new-person");
+      const name = input.value.trim();
+      if (!name) return;
+      if (people.includes(name)) {
+        alert("Esa persona ya está agregada");
+        return;
+      }
       people.push(name);
-      document.getElementById("new-person").value = "";
+      input.value = "";
+      input.focus();
       save();
       render();
     }
 
     function removePerson(name) {
-      if (people.length <= 1) return;
       people = people.filter(p => p !== name);
+      // Si alguien eliminado había pagado, también sacamos esos gastos
       expenses = expenses.filter(e => e.payer !== name);
       save();
       render();
     }
 
     function toggleEditPeople() {
-      document.getElementById("edit-people").classList.toggle("hidden");
+      const panel = document.getElementById("edit-people");
+      panel.classList.toggle("hidden");
+      if (!panel.classList.contains("hidden")) {
+        document.getElementById("new-person").focus();
+      }
     }
 
     function clearAll() {
-      if (!confirm("¿Borrar todos los gastos y reiniciar participantes?")) return;
-      people = [...DEFAULT_PEOPLE];
+      if (!confirm("¿Borrar todos los gastos y participantes?")) return;
+      people = [];
       expenses = [];
       save();
       render();
     }
 
     function copySummary() {
+      if (expenses.length === 0) {
+        alert("No hay gastos para copiar");
+        return;
+      }
+
+      // Calcular settlements
       const balances = {};
       people.forEach(p => balances[p] = 0);
       expenses.forEach(e => {
@@ -303,32 +368,48 @@
         });
       });
 
-      let text = "💰 *Resumen de gastos - La Ranchada*\\n\\n";
-      text += "*Gastos:*\\n";
-      expenses.forEach(e => {
-        text += `• ${e.desc}: $${e.amount.toLocaleString("es-AR")} (pagó ${e.payer})\\n`;
-      });
-      text += "\\n*Cómo liquidar:*\\n";
-
       const debtors = [], creditors = [];
       Object.entries(balances).forEach(([name, amount]) => {
         if (amount < -0.5) debtors.push({ name, amount: -amount });
         if (amount > 0.5) creditors.push({ name, amount });
       });
-      debtors.sort((a,b) => b.amount - a.amount);
-      creditors.sort((a,b) => b.amount - a.amount);
+      debtors.sort((a, b) => b.amount - a.amount);
+      creditors.sort((a, b) => b.amount - a.amount);
 
-      let i=0, j=0;
+      const settlements = [];
+      let i = 0, j = 0;
       while (i < debtors.length && j < creditors.length) {
         const pay = Math.min(debtors[i].amount, creditors[j].amount);
-        text += `• ${debtors[i].name} le debe $${Math.round(pay).toLocaleString("es-AR")} a ${creditors[j].name}\\n`;
+        settlements.push({
+          from: debtors[i].name,
+          to: creditors[j].name,
+          amount: Math.round(pay)
+        });
         debtors[i].amount -= pay;
         creditors[j].amount -= pay;
         if (debtors[i].amount < 0.5) i++;
         if (creditors[j].amount < 0.5) j++;
       }
 
-      if (debtors.length === 0 && creditors.length === 0) text += "Todo saldado 🎉\\n";
+      // Armar texto exactamente como pediste
+      let text = "💰 Resumen de gastos\n";
+      text += "🌐 https://laranchada.vercel.app\n\n";
+
+      expenses.forEach(e => {
+        text += `➡️ ¿Qué se compró?:\n`;
+        text += `**${e.desc}**\n`;
+        text += `➡️ ¿Quién pagó?:\n`;
+        text += `**${e.payer}** ($${e.amount.toLocaleString("es-AR")})\n\n`;
+      });
+
+      text += "💰 División de gastos:\n";
+      if (settlements.length === 0) {
+        text += "Todo saldado 🎉";
+      } else {
+        settlements.forEach(s => {
+          text += `${s.from} le debe $${s.amount.toLocaleString("es-AR")} a ${s.to}\n`;
+        });
+      }
 
       navigator.clipboard.writeText(text).then(() => {
         alert("¡Resumen copiado! Pegalo en el grupo");
@@ -337,6 +418,12 @@
       });
     }
 
+    // Enter para agregar persona
+    document.getElementById("new-person").addEventListener("keydown", e => {
+      if (e.key === "Enter") addPerson();
+    });
+
+    // Enter para agregar gasto
     document.getElementById("expense-amount").addEventListener("keydown", e => {
       if (e.key === "Enter") addExpense();
     });
