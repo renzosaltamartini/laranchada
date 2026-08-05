@@ -320,12 +320,19 @@
           <!-- Panel de MI turno -->
           <div id="my-turn-panel" class="hidden bg-blue-950/40 border border-blue-800/60 rounded-2xl p-4 text-center space-y-3">
             <p class="text-sm font-bold text-blue-300">🎯 ¡Es tu turno!</p>
+            <p id="active-hand-label" class="hidden text-xs font-bold text-amber-300">Jugando mano 1 de 2</p>
             <div class="grid grid-cols-2 gap-3">
               <button id="btn-hit" onclick="playerHit()" class="game-btn touch-manipulation py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
                 <span>🃏</span><span>Pedir carta</span>
               </button>
               <button id="btn-stand" onclick="playerStand()" class="game-btn touch-manipulation py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700 transition active:scale-95 flex items-center justify-center gap-2">
                 <span>✋</span><span>Plantarse</span>
+              </button>
+              <button id="btn-double" onclick="playerDouble()" class="hidden game-btn touch-manipulation py-3 px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                <span>💰</span><span>Doblar</span>
+              </button>
+              <button id="btn-split" onclick="playerSplit()" class="hidden game-btn touch-manipulation py-3 px-4 bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-sm rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                <span>✂️</span><span>Dividir</span>
               </button>
             </div>
           </div>
@@ -752,6 +759,8 @@
             nickname: window.currentProfile.nickname,
             isHost: true,
             hand: [],
+            hands: [],
+            activeHandIndex: 0,
             status: 'waiting',
             outcomeText: null,
             outcomeTone: null,
@@ -807,6 +816,8 @@
               nickname: window.currentProfile.nickname,
               isHost: (roomData.host === window.currentProfile.nickname),
               hand: [],
+              hands: [],
+              activeHandIndex: 0,
               status: 'waiting',
               outcomeText: null,
               outcomeTone: null,
@@ -952,13 +963,16 @@
         const playersUpdate = {};
 
         playerNicks.forEach(nick => {
-          const hand = [shoe.pop(), shoe.pop()];
-          const score = calcScore(hand);
+          const cards = [shoe.pop(), shoe.pop()];
+          const score = calcScore(cards);
           const isBJ = score === 21;
+          const initialHand = { cards, status: isBJ ? 'blackjack' : 'playing', doubled: false, split: false };
           playersUpdate[nick] = {
             ...room.players[nick],
-            hand,
-            status: isBJ ? 'blackjack' : 'playing',
+            hand: [],
+            hands: [initialHand],
+            activeHandIndex: 0,
+            status: isBJ ? 'done' : 'playing',
             outcomeText: null,
             outcomeTone: null,
             stats: room.players[nick].stats || { wins: 0, losses: 0, pushes: 0 }
@@ -999,7 +1013,7 @@
         const players = room.players || {};
         const resetPlayers = {};
         Object.keys(players).forEach(n => {
-          resetPlayers[n] = { ...players[n], hand: [], status: 'waiting', outcomeText: null, outcomeTone: null };
+          resetPlayers[n] = { ...players[n], hand: [], hands: [], activeHandIndex: 0, status: 'waiting', outcomeText: null, outcomeTone: null };
         });
         await update(ref(db, `${ROOMS_PATH}/${window.activeRoomCode}`), {
           started: false,
@@ -1029,50 +1043,25 @@
       return -1;
     }
 
-    window.playerHit = async function() {
-      const room = window.lastRoomSnapshot;
-      if (!room || !isMyTurn(room)) return;
-      const nick = window.currentProfile.nickname;
-      const code = window.activeRoomCode;
-
-      const card = await drawCardFromDeck(code);
-      if (!card) return;
-
-      const myPlayer = room.players[nick];
-      const newHand = [...(myPlayer.hand || []), card];
-      const score = calcScore(newHand);
-      let status = 'playing';
-      if (score > 21) status = 'bust';
-      else if (score === 21) status = 'stand';
-
+    // Avanza el turno tras una acción sobre una mano: pasa a la siguiente mano
+    // pendiente del mismo jugador (caso de división) o al siguiente jugador/dealer.
+    async function advanceAfterHandAction(room, nick, code, myPlayer, newHands, actedIdx) {
       const updates = {};
-      updates[`${ROOMS_PATH}/${code}/players/${nick}/hand`] = newHand;
-      updates[`${ROOMS_PATH}/${code}/players/${nick}/status`] = status;
+      updates[`${ROOMS_PATH}/${code}/players/${nick}/hands`] = newHands;
 
-      if (status !== 'playing') {
-        const projectedPlayers = { ...room.players, [nick]: { ...myPlayer, status } };
-        const nextIdx = findNextPlayingIndex(room.turnOrder, projectedPlayers, room.currentTurnIndex);
-        if (nextIdx === -1) {
-          updates[`${ROOMS_PATH}/${code}/phase`] = 'dealer';
-          updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = -1;
-        } else {
-          updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = nextIdx;
-        }
+      let nextHandIdx = -1;
+      for (let i = actedIdx + 1; i < newHands.length; i++) {
+        if (newHands[i].status === 'playing') { nextHandIdx = i; break; }
       }
-      await update(ref(db), updates);
-    }
 
-    window.playerStand = async function() {
-      const room = window.lastRoomSnapshot;
-      if (!room || !isMyTurn(room)) return;
-      const nick = window.currentProfile.nickname;
-      const code = window.activeRoomCode;
-      const myPlayer = room.players[nick];
+      if (nextHandIdx !== -1) {
+        updates[`${ROOMS_PATH}/${code}/players/${nick}/activeHandIndex`] = nextHandIdx;
+        await update(ref(db), updates);
+        return;
+      }
 
-      const updates = {};
-      updates[`${ROOMS_PATH}/${code}/players/${nick}/status`] = 'stand';
-
-      const projectedPlayers = { ...room.players, [nick]: { ...myPlayer, status: 'stand' } };
+      updates[`${ROOMS_PATH}/${code}/players/${nick}/status`] = 'done';
+      const projectedPlayers = { ...room.players, [nick]: { ...myPlayer, hands: newHands, status: 'done' } };
       const nextIdx = findNextPlayingIndex(room.turnOrder, projectedPlayers, room.currentTurnIndex);
       if (nextIdx === -1) {
         updates[`${ROOMS_PATH}/${code}/phase`] = 'dealer';
@@ -1081,6 +1070,112 @@
         updates[`${ROOMS_PATH}/${code}/currentTurnIndex`] = nextIdx;
       }
       await update(ref(db), updates);
+    }
+
+    window.playerHit = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+      const myPlayer = room.players[nick];
+      const hands = myPlayer.hands || [];
+      const activeIdx = myPlayer.activeHandIndex || 0;
+      const activeHand = hands[activeIdx];
+      if (!activeHand || activeHand.status !== 'playing') return;
+
+      const card = await drawCardFromDeck(code);
+      if (!card) return;
+
+      const newCards = [...(activeHand.cards || []), card];
+      const score = calcScore(newCards);
+      let status = 'playing';
+      if (score > 21) status = 'bust';
+      else if (score === 21) status = 'stand';
+
+      const newHands = hands.slice();
+      newHands[activeIdx] = { ...activeHand, cards: newCards, status };
+
+      if (status === 'playing') {
+        await update(ref(db), { [`${ROOMS_PATH}/${code}/players/${nick}/hands`]: newHands });
+        return;
+      }
+      await advanceAfterHandAction(room, nick, code, myPlayer, newHands, activeIdx);
+    }
+
+    window.playerStand = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+      const myPlayer = room.players[nick];
+      const hands = myPlayer.hands || [];
+      const activeIdx = myPlayer.activeHandIndex || 0;
+      const activeHand = hands[activeIdx];
+      if (!activeHand || activeHand.status !== 'playing') return;
+
+      const newHands = hands.slice();
+      newHands[activeIdx] = { ...activeHand, status: 'stand' };
+      await advanceAfterHandAction(room, nick, code, myPlayer, newHands, activeIdx);
+    }
+
+    // Doblar: se pide exactamente una carta más y la mano se planta sola.
+    // Sólo disponible con las 2 cartas iniciales de la mano activa.
+    window.playerDouble = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+      const myPlayer = room.players[nick];
+      const hands = myPlayer.hands || [];
+      const activeIdx = myPlayer.activeHandIndex || 0;
+      const activeHand = hands[activeIdx];
+      if (!activeHand || activeHand.status !== 'playing') return;
+      if (!activeHand.cards || activeHand.cards.length !== 2) return;
+
+      const card = await drawCardFromDeck(code);
+      if (!card) return;
+
+      const newCards = [...activeHand.cards, card];
+      const score = calcScore(newCards);
+      const status = score > 21 ? 'bust' : 'stand';
+
+      const newHands = hands.slice();
+      newHands[activeIdx] = { ...activeHand, cards: newCards, status, doubled: true };
+
+      await advanceAfterHandAction(room, nick, code, myPlayer, newHands, activeIdx);
+    }
+
+    // Dividir: sólo con las 2 cartas iniciales y del mismo valor. Crea 2 manos
+    // independientes, cada una con una carta nueva, y no permite volver a dividir.
+    window.playerSplit = async function() {
+      const room = window.lastRoomSnapshot;
+      if (!room || !isMyTurn(room)) return;
+      const nick = window.currentProfile.nickname;
+      const code = window.activeRoomCode;
+      const myPlayer = room.players[nick];
+      const hands = myPlayer.hands || [];
+      if (hands.length !== 1) return;
+      const activeHand = hands[0];
+      if (!activeHand || activeHand.status !== 'playing') return;
+      if (!activeHand.cards || activeHand.cards.length !== 2) return;
+
+      const [c1, c2] = activeHand.cards;
+      if (cardValue(c1.rank) !== cardValue(c2.rank)) {
+        showToast("Necesitás dos cartas del mismo valor para dividir.", "warning");
+        return;
+      }
+
+      const cardA = await drawCardFromDeck(code);
+      const cardB = await drawCardFromDeck(code);
+      if (!cardA || !cardB) return;
+
+      const hand1Cards = [c1, cardA];
+      const hand2Cards = [c2, cardB];
+      const hand1 = { cards: hand1Cards, status: calcScore(hand1Cards) === 21 ? 'stand' : 'playing', doubled: false, split: true };
+      const hand2 = { cards: hand2Cards, status: calcScore(hand2Cards) === 21 ? 'stand' : 'playing', doubled: false, split: true };
+      const newHands = [hand1, hand2];
+
+      await advanceAfterHandAction(room, nick, code, myPlayer, newHands, -1);
     }
 
     async function hostValidateTurnContinuity(room) {
@@ -1142,29 +1237,84 @@
 
       Object.keys(playersSnap).forEach(nick => {
         const p = playersSnap[nick];
-        const pScore = calcScore(p.hand || []);
-        const pBJ = pScore === 21 && (p.hand || []).length === 2;
+        const hands = (p.hands && p.hands.length) ? p.hands : [{ cards: p.hand || [], status: p.status }];
         const dBJ = dealerScore === 21 && dealerHand.length === 2;
-
-        let outcome, text, tone;
-        if (p.status === 'bust') { outcome = 'lose'; text = '💥 Te pasaste'; tone = 'lose'; }
-        else if (dealerScore > 21) { outcome = 'win'; text = '🎉 El dealer se pasó'; tone = 'win'; }
-        else if (pBJ && dBJ) { outcome = 'push'; text = '🤝 Empate (Blackjack)'; tone = 'push'; }
-        else if (pBJ) { outcome = 'win'; text = '🂡 ¡Blackjack!'; tone = 'blackjack'; }
-        else if (dBJ) { outcome = 'lose'; text = '🂡 Blackjack del dealer'; tone = 'lose'; }
-        else if (pScore > dealerScore) { outcome = 'win'; text = `🎉 Ganaste ${pScore} vs ${dealerScore}`; tone = 'win'; }
-        else if (pScore < dealerScore) { outcome = 'lose'; text = `😔 Perdiste ${pScore} vs ${dealerScore}`; tone = 'lose'; }
-        else { outcome = 'push'; text = `🤝 Empate en ${pScore}`; tone = 'push'; }
-
         const stats = p.stats || { wins: 0, losses: 0, pushes: 0 };
-        if (outcome === 'win') stats.wins = (stats.wins || 0) + 1;
-        else if (outcome === 'lose') stats.losses = (stats.losses || 0) + 1;
-        else stats.pushes = (stats.pushes || 0) + 1;
+        const multi = hands.length > 1;
 
-        playerUpdates[nick] = { ...p, outcomeText: text, outcomeTone: tone, stats };
+        const resolvedHands = hands.map((h, idx) => {
+          const pScore = calcScore(h.cards || []);
+          const pBJ = h.status === 'blackjack';
+          const prefix = multi ? `Mano ${idx + 1}: ` : '';
+
+          let outcome, text, tone;
+          if (h.status === 'bust') { outcome = 'lose'; text = `${prefix}💥 Se pasó`; tone = 'lose'; }
+          else if (dealerScore > 21) { outcome = 'win'; text = `${prefix}🎉 El dealer se pasó`; tone = 'win'; }
+          else if (pBJ && dBJ) { outcome = 'push'; text = `${prefix}🤝 Empate (Blackjack)`; tone = 'push'; }
+          else if (pBJ) { outcome = 'win'; text = `${prefix}🂡 ¡Blackjack!`; tone = 'blackjack'; }
+          else if (dBJ) { outcome = 'lose'; text = `${prefix}🂡 Blackjack del dealer`; tone = 'lose'; }
+          else if (pScore > dealerScore) { outcome = 'win'; text = `${prefix}🎉 Ganó ${pScore} vs ${dealerScore}`; tone = 'win'; }
+          else if (pScore < dealerScore) { outcome = 'lose'; text = `${prefix}😔 Perdió ${pScore} vs ${dealerScore}`; tone = 'lose'; }
+          else { outcome = 'push'; text = `${prefix}🤝 Empate en ${pScore}`; tone = 'push'; }
+
+          if (outcome === 'win') stats.wins = (stats.wins || 0) + 1;
+          else if (outcome === 'lose') stats.losses = (stats.losses || 0) + 1;
+          else stats.pushes = (stats.pushes || 0) + 1;
+
+          return { ...h, outcomeText: text, outcomeTone: tone };
+        });
+
+        playerUpdates[nick] = { ...p, hands: resolvedHands, stats };
       });
 
       await update(ref(db, `${ROOMS_PATH}/${code}`), { phase: 'ended', players: playerUpdates });
+    }
+
+    // Muestra/oculta Doblar y Dividir según la mano activa, y la etiqueta de "mano X de Y"
+    function updateActionButtonsUI(room) {
+      const nick = window.currentProfile.nickname;
+      const me = room.players[nick];
+      const btnDouble = document.getElementById('btn-double');
+      const btnSplit = document.getElementById('btn-split');
+      const label = document.getElementById('active-hand-label');
+      if (!me || !btnDouble || !btnSplit || !label) return;
+
+      const hands = me.hands || [];
+      const activeIdx = me.activeHandIndex || 0;
+      const activeHand = hands[activeIdx];
+
+      if (hands.length > 1) {
+        label.innerText = `Jugando mano ${activeIdx + 1} de ${hands.length}`;
+        label.classList.remove('hidden');
+      } else {
+        label.classList.add('hidden');
+      }
+
+      const canAct = activeHand && activeHand.status === 'playing';
+      const twoCards = canAct && activeHand.cards && activeHand.cards.length === 2;
+      const canSplit = twoCards && hands.length === 1 &&
+        cardValue(activeHand.cards[0].rank) === cardValue(activeHand.cards[1].rank);
+
+      btnDouble.classList.toggle('hidden', !twoCards);
+      btnSplit.classList.toggle('hidden', !canSplit);
+    }
+
+    // Arma el mensaje de espera cuando el jugador ya terminó todas sus manos
+    function describeFinishedHands(me) {
+      const hands = me.hands || [];
+      if (hands.length > 1) {
+        const parts = hands.map((h, i) => {
+          if (h.status === 'bust') return `Mano ${i + 1}: 💥`;
+          if (h.status === 'blackjack') return `Mano ${i + 1}: 🂡`;
+          return `Mano ${i + 1}: ✋`;
+        });
+        return `${parts.join(' · ')} — Esperando al resto...`;
+      }
+      const h = hands[0];
+      if (!h) return 'Esperando al resto...';
+      if (h.status === 'bust') return '💥 Te pasaste. Esperando al resto...';
+      if (h.status === 'blackjack') return '🂡 ¡Blackjack! Esperando al resto...';
+      return '✋ Estás plantado. Esperando al resto...';
     }
 
     // ================== RENDER DE LA MESA ==================
@@ -1216,31 +1366,49 @@
     function renderSeat(nick, p, room) {
       const isMe = nick === window.currentProfile.nickname;
       const isTurn = room.phase === 'playing' && room.turnOrder && room.turnOrder[room.currentTurnIndex] === nick;
-      const hand = p.hand || [];
-      const prevLen = prevHandLengths[nick] || 0;
+      const hands = (p.hands && p.hands.length) ? p.hands : [{ cards: p.hand || [], status: p.status }];
+      const activeIdx = p.activeHandIndex || 0;
+      const multi = hands.length > 1;
 
-      // Retraso para secuenciar animación carta por carta en el inicio del turno
-      const cardsHtml = hand.map((c, i) => {
-        const newCardIndex = i - prevLen;
-        const delaySec = newCardIndex >= 0 ? (newCardIndex * 0.22) : 0;
-        return cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'small', delaySec);
+      const handsHtml = hands.map((h, idx) => {
+        const cards = h.cards || [];
+        const prevKey = `${nick}#${idx}`;
+        const prevLen = prevHandLengths[prevKey] || 0;
+
+        // Retraso para secuenciar animación carta por carta en el inicio del turno
+        const cardsHtml = cards.map((c, i) => {
+          const newCardIndex = i - prevLen;
+          const delaySec = newCardIndex >= 0 ? (newCardIndex * 0.22) : 0;
+          return cardHTML(c, false, i >= prevLen ? 'card-deal' : '', 'small', delaySec);
+        }).join('');
+        prevHandLengths[prevKey] = cards.length;
+
+        const score = calcScore(cards);
+        const isActiveHand = isTurn && idx === activeIdx;
+
+        let statusBadge = '';
+        if (room.phase === 'ended' && h.outcomeText) {
+          statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${TONE_CLASSES[h.outcomeTone] || TONE_CLASSES.push}">${h.outcomeText}</span>`;
+        } else if (h.status === 'bust') {
+          statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300">💥 Se pasó</span>`;
+        } else if (h.status === 'blackjack') {
+          statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/40 text-blue-300">🂡 Blackjack</span>`;
+        } else if (h.status === 'stand') {
+          statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">✋ Plantado</span>`;
+        } else if (isActiveHand) {
+          statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 animate-pulse">🎯 Jugando...</span>`;
+        }
+
+        return `
+          <div class="${multi ? `rounded-xl p-1.5 ${isActiveHand ? 'bg-amber-400/5 ring-1 ring-amber-400/40' : ''}` : ''}">
+            ${multi ? `<div class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Mano ${idx + 1}${h.doubled ? ' · x2' : ''}</div>` : ''}
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <div class="flex flex-wrap gap-1.5 min-h-[3.75rem]">${cardsHtml}</div>
+              <span class="text-xs font-extrabold text-white bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-lg shrink-0">${score}</span>
+            </div>
+            <div class="flex justify-end">${statusBadge}</div>
+          </div>`;
       }).join('');
-
-      prevHandLengths[nick] = hand.length;
-      const score = calcScore(hand);
-
-      let statusBadge = '';
-      if (room.phase === 'ended' && p.outcomeText) {
-        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${TONE_CLASSES[p.outcomeTone] || TONE_CLASSES.push}">${p.outcomeText}</span>`;
-      } else if (p.status === 'bust') {
-        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300">💥 Se pasó</span>`;
-      } else if (p.status === 'blackjack') {
-        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/40 text-blue-300">🂡 Blackjack</span>`;
-      } else if (p.status === 'stand') {
-        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">✋ Plantado</span>`;
-      } else if (isTurn) {
-        statusBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 animate-pulse">🎯 Jugando...</span>`;
-      }
 
       const stats = p.stats || { wins: 0, losses: 0, pushes: 0 };
 
@@ -1252,13 +1420,9 @@
               <span class="text-xs sm:text-sm font-bold text-white truncate">${nick}${isMe ? ' <span class="text-slate-500 font-normal">(Vos)</span>' : ''}</span>
               ${p.isHost ? '<span class="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full shrink-0">HOST</span>' : ''}
             </div>
-            <span class="text-xs font-extrabold text-white bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-lg shrink-0">${score}</span>
-          </div>
-          <div class="flex flex-wrap gap-1.5 min-h-[4.5rem] mb-2">${cardsHtml}</div>
-          <div class="flex items-center justify-between gap-2">
             <span class="text-[9px] text-slate-500 shrink-0">V:${stats.wins || 0} D:${stats.losses || 0} E:${stats.pushes || 0}</span>
-            ${statusBadge}
           </div>
+          <div class="flex flex-col gap-1.5 mb-1">${handsHtml}</div>
         </div>`;
     }
 
@@ -1286,12 +1450,11 @@
         hostEndControls.classList.add('hidden');
         if (myTurn) {
           waitPanel.classList.add('hidden');
+          updateActionButtonsUI(room);
         } else {
           const me = room.players[window.currentProfile.nickname];
           let waitMsg = 'Esperando tu turno...';
-          if (me && me.status === 'bust') waitMsg = '💥 Te pasaste. Esperando al resto...';
-          else if (me && me.status === 'blackjack') waitMsg = '🂡 ¡Blackjack! Esperando al resto...';
-          else if (me && me.status === 'stand') waitMsg = '✋ Estás plantado. Esperando al resto...';
+          if (me && me.status === 'done') waitMsg = describeFinishedHands(me);
           else {
             const turnNick = room.turnOrder ? room.turnOrder[room.currentTurnIndex] : null;
             if (turnNick) waitMsg = `Turno de ${turnNick}...`;
