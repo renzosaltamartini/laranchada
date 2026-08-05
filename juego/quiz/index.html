@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#050914] text-slate-100 selection:bg-blue-500 selection:text-slate-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Quiz · LaRanchada Web</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #050914;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(59,130,246,0.20), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 10%, rgba(56,189,248,0.14), transparent),
+        radial-gradient(ellipse 70% 50% at 50% 120%, rgba(37,99,235,0.16), transparent);
+      background-attachment: fixed;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-radial-gradient(circle at 0 0, rgba(255,255,255,.015) 0, rgba(255,255,255,.015) 1px, transparent 2px, transparent 4px);
+      opacity: .7;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 999px; }
+    .glow-card {
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col p-4 sm:p-6 lg:p-8 relative">
+
+  <!-- Header -->
+  <header class="max-w-3xl w-full mx-auto flex justify-between items-center pb-4 sm:pb-6 border-b border-slate-800">
+    <a href="/" class="flex items-center gap-2 text-slate-400 hover:text-white transition group">
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      <span class="text-[10px] sm:text-xs font-semibold tracking-wider uppercase">Inicio</span>
+    </a>
+    <button onclick="resetAll()" class="text-[11px] sm:text-xs px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 rounded-lg transition">
+      🗑️ Reiniciar
+    </button>
+  </header>
+
+  <main class="max-w-3xl w-full mx-auto flex-1 py-6 sm:py-10 space-y-6">
+
+    <!-- ========== PANTALLA 1: PARTICIPANTES ========== -->
+    <div id="screen-players">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+          </span>
+          Quiz
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Quiz de la Ranchada</h1>
+        <p class="mt-1 text-xs sm:text-sm text-slate-500">Primero agregá a los que van a jugar</p>
+      </div>
+
+      <section class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold text-white">Participantes</h2>
+          <button onclick="toggleEditPeople()" class="text-xs text-blue-400 hover:text-blue-300 font-medium">+ Agregar</button>
+        </div>
+        <div id="people-chips" class="flex flex-wrap gap-2 min-h-[32px]"></div>
+        <p id="no-people-msg" class="text-center text-slate-500 text-sm py-3 hidden">Todavía no hay nadie.</p>
+        <div id="edit-people" class="hidden mt-3 space-y-2">
+          <input id="new-person" type="text" placeholder="Nombre..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500" autocomplete="off">
+          <div class="flex gap-2">
+            <button onclick="addPerson()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl">Agregar</button>
+            <button onclick="toggleEditPeople()" class="px-4 py-2.5 bg-slate-800 text-slate-300 text-sm rounded-xl">Listo</button>
+          </div>
+        </div>
+      </section>
+
+      <button id="btn-go-categories" onclick="goToCategories()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+        Elegir quiz →
+      </button>
+    </div>
+
+    <!-- ========== PANTALLA 2: CATEGORÍAS ========== -->
+    <div id="screen-categories" class="hidden">
+      <div class="text-center mb-6">
+        <button onclick="goToPlayers()" class="text-xs text-slate-500 hover:text-slate-300 mb-3">← Volver</button>
+        <h1 class="text-2xl font-extrabold text-white">Elegí el quiz</h1>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button onclick="startQuiz('banderas')" class="glow-card bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-2xl p-5 text-left transition active:scale-[0.98]">
+          <div class="text-2xl mb-2">🏳️</div>
+          <h3 class="font-bold text-white">Adivinar la bandera</h3>
+          <p class="text-xs text-slate-400 mt-1">¿De qué país es esta bandera?</p>
+        </button>
+
+        <button onclick="startQuiz('cultura')" class="glow-card bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-5 text-left transition active:scale-[0.98]">
+          <div class="text-2xl mb-2">🧠</div>
+          <h3 class="font-bold text-white">Cultura general</h3>
+          <p class="text-xs text-slate-400 mt-1">Preguntas de todo un poco</p>
+        </button>
+
+        <button onclick="showFutbolLevels()" class="glow-card bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 text-left transition active:scale-[0.98]">
+          <div class="text-2xl mb-2">⚽</div>
+          <h3 class="font-bold text-white">Fútbol</h3>
+          <p class="text-xs text-slate-400 mt-1">Fácil · Medio · Difícil · Muy difícil</p>
+        </button>
+
+        <button onclick="startQuiz('argentina')" class="glow-card bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-5 text-left transition active:scale-[0.98]">
+          <div class="text-2xl mb-2">🇦🇷</div>
+          <h3 class="font-bold text-white">Cultura Argentina</h3>
+          <p class="text-xs text-slate-400 mt-1">Historia, memes y datos criollos</p>
+        </button>
+      </div>
+
+      <!-- Niveles de fútbol -->
+      <div id="futbol-levels" class="hidden mt-4 space-y-2">
+        <p class="text-xs text-slate-400 mb-2">Elegí la dificultad:</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="startQuiz('futbol', 'facil')" class="py-3 bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 rounded-xl font-semibold text-sm">Fácil</button>
+          <button onclick="startQuiz('futbol', 'medio')" class="py-3 bg-blue-600/20 border border-blue-500/40 text-blue-300 rounded-xl font-semibold text-sm">Medio</button>
+          <button onclick="startQuiz('futbol', 'dificil')" class="py-3 bg-amber-600/20 border border-amber-500/40 text-amber-300 rounded-xl font-semibold text-sm">Difícil</button>
+          <button onclick="startQuiz('futbol', 'muy_dificil')" class="py-3 bg-red-600/20 border border-red-500/40 text-red-300 rounded-xl font-semibold text-sm">Muy difícil</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PANTALLA 3: JUGANDO ========== -->
+    <div id="screen-quiz" class="hidden">
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="goToCategories()" class="text-xs text-slate-500 hover:text-slate-300">← Salir</button>
+        <span id="progress" class="text-xs text-slate-400"></span>
+      </div>
+
+      <!-- Pregunta -->
+      <div class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-5 mb-4">
+        <div id="flag-display" class="text-6xl text-center mb-4 hidden"></div>
+        <h2 id="question-text" class="text-lg sm:text-xl font-bold text-white text-center leading-snug"></h2>
+      </div>
+
+      <!-- Opciones -->
+      <div id="options" class="space-y-3 mb-6"></div>
+
+      <!-- Después de responder: dar punto -->
+      <div id="point-section" class="hidden">
+        <p class="text-sm text-slate-400 mb-3 text-center">¿Quién acertó?</p>
+        <div id="point-buttons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
+        <button onclick="nextQuestion()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl">
+          Siguiente pregunta →
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== PANTALLA 4: RESULTADOS ========== -->
+    <div id="screen-results" class="hidden">
+      <div class="text-center mb-6">
+        <div class="text-4xl mb-3">🏆</div>
+        <h1 class="text-2xl font-extrabold text-white">Resultados</h1>
+        <p class="text-sm text-slate-400 mt-1">Ranking de la ranchada</p>
+      </div>
+
+      <div id="ranking" class="space-y-3 mb-6"></div>
+
+      <div class="flex gap-3">
+        <button onclick="goToCategories()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl">
+          Otro quiz
+        </button>
+        <button onclick="copyResults()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl">
+          📋 Copiar
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="max-w-3xl w-full mx-auto pt-4 border-t border-slate-800 text-center">
+    <p class="text-[10px] sm:text-xs text-slate-600">LaRanchada Web · Hecho con 💙 por Perico</p>
+  </footer>
+
+  <script>
+    // ========== DATOS ==========
+    let people = [];
+    let scores = {};
+    let currentCategory = null;
+    let currentDifficulty = null;
+    let questions = [];
+    let currentIndex = 0;
+    let answered = false;
+
+    const QUESTIONS = {
+      banderas: [
+        { flag: "🇦🇷", question: "¿De qué país es esta bandera?", options: ["Uruguay", "Argentina", "Chile", "Paraguay"], correct: 1 },
+        { flag: "🇧🇷", question: "¿De qué país es esta bandera?", options: ["Brasil", "Colombia", "Portugal", "México"], correct: 0 },
+        { flag: "🇫🇷", question: "¿De qué país es esta bandera?", options: ["Holanda", "Rusia", "Francia", "Italia"], correct: 2 },
+        { flag: "🇯🇵", question: "¿De qué país es esta bandera?", options: ["China", "Corea del Sur", "Japón", "Vietnam"], correct: 2 },
+        { flag: "🇮🇹", question: "¿De qué país es esta bandera?", options: ["México", "Italia", "Irlanda", "India"], correct: 1 },
+        { flag: "🇩🇪", question: "¿De qué país es esta bandera?", options: ["Bélgica", "Alemania", "España", "Austria"], correct: 1 },
+        { flag: "🇬🇧", question: "¿De qué país es esta bandera?", options: ["Inglaterra", "Australia", "Nueva Zelanda", "EE.UU."], correct: 0 },
+        { flag: "🇪🇸", question: "¿De qué país es esta bandera?", options: ["España", "Portugal", "Colombia", "Venezuela"], correct: 0 },
+        { flag: "🇲🇽", question: "¿De qué país es esta bandera?", options: ["Italia", "México", "Irlanda", "India"], correct: 1 },
+        { flag: "🇨🇦", question: "¿De qué país es esta bandera?", options: ["Canadá", "Perú", "Austria", "Líbano"], correct: 0 },
+        { flag: "🇺🇾", question: "¿De qué país es esta bandera?", options: ["Argentina", "Uruguay", "Grecia", "Israel"], correct: 1 },
+        { flag: "🇨🇱", question: "¿De qué país es esta bandera?", options: ["Cuba", "Puerto Rico", "Chile", "Panamá"], correct: 2 },
+      ],
+
+      cultura: [
+        { question: "¿Cuál es el planeta más grande del sistema solar?", options: ["Saturno", "Júpiter", "Neptuno", "Urano"], correct: 1 },
+        { question: "¿Quién pintó la Mona Lisa?", options: ["Van Gogh", "Picasso", "Leonardo da Vinci", "Miguel Ángel"], correct: 2 },
+        { question: "¿En qué continente está Egipto?", options: ["Asia", "Europa", "África", "América"], correct: 2 },
+        { question: "¿Cuántos lados tiene un hexágono?", options: ["5", "6", "7", "8"], correct: 1 },
+        { question: "¿Cuál es el océano más grande?", options: ["Atlántico", "Índico", "Pacífico", "Ártico"], correct: 2 },
+        { question: "¿En qué año llegó el hombre a la Luna?", options: ["1965", "1969", "1972", "1961"], correct: 1 },
+        { question: "¿Quién escribió 'Don Quijote de la Mancha'?", options: ["Shakespeare", "Cervantes", "Borges", "García Márquez"], correct: 1 },
+        { question: "¿Cuál es el metal más abundante en la corteza terrestre?", options: ["Hierro", "Aluminio", "Cobre", "Oro"], correct: 1 },
+        { question: "¿Cuántos huesos tiene el cuerpo humano adulto?", options: ["206", "198", "214", "180"], correct: 0 },
+        { question: "¿Cuál es la capital de Australia?", options: ["Sídney", "Melbourne", "Canberra", "Perth"], correct: 2 },
+      ],
+
+      argentina: [
+        { question: "¿En qué año fue la Revolución de Mayo?", options: ["1810", "1816", "1806", "1820"], correct: 0 },
+        { question: "¿Quién escribió el Martín Fierro?", options: ["Borges", "Sarmiento", "José Hernández", "Lugones"], correct: 2 },
+        { question: "¿Cuál es el baile nacional de Argentina?", options: ["Cumbia", "Tango", "Chacarera", "Zamba"], correct: 1 },
+        { question: "¿Qué significa 'che'?", options: ["Hola", "Una forma de llamar la atención / 'vos'", "Chau", "Gracias"], correct: 1 },
+        { question: "¿En qué provincia está el Cerro Aconcagua?", options: ["Neuquén", "Mendoza", "San Juan", "Salta"], correct: 1 },
+        { question: "¿Quién fue el primer presidente de Argentina?", options: ["San Martín", "Belgrano", "Bernardino Rivadavia", "Mitre"], correct: 2 },
+        { question: "¿Qué se celebra el 9 de Julio?", options: ["Revolución de Mayo", "Día de la Independencia", "Día del Trabajador", "Malvinas"], correct: 1 },
+        { question: "¿Cuál es el postre más típico argentino?", options: ["Flan", "Dulce de leche", "Alfajor", "Todos los anteriores"], correct: 3 },
+        { question: "¿Cómo se llama el estadio de Boca Juniors?", options: ["El Monumental", "La Bombonera", "El Cilindro", "El Gasómetro"], correct: 1 },
+        { question: "¿Qué provincia es conocida por sus cataratas?", options: ["Corrientes", "Misiones", "Chaco", "Formosa"], correct: 1 },
+      ],
+
+      futbol: {
+        facil: [
+          { question: "¿Quién es el máximo goleador histórico de la Selección Argentina?", options: ["Batistuta", "Messi", "Maradona", "Agüero"], correct: 1 },
+          { question: "¿En qué año ganó Argentina el Mundial de Qatar?", options: ["2018", "2022", "2014", "2026"], correct: 1 },
+          { question: "¿Qué número usaba Maradona en la Selección?", options: ["7", "9", "10", "11"], correct: 2 },
+          { question: "¿Contra qué país se jugó la final del Mundial 2022?", options: ["Francia", "Croacia", "Brasil", "Países Bajos"], correct: 0 },
+          { question: "¿Cómo se llama el estadio de River Plate?", options: ["La Bombonera", "El Monumental", "El Cilindro", "El Nuevo Gasómetro"], correct: 1 },
+          { question: "¿Quién atajó el penal decisivo en la final de 2022?", options: ["Armani", "Martínez (Dibu)", "Romero", "Andújar"], correct: 1 },
+          { question: "¿Cuántas Copas del Mundo tiene Argentina?", options: ["2", "3", "4", "1"], correct: 1 },
+          { question: "¿En qué club europeo se retiró Messi? (2025)", options: ["PSG", "Barcelona", "Inter Miami", "Manchester City"], correct: 2 },
+        ],
+        medio: [
+          { question: "¿Quién hizo el gol de la victoria en la final del Mundial 86?", options: ["Maradona", "Burruchaga", "Valdano", "Brown"], correct: 1 },
+          { question: "¿En qué año Argentina ganó su primera Copa América del siglo XXI?", options: ["2004", "2007", "2021", "2015"], correct: 2 },
+          { question: "¿Quién es el máximo goleador histórico de la Bombonera?", options: ["Martín Palermo", "Riquelme", "Guillermo Barros Schelotto", "Carlos Tévez"], correct: 0 },
+          { question: "¿Contra quién se jugó la final de la Copa América 2021?", options: ["Brasil", "Colombia", "Chile", "Uruguay"], correct: 0 },
+          { question: "¿Qué jugador argentino ganó el Balón de Oro antes que Messi?", options: ["Kempes", "Maradona", "Di Stéfano", "Ninguno"], correct: 3 },
+          { question: "¿En qué club jugaba Messi cuando debutó en la Selección?", options: ["Newell's", "Barcelona", "River", "PSG"], correct: 1 },
+          { question: "¿Quién dirigió a Argentina en el Mundial 2014?", options: ["Basile", "Maradona", "Sabella", "Martino"], correct: 2 },
+          { question: "¿Cuántos goles hizo Messi en el Mundial 2022?", options: ["5", "7", "6", "8"], correct: 1 },
+        ],
+        dificil: [
+          { question: "¿Quién fue el arquero titular de Argentina en el Mundial 1978?", options: ["Fillol", "Goycochea", "Pumpido", "Caranta"], correct: 0 },
+          { question: "¿En qué minuto Maradona hizo la 'Mano de Dios'?", options: ["51'", "55'", "60'", "45'"], correct: 0 },
+          { question: "¿Quién marcó el gol del empate de Argentina en la final de 1990?", options: ["Caniggia", "Burruchaga", "Maradona", "No hubo gol argentino"], correct: 3 },
+          { question: "¿Qué número usaba Batistuta en la Roma?", options: ["9", "18", "19", "10"], correct: 0 },
+          { question: "¿Quién fue el goleador de Argentina en el Mundial 1978?", options: ["Kempes", "Luque", "Bertoni", "Passarella"], correct: 0 },
+          { question: "¿En qué estadio se jugó la final del Mundial 1986?", options: ["Azteca", "Monumental", "Maracaná", "Wembley"], correct: 0 },
+          { question: "¿Quién le dio el pase a Messi en el primer gol de la final 2022?", options: ["Di María", "Álvarez", "Fernández", "De Paul"], correct: 0 },
+          { question: "¿Cuántas finales de Champions perdió Messi con el Barcelona?", options: ["1", "2", "3", "0"], correct: 0 },
+        ],
+        muy_dificil: [
+          { question: "¿Quién fue el técnico de Argentina en el Mundial 1930?", options: ["Olazar", "Stábile", "Pescia", "No tenía técnico fijo"], correct: 0 },
+          { question: "¿En qué club debutó profesionalmente Maradona?", options: ["Argentinos Juniors", "Boca", "Newell's", "Vélez"], correct: 0 },
+          { question: "¿Quién marcó el gol número 1000 de la historia de los Mundiales? (fue argentino)", options: ["Batistuta", "Kempes", "Maradona", "Caniggia"], correct: 0 },
+          { question: "¿Cuántos partidos consecutivos ganó Argentina en el ciclo Scaloni hasta antes de Qatar?", options: ["28", "31", "35", "36"], correct: 3 },
+          { question: "¿Quién fue el primer argentino en jugar en el Real Madrid?", options: ["Di Stéfano", "Rial", "Héctor Rial", "Pedernera"], correct: 0 },
+          { question: "¿En qué año River le ganó la final de la Libertadores a Boca en Madrid?", options: ["2017", "2018", "2019", "2015"], correct: 1 },
+          { question: "¿Quién atajó el penal de Higuaín en la final de Champions 2015?", options: ["Neuer", "Buffon", "Navas", "Oblak"], correct: 0 },
+          { question: "¿Qué jugador argentino tiene más títulos de liga en Europa?", options: ["Messi", "Di María", "Higuaín", "Mascherano"], correct: 0 },
+        ]
+      }
+    };
+
+    // ========== PARTICIPANTES ==========
+    function loadPeople() {
+      const saved = localStorage.getItem("ranchada_quiz_people");
+      people = saved ? JSON.parse(saved) : [];
+      renderPeople();
+    }
+
+    function savePeople() {
+      localStorage.setItem("ranchada_quiz_people", JSON.stringify(people));
+    }
+
+    function renderPeople() {
+      const chips = document.getElementById("people-chips");
+      const noMsg = document.getElementById("no-people-msg");
+      const btn = document.getElementById("btn-go-categories");
+
+      if (people.length === 0) {
+        chips.innerHTML = "";
+        noMsg.classList.remove("hidden");
+        btn.disabled = true;
+      } else {
+        noMsg.classList.add("hidden");
+        chips.innerHTML = people.map(p => `
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-xs font-medium">
+            ${p}
+            <button onclick="removePerson('${p}')" class="text-slate-500 hover:text-red-400">×</button>
+          </span>
+        `).join("");
+        btn.disabled = false;
+      }
+    }
+
+    function addPerson() {
+      const input = document.getElementById("new-person");
+      const name = input.value.trim();
+      if (!name || people.includes(name)) return;
+      people.push(name);
+      input.value = "";
+      input.focus();
+      savePeople();
+      renderPeople();
+    }
+
+    function removePerson(name) {
+      people = people.filter(p => p !== name);
+      savePeople();
+      renderPeople();
+    }
+
+    function toggleEditPeople() {
+      const panel = document.getElementById("edit-people");
+      panel.classList.toggle("hidden");
+      if (!panel.classList.contains("hidden")) document.getElementById("new-person").focus();
+    }
+
+    // ========== NAVEGACIÓN ==========
+    function goToPlayers() {
+      hideAll();
+      document.getElementById("screen-players").classList.remove("hidden");
+    }
+
+    function goToCategories() {
+      hideAll();
+      document.getElementById("screen-categories").classList.remove("hidden");
+      document.getElementById("futbol-levels").classList.add("hidden");
+    }
+
+    function showFutbolLevels() {
+      document.getElementById("futbol-levels").classList.toggle("hidden");
+    }
+
+    function hideAll() {
+      ["screen-players", "screen-categories", "screen-quiz", "screen-results"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+    }
+
+    // ========== QUIZ ==========
+    function startQuiz(category, difficulty = null) {
+      currentCategory = category;
+      currentDifficulty = difficulty;
+      currentIndex = 0;
+      answered = false;
+
+      // Reset scores
+      scores = {};
+      people.forEach(p => scores[p] = 0);
+
+      // Cargar preguntas
+      if (category === "futbol") {
+        questions = [...QUESTIONS.futbol[difficulty]];
+      } else {
+        questions = [...QUESTIONS[category]];
+      }
+
+      // Mezclar
+      questions = shuffle(questions);
+
+      hideAll();
+      document.getElementById("screen-quiz").classList.remove("hidden");
+      showQuestion();
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showQuestion() {
+      if (currentIndex >= questions.length) {
+        showResults();
+        return;
+      }
+
+      answered = false;
+      const q = questions[currentIndex];
+
+      document.getElementById("progress").textContent = `Pregunta ${currentIndex + 1} de ${questions.length}`;
+      document.getElementById("question-text").textContent = q.question;
+
+      const flagEl = document.getElementById("flag-display");
+      if (q.flag) {
+        flagEl.textContent = q.flag;
+        flagEl.classList.remove("hidden");
+      } else {
+        flagEl.classList.add("hidden");
+      }
+
+      const optionsEl = document.getElementById("options");
+      optionsEl.innerHTML = q.options.map((opt, i) => `
+        <button onclick="selectAnswer(${i})" class="option-btn w-full text-left px-4 py-3.5 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl transition text-sm font-medium">
+          <span class="text-slate-500 mr-2">${String.fromCharCode(65 + i)}.</span> ${opt}
+        </button>
+      `).join("");
+
+      document.getElementById("point-section").classList.add("hidden");
+    }
+
+    function selectAnswer(index) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentIndex];
+      const buttons = document.querySelectorAll(".option-btn");
+
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.correct) {
+          btn.classList.add("border-emerald-500", "bg-emerald-500/10", "text-emerald-300");
+        } else if (i === index && i !== q.correct) {
+          btn.classList.add("border-red-500", "bg-red-500/10", "text-red-300");
+        }
+      });
+
+      // Mostrar sección para dar punto
+      const pointBtns = document.getElementById("point-buttons");
+      pointBtns.innerHTML = people.map(p => `
+        <button onclick="givePoint('${p}')" class="px-4 py-2 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-xl text-sm font-medium transition">
+          ${p}
+        </button>
+      `).join("") + `
+        <button onclick="givePoint(null)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition">
+          Nadie
+        </button>
+      `;
+
+      document.getElementById("point-section").classList.remove("hidden");
+    }
+
+    function givePoint(player) {
+      if (player) scores[player]++;
+      // Deshabilitar botones de punto para evitar doble click
+      document.querySelectorAll("#point-buttons button").forEach(b => b.disabled = true);
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      showQuestion();
+    }
+
+    function showResults() {
+      hideAll();
+      document.getElementById("screen-results").classList.remove("hidden");
+
+      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+
+      document.getElementById("ranking").innerHTML = sorted.map(([name, pts], i) => {
+        const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`;
+        return `
+          <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800 rounded-2xl px-4 py-3">
+            <div class="flex items-center gap-3">
+              <span class="text-lg w-8">${medal}</span>
+              <span class="font-semibold text-white">${name}</span>
+            </div>
+            <span class="text-emerald-400 font-bold">${pts} pts</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function copyResults() {
+      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      let text = "🏆 Resultados del Quiz - La Ranchada\n";
+      text += "🌐 https://laranchada.vercel.app\n\n";
+      sorted.forEach(([name, pts], i) => {
+        const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`;
+        text += `${medal} ${name}: ${pts} pts\n`;
+      });
+
+      navigator.clipboard.writeText(text).then(() => alert("¡Resultados copiados!")).catch(() => prompt("Copiá:", text));
+    }
+
+    function resetAll() {
+      if (!confirm("¿Reiniciar todo?")) return;
+      people = [];
+      scores = {};
+      savePeople();
+      renderPeople();
+      goToPlayers();
+    }
+
+    // Enter
+    document.getElementById("new-person").addEventListener("keydown", e => {
+      if (e.key === "Enter") addPerson();
+    });
+
+    loadPeople();
+  </script>
+</body>
+</html>
