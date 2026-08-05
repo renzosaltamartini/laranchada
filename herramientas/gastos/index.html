@@ -99,11 +99,12 @@
     <section class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
       <h2 class="text-sm font-bold text-white">Agregar gasto</h2>
       <input id="expense-desc" type="text" placeholder="¿Qué se compró? (ej: Asado, Birras, Uber)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+      <input id="expense-alias" type="text" placeholder="¿Alias?" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
       <div class="grid grid-cols-2 gap-3">
         <input id="expense-amount" type="number" inputmode="decimal" placeholder="Monto $" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
         <select id="expense-payer" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500">
           <option value="" disabled selected>¿Quién pagó?</option>
-        </select>
+        </select>        
       </div>
       <button id="add-expense-btn" onclick="addExpense()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
         + Agregar gasto
@@ -289,6 +290,7 @@
       }
 
       const desc = document.getElementById("expense-desc").value.trim();
+      const alias = document.getElementById("expense-alias").value.trim();
       const amount = parseFloat(document.getElementById("expense-amount").value);
       const payer = document.getElementById("expense-payer").value;
 
@@ -296,13 +298,18 @@
         alert("Completá la descripción y un monto válido");
         return;
       }
+      if (!alias) {
+        alert("Completá el alias");
+        return;
+      }
       if (!payer) {
         alert("Elegí quién pagó");
         return;
       }
 
-      expenses.push({ desc, amount, payer });
+      expenses.push({ desc, alias, amount, payer });
       document.getElementById("expense-desc").value = "";
+      document.getElementById("expense-alias").value = "";
       document.getElementById("expense-amount").value = "";
       save();
       render();
@@ -399,9 +406,11 @@
 
       expenses.forEach(e => {
         text += `➡️ ¿Qué se compró?:\n`;
-        text += `**${e.desc}**\n`;
+        text += `*${e.desc}*\n`;
         text += `➡️ ¿Quién pagó?:\n`;
-        text += `**${e.payer}** ($${e.amount.toLocaleString("es-AR")})\n\n`;
+        text += `*${e.payer}* ($${e.amount.toLocaleString("es-AR")})\n`;
+        text += `➡️ ¿Alias?:\n`;
+        text += `*${e.alias}*\n\n`;
       });
 
       text += "💰 División de gastos:\n";
@@ -409,7 +418,7 @@
         text += "Todo saldado 🎉";
       } else {
         settlements.forEach(s => {
-          text += `${s.from} le debe $${s.amount.toLocaleString("es-AR")} a ${s.to}\n`;
+          text += `${s.from} le debe *💸 $${s.amount.toLocaleString("es-AR")}* a ${s.to}\n`;
         });
       }
 
@@ -431,6 +440,9 @@
     });
     document.getElementById("expense-desc").addEventListener("keydown", e => {
       if (e.key === "Enter") document.getElementById("expense-amount").focus();
+    });
+    document.getElementById("expense-alias").addEventListener("keydown", e => {
+      if (e.key === "Enter") addExpense();
     });
 
     load();
