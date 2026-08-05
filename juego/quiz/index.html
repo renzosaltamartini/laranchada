@@ -203,24 +203,32 @@
     };
 
     // ========== CARGAR JSONs ==========
-    async function loadAllQuestions() {
-      try {
-        const [banderas, cultura, argentina, futbol] = await Promise.all([
-          fetch("./banderas.json").then(r => r.json()),
-          fetch("./cultura.json").then(r => r.json()),
-          fetch("./argentina.json").then(r => r.json()),
-          fetch("./futbol.json").then(r => r.json())
-        ]);
+async function loadAllQuestions() {
+  try {
+    const [banderasRes, culturaRes, argentinaRes, futbolRes] = await Promise.all([
+      fetch("./banderas.json").then(r => r.json()),
+      fetch("./cultura.json").then(r => r.json()),
+      fetch("./argentina.json").then(r => r.json()),
+      fetch("./futbol.json").then(r => r.json())
+    ]);
 
-        DATA.banderas = banderas;
-        DATA.cultura = cultura;
-        DATA.argentina = argentina;
-        DATA.futbol = futbol;
-      } catch (err) {
-        console.error("Error cargando preguntas:", err);
-        alert("No se pudieron cargar las preguntas. Revisá que los .json estén en la misma carpeta.");
-      }
-    }
+    // Extraemos el array correcto de cada archivo
+    DATA.banderas = banderasRes.banderas || banderasRes;
+    DATA.cultura = culturaRes.cultura || culturaRes;
+    DATA.argentina = argentinaRes.cultura_argentina || argentinaRes.argentina || argentinaRes;
+    DATA.futbol = futbolRes.futbol || futbolRes;
+
+    console.log("Preguntas cargadas:", {
+      banderas: DATA.banderas.length,
+      cultura: DATA.cultura.length,
+      argentina: DATA.argentina.length,
+      futbol: DATA.futbol
+    });
+  } catch (err) {
+    console.error("Error cargando preguntas:", err);
+    alert("No se pudieron cargar las preguntas. Revisá la consola (F12).");
+  }
+}
 
     // ========== PARTICIPANTES ==========
     function loadPeople() {
