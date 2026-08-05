@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Inicio · LaRanchada Web</title>
 
+  <!-- CDN Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fuente Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,21 +23,39 @@
         radial-gradient(ellipse 70% 50% at 50% 120%, rgba(37,99,235,0.16), transparent);
       background-attachment: fixed;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: repeating-radial-gradient(circle at 0 0, rgba(255,255,255,.015) 0, rgba(255,255,255,.015) 1px, transparent 2px, transparent 4px);
-      opacity: .7;
-    }
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        repeating-radial-gradient(
+            circle at 0 0,
+            rgba(255,255,255,.015) 0,
+            rgba(255,255,255,.015) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+
+    opacity: .7;
+}
+
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.55); }
+
     .glow-card {
       box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 20px 60px -20px rgba(37,99,235,0.35);
     }
-    .game-btn { position: relative; overflow: hidden; }
+
+    /* Efecto de brillo que recorre los botones/tarjetas al pasar el mouse */
+    .game-btn {
+      position: relative;
+      overflow: hidden;
+    }
     .game-btn::before {
       content: '';
       position: absolute;
@@ -43,19 +64,25 @@
       transform: translateX(-100%);
       transition: transform 0.6s ease;
     }
-    .game-btn:hover::before { transform: translateX(100%); }
+    .game-btn:hover::before {
+      transform: translateX(100%);
+    }
+
     @keyframes floatIn {
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .float-in { animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .float-in {
+      animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
   </style>
 </head>
 <body class="min-h-full flex flex-col justify-between p-4 sm:p-6 lg:p-8 relative">
 
-  <!-- MODAL MIEMBROS -->
+  <!-- MODAL DE MIEMBROS DE LA RANCHADA -->
   <div id="members-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
+
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div>
           <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5">
@@ -63,37 +90,19 @@
           </h3>
           <p class="text-xs sm:text-sm text-slate-400 mt-1">Los 13 pibes de siempre</p>
         </div>
-        <button onclick="closeMembersModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">✕</button>
+        <button onclick="closeMembersModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">
+          ✕
+        </button>
       </div>
-      <div id="members-grid" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2"></div>
-      <div class="pt-3 border-t border-slate-800 flex justify-end">
-        <button onclick="closeMembersModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">Cerrar</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- MODAL LOGS -->
-  <div id="logs-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div>
-          <h3 class="text-lg sm:text-2xl font-bold text-white flex items-center gap-2.5">
-            <span>📋</span> Logs de visitas
-          </h3>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">Historial de entradas a la web</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="clearAllLogs()" title="Borrar todos los logs" class="w-10 h-10 flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-2xl transition text-base">
-            🗑️
-          </button>
-          <button onclick="closeLogsModal()" class="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-2xl transition text-base font-bold">✕</button>
-        </div>
+      <div id="members-grid" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2">
+        <!-- Generado dinámicamente -->
       </div>
-      <div id="logs-list" class="flex flex-col gap-3 overflow-y-auto pr-2 my-2 min-h-[120px]">
-        <p class="text-center text-slate-500 text-sm py-6">Cargando logs...</p>
-      </div>
+
       <div class="pt-3 border-t border-slate-800 flex justify-end">
-        <button onclick="closeLogsModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">Cerrar</button>
+        <button onclick="closeMembersModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition">
+          Cerrar
+        </button>
       </div>
     </div>
   </div>
@@ -106,10 +115,6 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <button onclick="openLogsModal()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white hover:border-slate-700 transition active:scale-95 flex items-center gap-1.5">
-        <span>📋</span>
-        <span>Logs</span>
-      </button>
       <button onclick="openMembersModal()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-slate-900 border border-slate-800 rounded-lg text-slate-300 hover:text-white hover:border-slate-700 transition active:scale-95 flex items-center gap-1.5">
         <span>🤗</span>
         <span>¿Miembros?</span>
@@ -119,6 +124,8 @@
 
   <!-- Contenido Principal -->
   <main class="max-w-4xl w-full mx-auto my-auto py-10 sm:py-14">
+
+    <!-- Branding -->
     <div class="text-center mb-10 sm:mb-14 float-in">
       <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-blue-300 bg-blue-500/10 border border-blue-500/25 rounded-full shadow-[0_0_20px_-6px_rgba(59,130,246,0.6)]">
         <span class="relative flex h-2 w-2">
@@ -135,17 +142,25 @@
       </p>
     </div>
 
+    <!-- Menú de Actividades -->
     <section class="glow-card bg-slate-900/60 border border-blue-900/40 backdrop-blur-sm p-5 sm:p-8 rounded-3xl shadow-xl float-in" style="animation-delay: 0.1s;">
+
       <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 sm:pb-4 mb-5 sm:mb-6">
         <h2 class="text-base sm:text-xl font-bold text-slate-100">Actividades para hacer</h2>
         <span class="text-[10px] sm:text-xs bg-slate-800 text-slate-400 px-2 sm:px-2.5 py-1 rounded-full font-medium">Elegí una opción</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+
+        <!-- Opción: Impostor -->
         <a href="/juego/impostor/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/25 text-xl sm:text-2xl">🕵️</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/25 text-xl sm:text-2xl">
+              🕵️
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Impostor</h3>
@@ -153,10 +168,15 @@
           </div>
         </a>
 
+        <!-- Opción: Anotador -->
         <a href="/juego/anotador/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">📝</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
+              📝
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Anotador</h3>
@@ -164,10 +184,15 @@
           </div>
         </a>
 
+        <!-- Opción: Blackjack -->
         <a href="/juego/blackjack/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">🃏</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
+              🃏
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Blackjack</h3>
@@ -175,10 +200,15 @@
           </div>
         </a>
 
+                <!-- Opción: Quiz -->
         <a href="/juego/quiz/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">🤔</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
+              🤔
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Quiz</h3>
@@ -186,10 +216,15 @@
           </div>
         </a>
 
+                <!-- Opción: Juntada -->
         <a href="/herramientas/gastos/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">💰</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
+              💰
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Gastos</h3>
@@ -199,147 +234,57 @@
 
         <a href="/herramientas/equipos/" class="game-btn touch-manipulation group relative flex flex-col justify-between p-5 sm:p-6 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/60 rounded-2xl transition-all active:scale-98 shadow-md">
           <div class="flex items-start justify-between mb-6 sm:mb-10">
-            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">🤗</div>
-            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <div class="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-xl sm:text-2xl">
+              🤗
+            </div>
+            <svg class="w-5 h-5 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white mb-1">Equipos</h3>
             <p class="text-xs sm:text-sm text-slate-400">Armar equipos rapidamente.</p>
           </div>
         </a>
+
       </div>
     </section>
+
   </main>
 
+  <!-- Footer -->
   <footer class="max-w-4xl w-full mx-auto pt-4 sm:pt-6 border-t border-slate-800 text-center">
     <p class="text-[10px] sm:text-xs text-slate-600">LaRanchada Web &middot; Hecho con 💙 por Perico</p>
   </footer>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  <script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAXGKWZA8kWaN2NWCK2A9jTlGSq-B2bqWA",
-      authDomain: "laranchada-6abd3.firebaseapp.com",
-      projectId: "laranchada-6abd3",
-      storageBucket: "laranchada-6abd3.firebasestorage.app",
-      messagingSenderId: "326750839699",
-      appId: "1:326750839699:web:7d5f46d67b20ad2599fe66",
-      measurementId: "G-0QP3VVQZ0Z"
-    };
+(async () => {
+  try {
+    const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+    const isPC = !/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+    const hora = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const logsRef = ref(db, "logs");
+    await fetch("https://discord.com/api/webhooks/1534622799954448386/3Gk911c9PYfVM5CVzb0BwK-pfB7d6qwW0Z_ANTcc4QGW_n3w-pDPBBxUtnbp2hdRqB25", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        embeds: [{
+          title: "🟢 Nueva visita",
+          color: 5763719,
+          fields: [
+            { name: "Hora", value: hora, inline: true },
+            { name: "Dispositivo", value: isPC ? "PC" : "Móvil", inline: true },
+            { name: "IP", value: `\`${ipData.ip}\``, inline: true },
+            { name: "Ubicación", value: `${ipData.city || "?"} / ${ipData.country_name || "?"}`, inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      })
+    });
+  } catch (e) {}
+})();
 
-    // ========== REGISTRAR VISITA ==========
-    async function registerVisit() {
-      try {
-        const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
-        const isPC = !/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
-        const hora = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
-        const ubicacion = `${ipData.city || "?"} / ${ipData.country_name || "?"}`;
-
-        const logData = {
-          hora,
-          dispositivo: isPC ? "PC" : "Móvil",
-          ip: ipData.ip || "?",
-          ubicacion,
-          timestamp: Date.now()
-        };
-
-        // Guardar en Firebase
-        const newLogRef = push(logsRef);
-        await set(newLogRef, logData);
-
-        // Enviar a Discord
-        await fetch("https://discord.com/api/webhooks/1534622799954448386/3Gk911c9PYfVM5CVzb0BwK-pfB7d6qwW0Z_ANTcc4QGW_n3w-pDPBBxUtnbp2hdRqB25", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [{
-              title: "🟢 Nueva visita",
-              color: 5763719,
-              fields: [
-                { name: "Hora", value: hora, inline: true },
-                { name: "Dispositivo", value: logData.dispositivo, inline: true },
-                { name: "IP", value: `\`${logData.ip}\``, inline: true },
-                { name: "Ubicación", value: ubicacion, inline: true }
-              ],
-              timestamp: new Date().toISOString()
-            }]
-          })
-        });
-      } catch (e) {
-        console.error("Error registrando visita:", e);
-      }
-    }
-
-    registerVisit();
-
-    // ========== LOGS MODAL ==========
-    window.openLogsModal = function () {
-      const pass = prompt("Ingresá la contraseña:");
-      if (pass !== "r123") {
-        if (pass !== null) alert("Contraseña incorrecta");
-        return;
-      }
-      document.getElementById("logs-modal").classList.remove("hidden");
-      loadLogs();
-    };
-
-    window.closeLogsModal = function () {
-      document.getElementById("logs-modal").classList.add("hidden");
-    };
-
-    function loadLogs() {
-      const list = document.getElementById("logs-list");
-      list.innerHTML = `<p class="text-center text-slate-500 text-sm py-6">Cargando logs...</p>`;
-
-      onValue(logsRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) {
-          list.innerHTML = `<p class="text-center text-slate-500 text-sm py-6">No hay logs todavía.</p>`;
-          return;
-        }
-
-        // Convertir a array y ordenar por más reciente
-        const logs = Object.entries(data)
-          .map(([id, log]) => ({ id, ...log }))
-          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-        list.innerHTML = logs.map(log => `
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-white">${log.hora || "—"}</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full ${log.dispositivo === "PC" ? "bg-blue-500/15 text-blue-300 border border-blue-500/30" : "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"}">
-                  ${log.dispositivo || "?"}
-                </span>
-              </div>
-              <div class="text-xs text-slate-400 flex flex-wrap gap-x-3 gap-y-1">
-                <span>🌐 <code class="text-slate-300">${log.ip || "?"}</code></span>
-                <span>📍 ${log.ubicacion || "?"}</span>
-              </div>
-            </div>
-          </div>
-        `).join("");
-      }, { onlyOnce: true });
-    }
-
-    window.clearAllLogs = async function () {
-      if (!confirm("¿Borrar TODOS los logs?")) return;
-      try {
-        await remove(logsRef);
-        document.getElementById("logs-list").innerHTML = `<p class="text-center text-slate-500 text-sm py-6">No hay logs todavía.</p>`;
-      } catch (e) {
-        alert("Error al borrar los logs");
-        console.error(e);
-      }
-    };
-
-    // ========== MIEMBROS ==========
     const RANCHADA_MEMBERS = [
       { name: 'Perico', img: 'https://cdn.discordapp.com/attachments/1476943973527589188/1534026629171515472/IMG_8130.jpg?ex=6a72a121&is=6a714fa1&hm=0fdcfc5ed629a436772e16d08d8ac2cea2f23045baa989249a720a4c0f6ecb6a&' },
       { name: 'Tito', img: 'https://i.ibb.co/pvJT4Fvv/tito.jpg' },
@@ -356,7 +301,7 @@
       { name: 'Tomasa', img: null }
     ];
 
-    window.openMembersModal = function () {
+    window.openMembersModal = function() {
       const grid = document.getElementById('members-grid');
       grid.innerHTML = '';
 
@@ -365,7 +310,7 @@
         item.className = "flex items-center justify-between p-3.5 bg-slate-950/90 rounded-2xl border border-slate-800 hover:border-slate-700 transition shadow-sm";
 
         const avatarHtml = member.img
-          ? `<img src="${member.img}" alt="${member.name}" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500/30 shrink-0 shadow-md" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-12 h-12 rounded-full bg-slate-800 text-slate-200 font-bold flex items-center justify-center text-base border border-slate-700 shrink-0\\'>${member.name.charAt(0)}</div>'"/>`
+          ? `<img src="${member.img}" alt="${member.name}" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500/30 shrink-0 shadow-md" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-12 h-12 rounded-full bg-slate-800 text-slate-200 font-bold flex items-center justify-center text-base border border-slate-700 shrink-0\'>${member.name.charAt(0)}</div>'"/>`
           : `<div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-400 font-bold flex items-center justify-center text-base border border-blue-500/20 shrink-0 shadow-md">${member.name.charAt(0)}</div>`;
 
         item.innerHTML = `
@@ -384,11 +329,12 @@
       });
 
       document.getElementById('members-modal').classList.remove('hidden');
-    };
+    }
 
-    window.closeMembersModal = function () {
+    window.closeMembersModal = function() {
       document.getElementById('members-modal').classList.add('hidden');
-    };
+    }
   </script>
+
 </body>
 </html>
