@@ -560,7 +560,7 @@
 
     window.purgeSystem = async function() {
       const password = prompt("Ingresa la contraseña para purgar todo el sistema:");
-      if (password === "Renzo123") {
+      if (password === "r123") {
         try {
           const now = Date.now();
           await remove(ref(db, 'rooms'));

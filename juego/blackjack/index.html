@@ -565,7 +565,7 @@
 
     window.purgeSystem = async function() {
       const password = prompt("Ingresá la contraseña para purgar el sistema de BlackJack:");
-      if (password === "Renzo123") {
+      if (password === "r123") {
         try {
           const now = Date.now();
           await remove(ref(db, ROOMS_PATH));
