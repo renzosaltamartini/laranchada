@@ -93,7 +93,7 @@
       <!-- Título dinámico -->
       <div class="text-center">
         <button onclick="goHome()" class="text-xs text-slate-500 hover:text-slate-300 mb-3 inline-flex items-center gap-1">
-          ← Cambiar deporte
+          ← Cambiar
         </button>
         <h1 id="build-title" class="text-2xl sm:text-3xl font-extrabold text-white"></h1>
         <p id="build-subtitle" class="mt-1 text-xs sm:text-sm text-slate-500"></p>
@@ -153,7 +153,7 @@
             <h2 class="text-sm font-bold text-white">Resultado</h2>
             <div class="flex gap-2">
               <button onclick="generate()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition">
-                🔄 Mezclar
+                🔄 Otra vez
               </button>
               <button onclick="copyResult()" class="text-xs px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 rounded-lg transition">
                 📋 Copiar
@@ -198,12 +198,12 @@
       lastResult = null;
 
       if (sport === "truco") {
-        document.getElementById("build-title").textContent = "Equipos de Truco";
+        document.getElementById("build-title").textContent = "Equipos";
         document.getElementById("build-subtitle").textContent = "2v2 o 3v3 · arma varios partidos si hay mucha gente";
         document.getElementById("truco-mode-section").classList.remove("hidden");
         setTrucoMode("2v2");
       } else {
-        document.getElementById("build-title").textContent = "Equipos de Papi";
+        document.getElementById("build-title").textContent = "Equipos";
         document.getElementById("build-subtitle").textContent = "Divide a todos en 2 equipos parejos";
         document.getElementById("truco-mode-section").classList.add("hidden");
       }
