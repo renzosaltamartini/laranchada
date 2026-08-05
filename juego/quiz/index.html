@@ -65,6 +65,7 @@
         <p class="mt-1 text-xs sm:text-sm text-slate-500">Primero agregá a los que van a jugar</p>
       </div>
 
+      <!-- Participantes -->
       <section class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6">
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-sm font-bold text-white">Participantes</h2>
@@ -78,6 +79,17 @@
             <button onclick="addPerson()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl">Agregar</button>
             <button onclick="toggleEditPeople()" class="px-4 py-2.5 bg-slate-800 text-slate-300 text-sm rounded-xl">Listo</button>
           </div>
+        </div>
+      </section>
+
+      <!-- Cantidad de preguntas -->
+      <section class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 mb-6">
+        <h2 class="text-sm font-bold text-white mb-3">Cantidad de preguntas</h2>
+        <div class="grid grid-cols-4 gap-2">
+          <button onclick="setQuizLength(5)" id="len-5" class="len-btn py-2.5 rounded-xl text-sm font-semibold border transition bg-blue-600 border-blue-500 text-white">5</button>
+          <button onclick="setQuizLength(10)" id="len-10" class="len-btn py-2.5 rounded-xl text-sm font-semibold border transition bg-slate-950 border-slate-700 text-slate-400">10</button>
+          <button onclick="setQuizLength(15)" id="len-15" class="len-btn py-2.5 rounded-xl text-sm font-semibold border transition bg-slate-950 border-slate-700 text-slate-400">15</button>
+          <button onclick="setQuizLength(20)" id="len-20" class="len-btn py-2.5 rounded-xl text-sm font-semibold border transition bg-slate-950 border-slate-700 text-slate-400">20</button>
         </div>
       </section>
 
@@ -149,7 +161,8 @@
 
       <!-- Después de responder: dar punto -->
       <div id="point-section" class="hidden">
-        <p class="text-sm text-slate-400 mb-3 text-center">¿Quién acertó?</p>
+        <p class="text-sm text-slate-400 mb-1 text-center">¿Quién acertó?</p>
+        <p id="multi-help" class="text-xs text-slate-500 text-center mb-3 hidden">Podés seleccionar varios ganadores</p>
         <div id="point-buttons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
         <button id="btn-next" onclick="nextQuestion()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl opacity-40 cursor-not-allowed" disabled>
           Siguiente pregunta →
@@ -192,7 +205,8 @@
     let questions = [];
     let currentIndex = 0;
     let answered = false;
-    let pointGiven = false;
+    let quizLength = 5;
+    let selectedWinners = new Set();
 
     // Datos cargados desde JSON
     let DATA = {
@@ -203,32 +217,32 @@
     };
 
     // ========== CARGAR JSONs ==========
-async function loadAllQuestions() {
-  try {
-    const [banderasRes, culturaRes, argentinaRes, futbolRes] = await Promise.all([
-      fetch("./banderas.json").then(r => r.json()),
-      fetch("./cultura.json").then(r => r.json()),
-      fetch("./argentina.json").then(r => r.json()),
-      fetch("./futbol.json").then(r => r.json())
-    ]);
+    async function loadAllQuestions() {
+      try {
+        const [banderasRes, culturaRes, argentinaRes, futbolRes] = await Promise.all([
+          fetch("./banderas.json").then(r => r.json()),
+          fetch("./cultura.json").then(r => r.json()),
+          fetch("./argentina.json").then(r => r.json()),
+          fetch("./futbol.json").then(r => r.json())
+        ]);
 
-    // Extraemos el array correcto de cada archivo
-    DATA.banderas = banderasRes.banderas || banderasRes;
-    DATA.cultura = culturaRes.cultura || culturaRes;
-    DATA.argentina = argentinaRes.cultura_argentina || argentinaRes.argentina || argentinaRes;
-    DATA.futbol = futbolRes.futbol || futbolRes;
+        // Extraemos el array correcto según la estructura real de cada archivo
+        DATA.banderas = banderasRes.banderas || banderasRes;
+        DATA.cultura = culturaRes.cultura || culturaRes;
+        DATA.argentina = argentinaRes.cultura_argentina || argentinaRes.argentina || argentinaRes;
+        DATA.futbol = futbolRes.futbol || futbolRes;
 
-    console.log("Preguntas cargadas:", {
-      banderas: DATA.banderas.length,
-      cultura: DATA.cultura.length,
-      argentina: DATA.argentina.length,
-      futbol: DATA.futbol
-    });
-  } catch (err) {
-    console.error("Error cargando preguntas:", err);
-    alert("No se pudieron cargar las preguntas. Revisá la consola (F12).");
-  }
-}
+        console.log("Preguntas cargadas:", {
+          banderas: DATA.banderas.length,
+          cultura: DATA.cultura.length,
+          argentina: DATA.argentina.length,
+          futbol: Object.keys(DATA.futbol)
+        });
+      } catch (err) {
+        console.error("Error cargando preguntas:", err);
+        alert("No se pudieron cargar las preguntas. Revisá la consola (F12).");
+      }
+    }
 
     // ========== PARTICIPANTES ==========
     function loadPeople() {
@@ -285,6 +299,20 @@ async function loadAllQuestions() {
       if (!panel.classList.contains("hidden")) document.getElementById("new-person").focus();
     }
 
+    // ========== CANTIDAD DE PREGUNTAS ==========
+    function setQuizLength(n) {
+      quizLength = n;
+      document.querySelectorAll(".len-btn").forEach(btn => {
+        btn.classList.remove("bg-blue-600", "border-blue-500", "text-white");
+        btn.classList.add("bg-slate-950", "border-slate-700", "text-slate-400");
+      });
+      const active = document.getElementById(`len-${n}`);
+      if (active) {
+        active.classList.remove("bg-slate-950", "border-slate-700", "text-slate-400");
+        active.classList.add("bg-blue-600", "border-blue-500", "text-white");
+      }
+    }
+
     // ========== NAVEGACIÓN ==========
     function goToPlayers() {
       hideAll();
@@ -313,25 +341,28 @@ async function loadAllQuestions() {
       currentDifficulty = difficulty;
       currentIndex = 0;
       answered = false;
-      pointGiven = false;
+      selectedWinners.clear();
 
       // Reset scores
       scores = {};
       people.forEach(p => scores[p] = 0);
 
-      // Cargar preguntas según categoría
+      // Cargar pool de preguntas
+      let pool = [];
       if (category === "futbol") {
-        questions = [...(DATA.futbol[difficulty] || [])];
+        pool = [...(DATA.futbol[difficulty] || [])];
       } else {
-        questions = [...(DATA[category] || [])];
+        pool = [...(DATA[category] || [])];
       }
 
-      if (questions.length === 0) {
+      if (pool.length === 0) {
         alert("No hay preguntas cargadas para esta categoría");
         return;
       }
 
-      questions = shuffle(questions);
+      // Mezclar y tomar solo la cantidad elegida
+      pool = shuffle(pool);
+      questions = pool.slice(0, Math.min(quizLength, pool.length));
 
       hideAll();
       document.getElementById("screen-quiz").classList.remove("hidden");
@@ -354,14 +385,17 @@ async function loadAllQuestions() {
       }
 
       answered = false;
-      pointGiven = false;
+      selectedWinners.clear();
+
+      const help = document.getElementById("multi-help");
+      if (help) help.classList.add("hidden");
 
       const q = questions[currentIndex];
 
       document.getElementById("progress").textContent = `Pregunta ${currentIndex + 1} de ${questions.length}`;
       document.getElementById("question-text").textContent = q.question;
 
-      // Bandera (si existe)
+      // Bandera
       const flagEl = document.getElementById("flag-display");
       if (q.flagUrl) {
         flagEl.innerHTML = `<img src="${q.flagUrl}" alt="Bandera" class="mx-auto rounded-lg shadow-lg" style="width: 160px; height: auto;">`;
@@ -402,48 +436,102 @@ async function loadAllQuestions() {
         }
       });
 
-      // Mostrar botones de quién acertó
+      const allowMultiple = people.length > 2;
       const pointBtns = document.getElementById("point-buttons");
+      const help = document.getElementById("multi-help");
+
+      if (allowMultiple) {
+        help.classList.remove("hidden");
+      } else {
+        help.classList.add("hidden");
+      }
+
       pointBtns.innerHTML = people.map(p => `
-        <button onclick="givePoint('${p}', this)" class="point-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-xl text-sm font-medium transition">
+        <button onclick="toggleWinner('${p}', this)" 
+                class="point-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-xl text-sm font-medium transition"
+                data-player="${p}">
           ${p}
         </button>
       `).join("") + `
-        <button onclick="givePoint(null, this)" class="point-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition">
+        <button onclick="toggleWinner(null, this)" 
+                class="point-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition"
+                data-player="nadie">
           Nadie
         </button>
       `;
 
+      pointBtns.dataset.multiple = allowMultiple ? "true" : "false";
       document.getElementById("point-section").classList.remove("hidden");
     }
 
-    function givePoint(player, btnElement) {
-      if (pointGiven) return; // evitar doble click
-      pointGiven = true;
+    function toggleWinner(player, btnElement) {
+      const allowMultiple = document.getElementById("point-buttons").dataset.multiple === "true";
 
-      if (player) {
-        scores[player] = (scores[player] || 0) + 1;
+      if (player === null) {
+        // "Nadie"
+        selectedWinners.clear();
+        document.querySelectorAll(".point-btn").forEach(btn => {
+          btn.classList.remove("bg-emerald-600", "border-emerald-500", "text-white");
+          btn.classList.add("bg-slate-800");
+        });
+        btnElement.classList.remove("bg-slate-800");
+        btnElement.classList.add("bg-emerald-600", "border-emerald-500", "text-white");
+        selectedWinners.add("nadie");
+      } else {
+        // Si estaba "Nadie", lo sacamos
+        if (selectedWinners.has("nadie")) {
+          selectedWinners.delete("nadie");
+          const nadieBtn = document.querySelector('[data-player="nadie"]');
+          if (nadieBtn) {
+            nadieBtn.classList.remove("bg-emerald-600", "border-emerald-500", "text-white");
+            nadieBtn.classList.add("bg-slate-800");
+          }
+        }
+
+        if (allowMultiple) {
+          // Toggle
+          if (selectedWinners.has(player)) {
+            selectedWinners.delete(player);
+            btnElement.classList.remove("bg-emerald-600", "border-emerald-500", "text-white");
+            btnElement.classList.add("bg-slate-800");
+          } else {
+            selectedWinners.add(player);
+            btnElement.classList.remove("bg-slate-800");
+            btnElement.classList.add("bg-emerald-600", "border-emerald-500", "text-white");
+          }
+        } else {
+          // Solo uno
+          selectedWinners.clear();
+          document.querySelectorAll(".point-btn").forEach(btn => {
+            btn.classList.remove("bg-emerald-600", "border-emerald-500", "text-white");
+            btn.classList.add("bg-slate-800");
+          });
+          selectedWinners.add(player);
+          btnElement.classList.remove("bg-slate-800");
+          btnElement.classList.add("bg-emerald-600", "border-emerald-500", "text-white");
+        }
       }
 
-      // Feedback visual: marcar el botón elegido y deshabilitar el resto
-      const allBtns = document.querySelectorAll(".point-btn");
-      allBtns.forEach(btn => {
-        btn.disabled = true;
-        btn.classList.remove("hover:bg-blue-600", "hover:bg-slate-700");
-        btn.classList.add("opacity-50");
-      });
-
-      // Destacar el botón seleccionado
-      btnElement.classList.remove("opacity-50", "bg-slate-800", "text-slate-400");
-      btnElement.classList.add("bg-emerald-600", "border-emerald-500", "text-white", "opacity-100");
-
-      // Habilitar botón "Siguiente"
+      // Habilitar siguiente
       const nextBtn = document.getElementById("btn-next");
-      nextBtn.disabled = false;
-      nextBtn.classList.remove("opacity-40", "cursor-not-allowed");
+      if (selectedWinners.size > 0) {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove("opacity-40", "cursor-not-allowed");
+      } else {
+        nextBtn.disabled = true;
+        nextBtn.classList.add("opacity-40", "cursor-not-allowed");
+      }
     }
 
     function nextQuestion() {
+      // Sumar puntos
+      selectedWinners.forEach(player => {
+        if (player !== "nadie") {
+          scores[player] = (scores[player] || 0) + 1;
+        }
+      });
+      selectedWinners.clear();
+
       currentIndex++;
       showQuestion();
     }
@@ -489,7 +577,7 @@ async function loadAllQuestions() {
       goToPlayers();
     }
 
-    // Enter para agregar persona
+    // Enter
     document.getElementById("new-person").addEventListener("keydown", e => {
       if (e.key === "Enter") addPerson();
     });
