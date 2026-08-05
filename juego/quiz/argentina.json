@@ -1,0 +1,504 @@
+{
+  "cultura_argentina": [
+    {
+      "question": "¿Cuál es la capital de Argentina?",
+      "options": [
+        "Mendoza",
+        "Córdoba",
+        "Buenos Aires",
+        "Rosario"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿En qué año se declaró la Independencia argentina?",
+      "options": [
+        "1810",
+        "1820",
+        "1853",
+        "1816"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿En qué ciudad se declaró la Independencia?",
+      "options": [
+        "Buenos Aires",
+        "San Miguel de Tucumán",
+        "Salta",
+        "Córdoba"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Quién creó la bandera argentina?",
+      "options": [
+        "Sarmiento",
+        "Mariano Moreno",
+        "Manuel Belgrano",
+        "José de San Martín"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué colores tiene la bandera argentina?",
+      "options": [
+        "Azul y amarillo",
+        "Celeste y blanco",
+        "Rojo y blanco",
+        "Verde y blanco"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cuál es la moneda oficial?",
+      "options": [
+        "Peso uruguayo",
+        "Dólar",
+        "Peso argentino",
+        "Real"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Cuál es el río más importante que atraviesa Buenos Aires?",
+      "options": [
+        "Río Paraná",
+        "Río Negro",
+        "Río Uruguay",
+        "Río de la Plata"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Cuál es la montaña más alta de Argentina?",
+      "options": [
+        "Mercedario",
+        "Aconcagua",
+        "Tronador",
+        "Lanín"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿En qué provincia está el Aconcagua?",
+      "options": [
+        "Neuquén",
+        "San Juan",
+        "Mendoza",
+        "Salta"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué cataratas comparte Argentina con Brasil?",
+      "options": [
+        "Niágara",
+        "Moconá",
+        "Victoria",
+        "Cataratas del Iguazú"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿En qué provincia están las Cataratas del Iguazú?",
+      "options": [
+        "Entre Ríos",
+        "Misiones",
+        "Corrientes",
+        "Chaco"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cuál es el glaciar más famoso de Argentina?",
+      "options": [
+        "Spegazzini",
+        "Upsala",
+        "Viedma",
+        "Perito Moreno"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿En qué provincia está el glaciar Perito Moreno?",
+      "options": [
+        "Río Negro",
+        "Tierra del Fuego",
+        "Santa Cruz",
+        "Chubut"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Cuál es el deporte más popular?",
+      "options": [
+        "Rugby",
+        "Básquet",
+        "Fútbol",
+        "Tenis"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué selección ganó el Mundial 2022?",
+      "options": [
+        "Francia",
+        "Croacia",
+        "Brasil",
+        "Argentina"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Quién fue el capitán argentino en el Mundial 2022?",
+      "options": [
+        "Lionel Messi",
+        "Ángel Di María",
+        "Rodrigo De Paul",
+        "Emiliano Martínez"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cómo se llama el himno nacional?",
+      "options": [
+        "Himno Nacional Argentino",
+        "Mi Bandera",
+        "Marcha de San Lorenzo",
+        "Aurora"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es el ave nacional?",
+      "options": [
+        "Carancho",
+        "Hornero",
+        "Cóndor",
+        "Ñandú"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cuál es la flor nacional?",
+      "options": [
+        "Orquídea",
+        "Ceibo",
+        "Jazmín",
+        "Rosa"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cuál es el árbol nacional?",
+      "options": [
+        "Jacarandá",
+        "Ombú",
+        "Pino",
+        "Quebracho colorado"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Qué bebida es tradicional argentina?",
+      "options": [
+        "Mate",
+        "Té",
+        "Café",
+        "Chocolate"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es la danza tradicional?",
+      "options": [
+        "Salsa",
+        "Tango",
+        "Samba",
+        "Flamenco"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿En qué barrio nació el tango?",
+      "options": [
+        "Recoleta",
+        "Palermo",
+        "Belgrano",
+        "La Boca"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Qué dulce es típico argentino?",
+      "options": [
+        "Arrope",
+        "Dulce de leche",
+        "Miel",
+        "Membrillo"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cómo se llama la carne asada típica?",
+      "options": [
+        "Feijoada",
+        "Asado",
+        "Paella",
+        "Ceviche"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Qué animal aparece en el escudo de Mendoza?",
+      "options": [
+        "Caballo",
+        "Puma",
+        "Guanaco",
+        "Cóndor"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Cuál es la provincia más austral?",
+      "options": [
+        "Tierra del Fuego",
+        "Santa Cruz",
+        "Río Negro",
+        "Chubut"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es la provincia más grande?",
+      "options": [
+        "Buenos Aires",
+        "Santa Cruz",
+        "Córdoba",
+        "Mendoza"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es la capital de Córdoba?",
+      "options": [
+        "Río Cuarto",
+        "Villa María",
+        "Alta Gracia",
+        "Córdoba"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Cuál es la capital de Mendoza?",
+      "options": [
+        "San Rafael",
+        "Mendoza",
+        "Godoy Cruz",
+        "Malargüe"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Cuál es la capital de Santa Fe?",
+      "options": [
+        "Venado Tuerto",
+        "Rosario",
+        "Rafaela",
+        "Santa Fe"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Cuál es la capital de Neuquén?",
+      "options": [
+        "Neuquén",
+        "Cutral Co",
+        "Zapala",
+        "Plottier"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es la capital de Salta?",
+      "options": [
+        "Cafayate",
+        "Orán",
+        "Salta",
+        "Tartagal"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué mar baña la costa argentina?",
+      "options": [
+        "Mar Caribe",
+        "Mar Mediterráneo",
+        "Mar Argentino",
+        "Mar Rojo"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Cuál es el lago más conocido de Bariloche?",
+      "options": [
+        "Argentino",
+        "Viedma",
+        "Nahuel Huapi",
+        "Fagnano"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Dónde se encuentra el Obelisco?",
+      "options": [
+        "Rosario",
+        "Córdoba",
+        "Buenos Aires",
+        "La Plata"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué avenida es una de las más anchas del mundo?",
+      "options": [
+        "9 de Julio",
+        "Santa Fe",
+        "Corrientes",
+        "Rivadavia"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Qué universidad es la más antigua del país?",
+      "options": [
+        "UNLP",
+        "UBA",
+        "UNR",
+        "Universidad Nacional de Córdoba"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Qué significa UBA?",
+      "options": [
+        "Universidad de Buenos Aires",
+        "Universidad Básica Argentina",
+        "Unión Bonaerense Académica",
+        "Universidad Binacional Argentina"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Qué prócer cruzó los Andes?",
+      "options": [
+        "José de San Martín",
+        "Moreno",
+        "Roca",
+        "Belgrano"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Quién escribió el Martín Fierro?",
+      "options": [
+        "José Hernández",
+        "Sarmiento",
+        "Borges",
+        "Lugones"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Qué instrumento identifica al tango?",
+      "options": [
+        "Flauta",
+        "Piano",
+        "Bandoneón",
+        "Violín"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Cuál es la principal industria vitivinícola?",
+      "options": [
+        "Chaco",
+        "Formosa",
+        "Mendoza",
+        "La Pampa"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué parque nacional protege las Cataratas del Iguazú?",
+      "options": [
+        "Nahuel Huapi",
+        "Talampaya",
+        "Parque Nacional Iguazú",
+        "Los Glaciares"
+      ],
+      "correct": 2
+    },
+    {
+      "question": "¿Qué parque nacional protege el Perito Moreno?",
+      "options": [
+        "Los Glaciares",
+        "Iberá",
+        "El Palmar",
+        "Lanín"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es el idioma oficial de facto?",
+      "options": [
+        "Guaraní",
+        "Portugués",
+        "Inglés",
+        "Español"
+      ],
+      "correct": 3
+    },
+    {
+      "question": "¿Cuál es el mamífero marino emblemático de Península Valdés?",
+      "options": [
+        "Ballena franca austral",
+        "Orca",
+        "Lobo marino",
+        "Delfín"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Qué provincia es famosa por la Quebrada de Humahuaca?",
+      "options": [
+        "La Rioja",
+        "Jujuy",
+        "Catamarca",
+        "Salta"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "¿Qué región argentina produce más yerba mate?",
+      "options": [
+        "Misiones",
+        "Córdoba",
+        "Buenos Aires",
+        "San Luis"
+      ],
+      "correct": 0
+    },
+    {
+      "question": "¿Cuál es el pico más alto de la Patagonia?",
+      "options": [
+        "Monte San Valentín",
+        "Tronador",
+        "Fitz Roy",
+        "Lanín"
+      ],
+      "correct": 0
+    }
+  ]
+}

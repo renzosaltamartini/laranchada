@@ -1,0 +1,2412 @@
+{
+  "futbol": {
+    "facil": [
+      {
+        "question": "¿Cuántos jugadores tiene cada equipo en cancha al comenzar un partido?",
+        "options": [
+          "11",
+          "10",
+          "9",
+          "12"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Cuánto dura un partido reglamentario sin contar descuentos?",
+        "options": [
+          "120 minutos",
+          "90 minutos",
+          "100 minutos",
+          "80 minutos"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Cuántos tiempos tiene un partido de fútbol?",
+        "options": [
+          "4",
+          "3",
+          "1",
+          "2"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Cuánto dura cada tiempo reglamentario?",
+        "options": [
+          "30 minutos",
+          "40 minutos",
+          "50 minutos",
+          "45 minutos"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador puede usar las manos dentro de su propia área?",
+        "options": [
+          "El capitán",
+          "El arquero",
+          "El delantero",
+          "El defensor"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué tarjeta significa expulsión?",
+        "options": [
+          "Amarilla",
+          "Verde",
+          "Roja",
+          "Azul"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué tarjeta se usa normalmente como advertencia?",
+        "options": [
+          "Amarilla",
+          "Negra",
+          "Roja",
+          "Blanca"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Cómo se llama la acción de marcar un tanto?",
+        "options": [
+          "Lateral",
+          "Falta",
+          "Córner",
+          "Gol"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Cómo se llama el saque desde una esquina?",
+        "options": [
+          "Saque de arco",
+          "Lateral",
+          "Penal",
+          "Córner"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué se cobra cuando la pelota sale por una banda lateral?",
+        "options": [
+          "Saque lateral",
+          "Córner",
+          "Saque de arco",
+          "Penal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Desde qué distancia se ejecuta un penal?",
+        "options": [
+          "9 metros",
+          "11 metros",
+          "12 metros",
+          "10 metros"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2022?",
+        "options": [
+          "Francia",
+          "Brasil",
+          "Croacia",
+          "Argentina"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue el capitán de Argentina en el Mundial de 2022?",
+        "options": [
+          "Lionel Messi",
+          "Emiliano Martínez",
+          "Rodrigo De Paul",
+          "Ángel Di María"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2018?",
+        "options": [
+          "Argentina",
+          "Alemania",
+          "Croacia",
+          "Francia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2014?",
+        "options": [
+          "España",
+          "Brasil",
+          "Argentina",
+          "Alemania"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2010?",
+        "options": [
+          "Países Bajos",
+          "Brasil",
+          "España",
+          "Alemania"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2006?",
+        "options": [
+          "Italia",
+          "Francia",
+          "Alemania",
+          "Brasil"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2022?",
+        "options": [
+          "Rusia",
+          "Brasil",
+          "Catar",
+          "Sudáfrica"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2018?",
+        "options": [
+          "Rusia",
+          "Francia",
+          "Alemania",
+          "Brasil"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2014?",
+        "options": [
+          "Argentina",
+          "México",
+          "Brasil",
+          "España"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué jugador argentino es conocido como 'La Pulga'?",
+        "options": [
+          "Ángel Di María",
+          "Sergio Agüero",
+          "Lionel Messi",
+          "Diego Maradona"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué jugador fue apodado 'El Pelusa'?",
+        "options": [
+          "Gabriel Batistuta",
+          "Mario Kempes",
+          "Lionel Messi",
+          "Diego Maradona"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿En qué club argentino jugó Diego Maradona antes de ir a Europa?",
+        "options": [
+          "Boca Juniors",
+          "Racing Club",
+          "San Lorenzo",
+          "River Plate"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino juega en el estadio Monumental?",
+        "options": [
+          "River Plate",
+          "Independiente",
+          "San Lorenzo",
+          "Boca Juniors"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino juega en La Bombonera?",
+        "options": [
+          "Boca Juniors",
+          "Vélez Sarsfield",
+          "Racing Club",
+          "River Plate"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección viste tradicionalmente de celeste y blanco?",
+        "options": [
+          "Italia",
+          "Argentina",
+          "Alemania",
+          "Brasil"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección viste tradicionalmente de amarillo?",
+        "options": [
+          "Brasil",
+          "Uruguay",
+          "Argentina",
+          "Portugal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección es conocida como 'La Roja'?",
+        "options": [
+          "Italia",
+          "Alemania",
+          "España",
+          "Países Bajos"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección es conocida como 'La Albiceleste'?",
+        "options": [
+          "Argentina",
+          "Chile",
+          "Paraguay",
+          "Uruguay"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección es conocida como 'La Canarinha'?",
+        "options": [
+          "México",
+          "Brasil",
+          "Ecuador",
+          "Colombia"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué torneo enfrentan selecciones sudamericanas?",
+        "options": [
+          "Concacaf Gold Cup",
+          "Copa Africana",
+          "Eurocopa",
+          "Copa América"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué torneo de clubes es el más importante de Europa?",
+        "options": [
+          "Conference League",
+          "Champions League",
+          "Supercopa de Europa",
+          "Europa League"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué torneo de clubes es el más importante de Sudamérica?",
+        "options": [
+          "Copa Libertadores",
+          "Recopa Sudamericana",
+          "Copa América",
+          "Copa Sudamericana"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Cuántos puntos recibe un equipo por ganar un partido?",
+        "options": [
+          "1",
+          "2",
+          "4",
+          "3"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Cuántos puntos recibe un equipo por empatar?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué posición ocupa normalmente el jugador que defiende el arco?",
+        "options": [
+          "Lateral",
+          "Arquero",
+          "Delantero",
+          "Volante"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué posición suele tener como función principal marcar goles?",
+        "options": [
+          "Delantero",
+          "Defensor central",
+          "Arquero",
+          "Lateral"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué parte del cuerpo no puede usar un jugador de campo para controlar deliberadamente la pelota?",
+        "options": [
+          "El pecho",
+          "La cabeza",
+          "La pierna",
+          "La mano"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Cómo se llama cuando un jugador marca tres goles en un partido?",
+        "options": [
+          "Hat-trick",
+          "Poker",
+          "Triplete de títulos",
+          "Doblete"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué se cobra por una falta dentro del área propia?",
+        "options": [
+          "Penal",
+          "Córner",
+          "Lateral",
+          "Saque de arco"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué árbitro dirige principalmente el partido dentro del campo?",
+        "options": [
+          "Delegado",
+          "Comentarista",
+          "Cuarto árbitro",
+          "Árbitro principal"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué tecnología se usa para revisar jugadas polémicas?",
+        "options": [
+          "VAR",
+          "DRS",
+          "Hawk-Eye exclusivamente",
+          "GPS"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Cómo se llama la línea que divide el campo en dos mitades?",
+        "options": [
+          "Línea de gol",
+          "Línea lateral",
+          "Línea de mitad de cancha",
+          "Línea de fondo"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué equipo ganó el Mundial de 1986?",
+        "options": [
+          "Italia",
+          "Alemania Federal",
+          "Brasil",
+          "Argentina"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién marcó la 'Mano de Dios'?",
+        "options": [
+          "Mario Kempes",
+          "Diego Maradona",
+          "Lionel Messi",
+          "Claudio Caniggia"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué jugador brasileño fue conocido como 'O Rei'?",
+        "options": [
+          "Ronaldinho",
+          "Ronaldo",
+          "Romário",
+          "Pelé"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador portugués es conocido como CR7?",
+        "options": [
+          "Bruno Fernandes",
+          "Eusébio",
+          "Cristiano Ronaldo",
+          "Luis Figo"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club español juega en el estadio Santiago Bernabéu?",
+        "options": [
+          "Real Madrid",
+          "Atlético de Madrid",
+          "Sevilla",
+          "Barcelona"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club español juega en el Camp Nou?",
+        "options": [
+          "Barcelona",
+          "Valencia",
+          "Real Madrid",
+          "Villarreal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué país vio nacer al fútbol moderno?",
+        "options": [
+          "Brasil",
+          "Inglaterra",
+          "Argentina",
+          "Italia"
+        ],
+        "correct": 1
+      }
+    ],
+    "medio": [
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2022?",
+        "options": [
+          "Julián Álvarez",
+          "Lionel Messi",
+          "Kylian Mbappé",
+          "Olivier Giroud"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién ganó el Balón de Oro del Mundial de 2022?",
+        "options": [
+          "Emiliano Martínez",
+          "Kylian Mbappé",
+          "Luka Modrić",
+          "Lionel Messi"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién ganó el Guante de Oro del Mundial de 2022?",
+        "options": [
+          "Emiliano Martínez",
+          "Hugo Lloris",
+          "Yassine Bounou",
+          "Dominik Livaković"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección perdió la final del Mundial de 2014?",
+        "options": [
+          "Brasil",
+          "Argentina",
+          "Países Bajos",
+          "Francia"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección perdió la final del Mundial de 2018?",
+        "options": [
+          "Inglaterra",
+          "Argentina",
+          "Bélgica",
+          "Croacia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección perdió la final del Mundial de 2010?",
+        "options": [
+          "Uruguay",
+          "Portugal",
+          "Países Bajos",
+          "Alemania"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección ganó la Copa América 2021?",
+        "options": [
+          "Uruguay",
+          "Chile",
+          "Brasil",
+          "Argentina"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿En qué estadio se disputó la final de la Copa América 2021?",
+        "options": [
+          "Mineirão",
+          "Maracaná",
+          "Centenario",
+          "Monumental"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién marcó el gol de Argentina en la final de la Copa América 2021?",
+        "options": [
+          "Rodrigo De Paul",
+          "Lionel Messi",
+          "Lautaro Martínez",
+          "Ángel Di María"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó la Eurocopa 2020 disputada en 2021?",
+        "options": [
+          "España",
+          "Inglaterra",
+          "Francia",
+          "Italia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó la Eurocopa 2016?",
+        "options": [
+          "Francia",
+          "Alemania",
+          "España",
+          "Portugal"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó la Copa América 2015?",
+        "options": [
+          "Brasil",
+          "Chile",
+          "Argentina",
+          "Uruguay"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó la Copa América 2016?",
+        "options": [
+          "Chile",
+          "Colombia",
+          "México",
+          "Argentina"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2010?",
+        "options": [
+          "Brasil",
+          "Sudáfrica",
+          "Alemania",
+          "Corea del Sur"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2006?",
+        "options": [
+          "Japón",
+          "Italia",
+          "Alemania",
+          "Francia"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué país organizó el Mundial de 2002 junto con Corea del Sur?",
+        "options": [
+          "Japón",
+          "Australia",
+          "Tailandia",
+          "China"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 2002?",
+        "options": [
+          "Brasil",
+          "Alemania",
+          "Francia",
+          "Argentina"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2002?",
+        "options": [
+          "Miroslav Klose",
+          "Ronaldo Nazário",
+          "Ronaldinho",
+          "Rivaldo"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1998?",
+        "options": [
+          "Francia",
+          "Italia",
+          "Croacia",
+          "Brasil"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó dos goles en la final del Mundial de 1998?",
+        "options": [
+          "Thierry Henry",
+          "Zinedine Zidane",
+          "Ronaldo",
+          "David Trezeguet"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1994?",
+        "options": [
+          "Italia",
+          "Alemania",
+          "Argentina",
+          "Brasil"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador falló el penal decisivo en la final del Mundial de 1994?",
+        "options": [
+          "Paolo Maldini",
+          "Daniele Massaro",
+          "Franco Baresi",
+          "Roberto Baggio"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1990?",
+        "options": [
+          "Brasil",
+          "Alemania Federal",
+          "Argentina",
+          "Italia"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1986?",
+        "options": [
+          "Diego Maradona",
+          "Emilio Butragueño",
+          "Gary Lineker",
+          "Jorge Valdano"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1978?",
+        "options": [
+          "Italia",
+          "Argentina",
+          "Países Bajos",
+          "Brasil"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1978?",
+        "options": [
+          "Zico",
+          "Mario Kempes",
+          "Paolo Rossi",
+          "Rob Rensenbrink"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1974?",
+        "options": [
+          "Alemania Federal",
+          "Brasil",
+          "Polonia",
+          "Países Bajos"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1970?",
+        "options": [
+          "Brasil",
+          "Italia",
+          "Uruguay",
+          "Alemania Federal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador levantó la Copa del Mundo en 1970 como capitán de Brasil?",
+        "options": [
+          "Pelé",
+          "Carlos Alberto",
+          "Rivellino",
+          "Jairzinho"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1966?",
+        "options": [
+          "Inglaterra",
+          "Brasil",
+          "Alemania Federal",
+          "Portugal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador marcó un hat-trick en la final de 1966?",
+        "options": [
+          "Eusébio",
+          "Geoff Hurst",
+          "Franz Beckenbauer",
+          "Bobby Charlton"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección ganó el primer Mundial en 1930?",
+        "options": [
+          "Uruguay",
+          "Italia",
+          "Argentina",
+          "Brasil"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Dónde se disputó la final del Mundial de 1930?",
+        "options": [
+          "Estadio Centenario",
+          "Maracaná",
+          "Monumental",
+          "Wembley"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2022-23?",
+        "options": [
+          "Liverpool",
+          "Real Madrid",
+          "Manchester City",
+          "Inter"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2021-22?",
+        "options": [
+          "Real Madrid",
+          "Chelsea",
+          "Manchester City",
+          "Liverpool"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2020-21?",
+        "options": [
+          "Chelsea",
+          "Bayern Múnich",
+          "PSG",
+          "Manchester City"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2019-20?",
+        "options": [
+          "PSG",
+          "Bayern Múnich",
+          "Liverpool",
+          "Real Madrid"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2018-19?",
+        "options": [
+          "Ajax",
+          "Liverpool",
+          "Tottenham",
+          "Barcelona"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2014-15?",
+        "options": [
+          "Barcelona",
+          "Juventus",
+          "Real Madrid",
+          "Bayern Múnich"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2012-13?",
+        "options": [
+          "Barcelona",
+          "Borussia Dortmund",
+          "Chelsea",
+          "Bayern Múnich"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Champions League 2011-12?",
+        "options": [
+          "Real Madrid",
+          "Barcelona",
+          "Bayern Múnich",
+          "Chelsea"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién es el máximo goleador histórico de la Champions League?",
+        "options": [
+          "Robert Lewandowski",
+          "Karim Benzema",
+          "Cristiano Ronaldo",
+          "Lionel Messi"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club tiene más títulos de Copa Libertadores?",
+        "options": [
+          "Boca Juniors",
+          "River Plate",
+          "Peñarol",
+          "Independiente"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club es conocido como 'El Rey de Copas' en Argentina?",
+        "options": [
+          "Boca Juniors",
+          "Independiente",
+          "Racing Club",
+          "San Lorenzo"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Copa Libertadores 2018?",
+        "options": [
+          "Grêmio",
+          "Boca Juniors",
+          "River Plate",
+          "Flamengo"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿En qué ciudad se disputó la vuelta de la final de la Libertadores 2018?",
+        "options": [
+          "Buenos Aires",
+          "Madrid",
+          "Montevideo",
+          "Lima"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Copa Libertadores 2019?",
+        "options": [
+          "Boca Juniors",
+          "Flamengo",
+          "Palmeiras",
+          "River Plate"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Copa Libertadores 2020?",
+        "options": [
+          "River Plate",
+          "Flamengo",
+          "Santos",
+          "Palmeiras"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Copa Libertadores 2022?",
+        "options": [
+          "Palmeiras",
+          "Boca Juniors",
+          "Flamengo",
+          "Athletico Paranaense"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'La Academia'?",
+        "options": [
+          "Estudiantes",
+          "Vélez Sarsfield",
+          "Independiente",
+          "Racing Club"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'El Ciclón'?",
+        "options": [
+          "Rosario Central",
+          "Newell's Old Boys",
+          "San Lorenzo",
+          "Huracán"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'El Fortín'?",
+        "options": [
+          "Lanús",
+          "Vélez Sarsfield",
+          "Argentinos Juniors",
+          "Banfield"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'El Pincha'?",
+        "options": [
+          "Estudiantes de La Plata",
+          "Colón",
+          "Gimnasia de La Plata",
+          "Unión"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'El Canalla'?",
+        "options": [
+          "Rosario Central",
+          "Newell's Old Boys",
+          "Central Córdoba",
+          "Talleres"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'La Lepra'?",
+        "options": [
+          "Rosario Central",
+          "Newell's Old Boys",
+          "Instituto",
+          "Belgrano"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club argentino es conocido como 'El Globo'?",
+        "options": [
+          "San Lorenzo",
+          "Argentinos Juniors",
+          "Huracán",
+          "Platense"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién dirigió a Argentina en el Mundial de 1986?",
+        "options": [
+          "César Luis Menotti",
+          "Marcelo Bielsa",
+          "Alfio Basile",
+          "Carlos Bilardo"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién dirigió a Argentina en el Mundial de 1978?",
+        "options": [
+          "César Luis Menotti",
+          "Daniel Passarella",
+          "Alejandro Sabella",
+          "Carlos Bilardo"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién dirigió a Argentina en el Mundial de 2014?",
+        "options": [
+          "Diego Maradona",
+          "Gerardo Martino",
+          "Alejandro Sabella",
+          "Jorge Sampaoli"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién dirigió a Argentina en el Mundial de 2022?",
+        "options": [
+          "Marcelo Bielsa",
+          "Lionel Scaloni",
+          "Alejandro Sabella",
+          "Jorge Sampaoli"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el arquero titular de Argentina en la final de 2014?",
+        "options": [
+          "Franco Armani",
+          "Emiliano Martínez",
+          "Sergio Romero",
+          "Roberto Abbondanzieri"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol de Alemania en la final del Mundial 2014?",
+        "options": [
+          "Miroslav Klose",
+          "Mario Götze",
+          "Thomas Müller",
+          "Mesut Özil"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué jugador argentino fue goleador del Mundial de 1930?",
+        "options": [
+          "Guillermo Stábile",
+          "Luis Monti",
+          "Manuel Ferreira",
+          "Francisco Varallo"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué delantero argentino fue apodado 'Batigol'?",
+        "options": [
+          "Gabriel Batistuta",
+          "Sergio Agüero",
+          "Hernán Crespo",
+          "Claudio Caniggia"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador argentino fue apodado 'El Kun'?",
+        "options": [
+          "Sergio Agüero",
+          "Carlos Tévez",
+          "Ángel Correa",
+          "Javier Saviola"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador argentino fue apodado 'El Fideo'?",
+        "options": [
+          "Enzo Fernández",
+          "Julián Álvarez",
+          "Paulo Dybala",
+          "Ángel Di María"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club inglés juega en Anfield?",
+        "options": [
+          "Manchester United",
+          "Arsenal",
+          "Liverpool",
+          "Chelsea"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club inglés juega en Old Trafford?",
+        "options": [
+          "Manchester United",
+          "Liverpool",
+          "Manchester City",
+          "Everton"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club italiano juega en el estadio Diego Armando Maradona?",
+        "options": [
+          "Roma",
+          "Napoli",
+          "Fiorentina",
+          "Lazio"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club alemán juega en el Allianz Arena?",
+        "options": [
+          "Bayer Leverkusen",
+          "Bayern Múnich",
+          "Borussia Dortmund",
+          "RB Leipzig"
+        ],
+        "correct": 1
+      }
+    ],
+    "dificil": [
+      {
+        "question": "¿Quién marcó el gol decisivo de Argentina ante Países Bajos en la final de 1978?",
+        "options": [
+          "Mario Kempes",
+          "Daniel Bertoni",
+          "Leopoldo Luque",
+          "René Houseman"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó el tercer gol de Argentina en la final del Mundial de 1978?",
+        "options": [
+          "Osvaldo Ardiles",
+          "Leopoldo Luque",
+          "Daniel Bertoni",
+          "Mario Kempes"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué jugador convirtió el gol del título para Argentina ante Alemania en 1986?",
+        "options": [
+          "Jorge Burruchaga",
+          "Jorge Valdano",
+          "Diego Maradona",
+          "José Luis Brown"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó el primer gol argentino en la final de 1986?",
+        "options": [
+          "Jorge Valdano",
+          "Jorge Burruchaga",
+          "José Luis Brown",
+          "Héctor Enrique"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el segundo gol argentino en la final de 1986?",
+        "options": [
+          "Ricardo Giusti",
+          "Jorge Valdano",
+          "Claudio Caniggia",
+          "Diego Maradona"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección eliminó a Argentina en el Mundial de 1998?",
+        "options": [
+          "Alemania",
+          "Croacia",
+          "Países Bajos",
+          "Brasil"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol decisivo contra Argentina en 1998?",
+        "options": [
+          "Patrick Kluivert",
+          "Marc Overmars",
+          "Dennis Bergkamp",
+          "Edgar Davids"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección eliminó a Argentina en el Mundial de 2006?",
+        "options": [
+          "Portugal",
+          "Alemania",
+          "Países Bajos",
+          "Italia"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué arquero alemán fue protagonista en la tanda de penales ante Argentina en 2006?",
+        "options": [
+          "Oliver Kahn",
+          "Manuel Neuer",
+          "Marc-André ter Stegen",
+          "Jens Lehmann"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección eliminó a Argentina en el Mundial de 2010?",
+        "options": [
+          "Países Bajos",
+          "Alemania",
+          "España",
+          "Uruguay"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué selección eliminó a Argentina en el Mundial de 2018?",
+        "options": [
+          "Croacia",
+          "Bélgica",
+          "Portugal",
+          "Francia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién marcó dos goles para Francia ante Argentina en 2018?",
+        "options": [
+          "Antoine Griezmann",
+          "Kylian Mbappé",
+          "Paul Pogba",
+          "Olivier Giroud"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué jugador argentino marcó de tiro libre contra Nigeria en el Mundial de 1994?",
+        "options": [
+          "Diego Maradona",
+          "Fernando Redondo",
+          "Claudio Caniggia",
+          "Gabriel Batistuta"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién fue el capitán argentino en la final del Mundial de 1990?",
+        "options": [
+          "Diego Maradona",
+          "Jorge Burruchaga",
+          "Sergio Goycochea",
+          "Oscar Ruggeri"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién fue el arquero argentino destacado en los penales del Mundial de 1990?",
+        "options": [
+          "Carlos Roa",
+          "Luis Islas",
+          "Sergio Goycochea",
+          "Nery Pumpido"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección fue subcampeona del Mundial de 1954?",
+        "options": [
+          "Checoslovaquia",
+          "Brasil",
+          "Suecia",
+          "Hungría"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección protagonizó el 'Maracanazo' en 1950?",
+        "options": [
+          "Argentina",
+          "Alemania",
+          "Italia",
+          "Uruguay"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue el capitán uruguayo en el Maracanazo?",
+        "options": [
+          "Roque Máspoli",
+          "Alcides Ghiggia",
+          "Juan Schiaffino",
+          "Obdulio Varela"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador uruguayo marcó el gol decisivo del Maracanazo?",
+        "options": [
+          "Óscar Míguez",
+          "Juan Schiaffino",
+          "Obdulio Varela",
+          "Alcides Ghiggia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1958?",
+        "options": [
+          "Garrincha",
+          "Vavá",
+          "Pelé",
+          "Just Fontaine"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Cuántos goles marcó Just Fontaine en el Mundial de 1958?",
+        "options": [
+          "12",
+          "10",
+          "13",
+          "11"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1954?",
+        "options": [
+          "Alemania Federal",
+          "Brasil",
+          "Uruguay",
+          "Hungría"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1938?",
+        "options": [
+          "Hungría",
+          "Alemania",
+          "Brasil",
+          "Italia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1934?",
+        "options": [
+          "Checoslovaquia",
+          "Austria",
+          "Alemania",
+          "Italia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1982?",
+        "options": [
+          "Zico",
+          "Sócrates",
+          "Paolo Rossi",
+          "Karl-Heinz Rummenigge"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué selección ganó el Mundial de 1982?",
+        "options": [
+          "Francia",
+          "Alemania Federal",
+          "Brasil",
+          "Italia"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1990?",
+        "options": [
+          "Salvatore Schillaci",
+          "Gary Lineker",
+          "Jürgen Klinsmann",
+          "Lothar Matthäus"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1994?",
+        "options": [
+          "Romário",
+          "Roberto Baggio",
+          "Oleg Salenko y Hristo Stoichkov",
+          "Gabriel Batistuta"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué jugador marcó cinco goles en un solo partido del Mundial de 1994?",
+        "options": [
+          "Romário",
+          "Oleg Salenko",
+          "Hristo Stoichkov",
+          "Bebeto"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 1998?",
+        "options": [
+          "Davor Šuker",
+          "Ronaldo",
+          "Gabriel Batistuta",
+          "Christian Vieri"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2006?",
+        "options": [
+          "David Villa",
+          "Ronaldo",
+          "Miroslav Klose",
+          "Thierry Henry"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2010?",
+        "options": [
+          "David Villa",
+          "Thomas Müller",
+          "Diego Forlán",
+          "Wesley Sneijder"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién ganó el Balón de Oro del Mundial de 2010?",
+        "options": [
+          "Xavi",
+          "Diego Forlán",
+          "Wesley Sneijder",
+          "Andrés Iniesta"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2014?",
+        "options": [
+          "James Rodríguez",
+          "Thomas Müller",
+          "Neymar",
+          "Lionel Messi"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién ganó el Balón de Oro del Mundial de 2014?",
+        "options": [
+          "Manuel Neuer",
+          "Arjen Robben",
+          "Lionel Messi",
+          "Thomas Müller"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién fue el goleador del Mundial de 2018?",
+        "options": [
+          "Kylian Mbappé",
+          "Antoine Griezmann",
+          "Romelu Lukaku",
+          "Harry Kane"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la primera Copa de Europa en 1956?",
+        "options": [
+          "Real Madrid",
+          "Benfica",
+          "Milan",
+          "Barcelona"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó cinco Copas de Europa consecutivas entre 1956 y 1960?",
+        "options": [
+          "Milan",
+          "Benfica",
+          "Real Madrid",
+          "Ajax"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1967 con el apodo de 'Lisbon Lions'?",
+        "options": [
+          "Rangers",
+          "Benfica",
+          "Manchester United",
+          "Celtic"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1968?",
+        "options": [
+          "Manchester United",
+          "Celtic",
+          "Benfica",
+          "Real Madrid"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó tres Copas de Europa consecutivas entre 1971 y 1973?",
+        "options": [
+          "Bayern Múnich",
+          "Ajax",
+          "Liverpool",
+          "Inter"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó tres Copas de Europa consecutivas entre 1974 y 1976?",
+        "options": [
+          "Bayern Múnich",
+          "Nottingham Forest",
+          "Ajax",
+          "Liverpool"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club inglés ganó la Copa de Europa en 1979 y 1980?",
+        "options": [
+          "Liverpool",
+          "Nottingham Forest",
+          "Leeds United",
+          "Aston Villa"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1982?",
+        "options": [
+          "Hamburgo",
+          "Aston Villa",
+          "Bayern Múnich",
+          "Liverpool"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1983?",
+        "options": [
+          "Juventus",
+          "Liverpool",
+          "Hamburgo",
+          "Real Madrid"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1986?",
+        "options": [
+          "Benfica",
+          "Porto",
+          "Barcelona",
+          "Steaua de Bucarest"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Copa de Europa de 1991?",
+        "options": [
+          "Milan",
+          "Estrella Roja de Belgrado",
+          "Marsella",
+          "Barcelona"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la primera Champions League con ese nombre en 1992-93?",
+        "options": [
+          "Ajax",
+          "Milan",
+          "Olympique de Marsella",
+          "Barcelona"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol de la final de Champions de 1993?",
+        "options": [
+          "Jean-Pierre Papin",
+          "Rudi Völler",
+          "Basile Boli",
+          "Didier Deschamps"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club ganó la Champions League de 1995?",
+        "options": [
+          "Milan",
+          "Ajax",
+          "Juventus",
+          "Borussia Dortmund"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Champions League de 1997?",
+        "options": [
+          "Borussia Dortmund",
+          "Ajax",
+          "Real Madrid",
+          "Juventus"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Champions League de 2004?",
+        "options": [
+          "Chelsea",
+          "Mónaco",
+          "Porto",
+          "Milan"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién dirigió al Porto campeón de Europa en 2004?",
+        "options": [
+          "Carlos Queiroz",
+          "Luiz Felipe Scolari",
+          "André Villas-Boas",
+          "José Mourinho"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Champions League de 2005 en Estambul?",
+        "options": [
+          "Liverpool",
+          "Barcelona",
+          "Milan",
+          "Chelsea"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador marcó el penal decisivo para Liverpool en la final de 2005?",
+        "options": [
+          "Vladimír Šmicer",
+          "Xabi Alonso",
+          "Steven Gerrard",
+          "Djibril Cissé"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué arquero atajó el penal decisivo en la final de Champions 2005?",
+        "options": [
+          "Dida",
+          "Petr Čech",
+          "Pepe Reina",
+          "Jerzy Dudek"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1960?",
+        "options": [
+          "Peñarol",
+          "Independiente",
+          "Santos",
+          "Olimpia"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó cuatro Libertadores consecutivas entre 1972 y 1975?",
+        "options": [
+          "Boca Juniors",
+          "Estudiantes",
+          "Independiente",
+          "Peñarol"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club argentino ganó tres Libertadores consecutivas entre 1968 y 1970?",
+        "options": [
+          "River Plate",
+          "Boca Juniors",
+          "Estudiantes de La Plata",
+          "Independiente"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1985?",
+        "options": [
+          "Argentinos Juniors",
+          "River Plate",
+          "América de Cali",
+          "Independiente"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1986?",
+        "options": [
+          "River Plate",
+          "Peñarol",
+          "Nacional",
+          "América de Cali"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1994?",
+        "options": [
+          "São Paulo",
+          "Palmeiras",
+          "Cruzeiro",
+          "Vélez Sarsfield"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién dirigió a Vélez campeón de la Libertadores 1994?",
+        "options": [
+          "Alfio Basile",
+          "Carlos Bianchi",
+          "Marcelo Bielsa",
+          "Héctor Cúper"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 2007?",
+        "options": [
+          "Santos",
+          "São Paulo",
+          "Grêmio",
+          "Boca Juniors"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Quién fue la gran figura de Boca en la Libertadores 2007?",
+        "options": [
+          "Martín Palermo",
+          "Juan Román Riquelme",
+          "Rodrigo Palacio",
+          "Ever Banega"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 2008?",
+        "options": [
+          "Internacional",
+          "Liga de Quito",
+          "Boca Juniors",
+          "Fluminense"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ecuatoriano fue el primero de su país en ganar la Libertadores?",
+        "options": [
+          "Barcelona SC",
+          "Independiente del Valle",
+          "Emelec",
+          "Liga de Quito"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 2014?",
+        "options": [
+          "Nacional de Paraguay",
+          "San Lorenzo",
+          "Cruzeiro",
+          "Atlético Nacional"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién dirigió a San Lorenzo campeón de la Libertadores 2014?",
+        "options": [
+          "Marcelo Gallardo",
+          "Edgardo Bauza",
+          "Ramón Díaz",
+          "Diego Simeone"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 2016?",
+        "options": [
+          "São Paulo",
+          "Boca Juniors",
+          "Independiente del Valle",
+          "Atlético Nacional"
+        ],
+        "correct": 3
+      }
+    ],
+    "muy_dificil": [
+      {
+        "question": "¿Quién fue el primer jugador expulsado en una final de Copa del Mundo?",
+        "options": [
+          "Gustavo Dezotti",
+          "Zinedine Zidane",
+          "Marcel Desailly",
+          "Pedro Monzón"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿En qué final de Mundial fue expulsado Pedro Monzón?",
+        "options": [
+          "Italia 1990",
+          "Estados Unidos 1994",
+          "Francia 1998",
+          "México 1986"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué otro jugador argentino fue expulsado en la final del Mundial de 1990?",
+        "options": [
+          "Claudio Caniggia",
+          "Gustavo Dezotti",
+          "Oscar Ruggeri",
+          "José Basualdo"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién arbitró la final del Mundial de 1986?",
+        "options": [
+          "Romualdo Arppi Filho",
+          "Sandro Ricci",
+          "Néstor Pitana",
+          "Edgardo Codesal"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién arbitró la final del Mundial de 1990?",
+        "options": [
+          "Edgardo Codesal",
+          "Romualdo Arppi Filho",
+          "Michel Vautrot",
+          "Joël Quiniou"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué jugador argentino asistió a Burruchaga en el gol decisivo de la final de 1986?",
+        "options": [
+          "Jorge Valdano",
+          "Héctor Enrique",
+          "Diego Maradona",
+          "Ricardo Giusti"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué jugador alemán empató transitoriamente la final de 1986?",
+        "options": [
+          "Rudi Völler",
+          "Karl-Heinz Rummenigge",
+          "Lothar Matthäus",
+          "Andreas Brehme"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó el primer gol alemán en la final de 1986?",
+        "options": [
+          "Rudi Völler",
+          "Lothar Matthäus",
+          "Pierre Littbarski",
+          "Karl-Heinz Rummenigge"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué árbitro dirigió Argentina-Inglaterra en México 1986?",
+        "options": [
+          "Joël Quiniou",
+          "Edgardo Codesal",
+          "Romualdo Arppi Filho",
+          "Ali Bin Nasser"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador inglés marcó el descuento ante Argentina en 1986?",
+        "options": [
+          "John Barnes",
+          "Glenn Hoddle",
+          "Gary Lineker",
+          "Peter Beardsley"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol de Argentina ante Brasil en el Mundial de 1990?",
+        "options": [
+          "Pedro Troglio",
+          "Claudio Caniggia",
+          "Diego Maradona",
+          "Jorge Burruchaga"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué jugador asistió a Caniggia ante Brasil en 1990?",
+        "options": [
+          "Jorge Burruchaga",
+          "José Basualdo",
+          "Oscar Dertycia",
+          "Diego Maradona"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué arquero argentino atajó dos penales ante Yugoslavia en 1990?",
+        "options": [
+          "Nery Pumpido",
+          "Carlos Roa",
+          "Luis Islas",
+          "Sergio Goycochea"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué jugador yugoslavo fue expulsado ante Argentina en cuartos de final de 1990?",
+        "options": [
+          "Robert Prosinečki",
+          "Dejan Savićević",
+          "Refik Šabanadžović",
+          "Dragan Stojković"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el penal decisivo de Argentina contra Italia en 1990?",
+        "options": [
+          "Diego Maradona",
+          "Julio Olarticoechea",
+          "Jorge Burruchaga",
+          "Sergio Goycochea"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué italiano falló el último penal ante Argentina en la semifinal de 1990?",
+        "options": [
+          "Salvatore Schillaci",
+          "Roberto Donadoni",
+          "Roberto Baggio",
+          "Aldo Serena"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué arquero atajó el penal de Maradona en el Mundial de 1990 contra Yugoslavia?",
+        "options": [
+          "Tomislav Ivković",
+          "Peter Shilton",
+          "Rinat Dasáyev",
+          "Walter Zenga"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó el único gol de la final del Mundial de 1990?",
+        "options": [
+          "Rudi Völler",
+          "Jürgen Klinsmann",
+          "Andreas Brehme",
+          "Lothar Matthäus"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Qué club fue el primer campeón de la Copa Intercontinental en 1960?",
+        "options": [
+          "Real Madrid",
+          "Santos",
+          "Peñarol",
+          "Benfica"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino ganó la Copa Intercontinental de 1967?",
+        "options": [
+          "Boca Juniors",
+          "Independiente",
+          "Racing Club",
+          "Estudiantes"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Contra qué club ganó Racing la Intercontinental de 1967?",
+        "options": [
+          "Manchester United",
+          "Benfica",
+          "Celtic",
+          "Inter"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol decisivo para Racing en la Intercontinental de 1967?",
+        "options": [
+          "Alfio Basile",
+          "Humberto Maschio",
+          "Norberto Raffo",
+          "Juan Carlos Cárdenas"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club argentino ganó la Intercontinental de 1968?",
+        "options": [
+          "Estudiantes de La Plata",
+          "Independiente",
+          "Racing Club",
+          "River Plate"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Contra qué club ganó Estudiantes la Intercontinental de 1968?",
+        "options": [
+          "Celtic",
+          "Milan",
+          "Ajax",
+          "Manchester United"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Intercontinental de 1973 tras reemplazar al campeón europeo?",
+        "options": [
+          "Juventus",
+          "Ajax",
+          "Independiente",
+          "Bayern Múnich"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol de Independiente ante Juventus en la Intercontinental de 1973?",
+        "options": [
+          "Ricardo Bochini",
+          "Daniel Bertoni",
+          "Francisco Sá",
+          "Agustín Balbuena"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino ganó la Intercontinental de 1984?",
+        "options": [
+          "Boca Juniors",
+          "Argentinos Juniors",
+          "River Plate",
+          "Independiente"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Contra qué club ganó Independiente la Intercontinental de 1984?",
+        "options": [
+          "Liverpool",
+          "Hamburgo",
+          "Porto",
+          "Juventus"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Quién marcó el gol de Independiente ante Liverpool en 1984?",
+        "options": [
+          "Ricardo Bochini",
+          "Jorge Burruchaga",
+          "Claudio Marangoni",
+          "José Percudani"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club argentino ganó la Intercontinental de 1986?",
+        "options": [
+          "Independiente",
+          "Argentinos Juniors",
+          "Boca Juniors",
+          "River Plate"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Contra qué club ganó River la Intercontinental de 1986?",
+        "options": [
+          "Porto",
+          "Steaua de Bucarest",
+          "Barcelona",
+          "PSV Eindhoven"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién marcó el gol de River en la Intercontinental de 1986?",
+        "options": [
+          "Juan Gilberto Funes",
+          "Antonio Alzamendi",
+          "Enzo Francescoli",
+          "Norberto Alonso"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1966?",
+        "options": [
+          "Peñarol",
+          "Nacional",
+          "River Plate",
+          "Independiente"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1971?",
+        "options": [
+          "Peñarol",
+          "Estudiantes",
+          "Palmeiras",
+          "Nacional"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1977?",
+        "options": [
+          "Cruzeiro",
+          "River Plate",
+          "Deportivo Cali",
+          "Boca Juniors"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Contra qué club ganó Boca la final de la Libertadores de 1977?",
+        "options": [
+          "Olimpia",
+          "Cruzeiro",
+          "Peñarol",
+          "Deportivo Cali"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué arquero de Boca fue clave en los penales de la Libertadores 1977?",
+        "options": [
+          "Carlos Navarro Montoya",
+          "Antonio Roma",
+          "Roberto Abbondanzieri",
+          "Hugo Gatti"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1979?",
+        "options": [
+          "Nacional",
+          "Olimpia",
+          "Boca Juniors",
+          "Internacional"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club colombiano fue subcampeón de Libertadores tres años consecutivos entre 1985 y 1987?",
+        "options": [
+          "Atlético Nacional",
+          "Deportivo Cali",
+          "Millonarios",
+          "América de Cali"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1987?",
+        "options": [
+          "América de Cali",
+          "Nacional",
+          "Peñarol",
+          "Independiente"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "¿Quién marcó el gol del título para Peñarol en la final de 1987?",
+        "options": [
+          "Rubén Sosa",
+          "Diego Aguirre",
+          "Antonio Alzamendi",
+          "Fernando Morena"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1988?",
+        "options": [
+          "Nacional",
+          "Olimpia",
+          "Peñarol",
+          "Newell's Old Boys"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club argentino fue subcampeón de la Libertadores 1988?",
+        "options": [
+          "Racing Club",
+          "Newell's Old Boys",
+          "San Lorenzo",
+          "River Plate"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1991?",
+        "options": [
+          "Olimpia",
+          "Colo-Colo",
+          "Nacional",
+          "Boca Juniors"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Qué club chileno es el único de su país que ganó la Libertadores?",
+        "options": [
+          "Universidad de Chile",
+          "Cobreloa",
+          "Universidad Católica",
+          "Colo-Colo"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1992?",
+        "options": [
+          "Newell's Old Boys",
+          "Cruzeiro",
+          "Barcelona SC",
+          "São Paulo"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué entrenador dirigió a São Paulo en las Libertadores de 1992 y 1993?",
+        "options": [
+          "Telê Santana",
+          "Luiz Felipe Scolari",
+          "Carlos Alberto Parreira",
+          "Muricy Ramalho"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1996?",
+        "options": [
+          "Grêmio",
+          "River Plate",
+          "América de Cali",
+          "Cruzeiro"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "¿Quién fue el goleador de River en la final de la Libertadores de 1996?",
+        "options": [
+          "Enzo Francescoli",
+          "Marcelo Salas",
+          "Ariel Ortega",
+          "Hernán Crespo"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "¿Qué club ganó la Libertadores de 1998?",
+        "options": [
+          "Palmeiras",
+          "Vasco da Gama",
+          "Barcelona SC",
+          "Cruzeiro"
+        ],
+        "correct": 1
+      }
+    ]
+  }
+}

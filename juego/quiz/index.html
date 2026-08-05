@@ -140,7 +140,7 @@
 
       <!-- Pregunta -->
       <div class="glow-card bg-slate-900/60 border border-slate-800 rounded-2xl p-5 mb-4">
-        <div id="flag-display" class="text-6xl text-center mb-4 hidden"></div>
+        <div id="flag-display" class="text-center mb-4 hidden"></div>
         <h2 id="question-text" class="text-lg sm:text-xl font-bold text-white text-center leading-snug"></h2>
       </div>
 
@@ -151,7 +151,7 @@
       <div id="point-section" class="hidden">
         <p class="text-sm text-slate-400 mb-3 text-center">¿Quién acertó?</p>
         <div id="point-buttons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
-        <button onclick="nextQuestion()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl">
+        <button id="btn-next" onclick="nextQuestion()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl opacity-40 cursor-not-allowed" disabled>
           Siguiente pregunta →
         </button>
       </div>
@@ -184,7 +184,7 @@
   </footer>
 
   <script>
-    // ========== DATOS ==========
+    // ========== ESTADO ==========
     let people = [];
     let scores = {};
     let currentCategory = null;
@@ -192,92 +192,35 @@
     let questions = [];
     let currentIndex = 0;
     let answered = false;
+    let pointGiven = false;
 
-    const QUESTIONS = {
-      banderas: [
-        { flag: "🇦🇷", question: "¿De qué país es esta bandera?", options: ["Uruguay", "Argentina", "Chile", "Paraguay"], correct: 1 },
-        { flag: "🇧🇷", question: "¿De qué país es esta bandera?", options: ["Brasil", "Colombia", "Portugal", "México"], correct: 0 },
-        { flag: "🇫🇷", question: "¿De qué país es esta bandera?", options: ["Holanda", "Rusia", "Francia", "Italia"], correct: 2 },
-        { flag: "🇯🇵", question: "¿De qué país es esta bandera?", options: ["China", "Corea del Sur", "Japón", "Vietnam"], correct: 2 },
-        { flag: "🇮🇹", question: "¿De qué país es esta bandera?", options: ["México", "Italia", "Irlanda", "India"], correct: 1 },
-        { flag: "🇩🇪", question: "¿De qué país es esta bandera?", options: ["Bélgica", "Alemania", "España", "Austria"], correct: 1 },
-        { flag: "🇬🇧", question: "¿De qué país es esta bandera?", options: ["Inglaterra", "Australia", "Nueva Zelanda", "EE.UU."], correct: 0 },
-        { flag: "🇪🇸", question: "¿De qué país es esta bandera?", options: ["España", "Portugal", "Colombia", "Venezuela"], correct: 0 },
-        { flag: "🇲🇽", question: "¿De qué país es esta bandera?", options: ["Italia", "México", "Irlanda", "India"], correct: 1 },
-        { flag: "🇨🇦", question: "¿De qué país es esta bandera?", options: ["Canadá", "Perú", "Austria", "Líbano"], correct: 0 },
-        { flag: "🇺🇾", question: "¿De qué país es esta bandera?", options: ["Argentina", "Uruguay", "Grecia", "Israel"], correct: 1 },
-        { flag: "🇨🇱", question: "¿De qué país es esta bandera?", options: ["Cuba", "Puerto Rico", "Chile", "Panamá"], correct: 2 },
-      ],
-
-      cultura: [
-        { question: "¿Cuál es el planeta más grande del sistema solar?", options: ["Saturno", "Júpiter", "Neptuno", "Urano"], correct: 1 },
-        { question: "¿Quién pintó la Mona Lisa?", options: ["Van Gogh", "Picasso", "Leonardo da Vinci", "Miguel Ángel"], correct: 2 },
-        { question: "¿En qué continente está Egipto?", options: ["Asia", "Europa", "África", "América"], correct: 2 },
-        { question: "¿Cuántos lados tiene un hexágono?", options: ["5", "6", "7", "8"], correct: 1 },
-        { question: "¿Cuál es el océano más grande?", options: ["Atlántico", "Índico", "Pacífico", "Ártico"], correct: 2 },
-        { question: "¿En qué año llegó el hombre a la Luna?", options: ["1965", "1969", "1972", "1961"], correct: 1 },
-        { question: "¿Quién escribió 'Don Quijote de la Mancha'?", options: ["Shakespeare", "Cervantes", "Borges", "García Márquez"], correct: 1 },
-        { question: "¿Cuál es el metal más abundante en la corteza terrestre?", options: ["Hierro", "Aluminio", "Cobre", "Oro"], correct: 1 },
-        { question: "¿Cuántos huesos tiene el cuerpo humano adulto?", options: ["206", "198", "214", "180"], correct: 0 },
-        { question: "¿Cuál es la capital de Australia?", options: ["Sídney", "Melbourne", "Canberra", "Perth"], correct: 2 },
-      ],
-
-      argentina: [
-        { question: "¿En qué año fue la Revolución de Mayo?", options: ["1810", "1816", "1806", "1820"], correct: 0 },
-        { question: "¿Quién escribió el Martín Fierro?", options: ["Borges", "Sarmiento", "José Hernández", "Lugones"], correct: 2 },
-        { question: "¿Cuál es el baile nacional de Argentina?", options: ["Cumbia", "Tango", "Chacarera", "Zamba"], correct: 1 },
-        { question: "¿Qué significa 'che'?", options: ["Hola", "Una forma de llamar la atención / 'vos'", "Chau", "Gracias"], correct: 1 },
-        { question: "¿En qué provincia está el Cerro Aconcagua?", options: ["Neuquén", "Mendoza", "San Juan", "Salta"], correct: 1 },
-        { question: "¿Quién fue el primer presidente de Argentina?", options: ["San Martín", "Belgrano", "Bernardino Rivadavia", "Mitre"], correct: 2 },
-        { question: "¿Qué se celebra el 9 de Julio?", options: ["Revolución de Mayo", "Día de la Independencia", "Día del Trabajador", "Malvinas"], correct: 1 },
-        { question: "¿Cuál es el postre más típico argentino?", options: ["Flan", "Dulce de leche", "Alfajor", "Todos los anteriores"], correct: 3 },
-        { question: "¿Cómo se llama el estadio de Boca Juniors?", options: ["El Monumental", "La Bombonera", "El Cilindro", "El Gasómetro"], correct: 1 },
-        { question: "¿Qué provincia es conocida por sus cataratas?", options: ["Corrientes", "Misiones", "Chaco", "Formosa"], correct: 1 },
-      ],
-
-      futbol: {
-        facil: [
-          { question: "¿Quién es el máximo goleador histórico de la Selección Argentina?", options: ["Batistuta", "Messi", "Maradona", "Agüero"], correct: 1 },
-          { question: "¿En qué año ganó Argentina el Mundial de Qatar?", options: ["2018", "2022", "2014", "2026"], correct: 1 },
-          { question: "¿Qué número usaba Maradona en la Selección?", options: ["7", "9", "10", "11"], correct: 2 },
-          { question: "¿Contra qué país se jugó la final del Mundial 2022?", options: ["Francia", "Croacia", "Brasil", "Países Bajos"], correct: 0 },
-          { question: "¿Cómo se llama el estadio de River Plate?", options: ["La Bombonera", "El Monumental", "El Cilindro", "El Nuevo Gasómetro"], correct: 1 },
-          { question: "¿Quién atajó el penal decisivo en la final de 2022?", options: ["Armani", "Martínez (Dibu)", "Romero", "Andújar"], correct: 1 },
-          { question: "¿Cuántas Copas del Mundo tiene Argentina?", options: ["2", "3", "4", "1"], correct: 1 },
-          { question: "¿En qué club europeo se retiró Messi? (2025)", options: ["PSG", "Barcelona", "Inter Miami", "Manchester City"], correct: 2 },
-        ],
-        medio: [
-          { question: "¿Quién hizo el gol de la victoria en la final del Mundial 86?", options: ["Maradona", "Burruchaga", "Valdano", "Brown"], correct: 1 },
-          { question: "¿En qué año Argentina ganó su primera Copa América del siglo XXI?", options: ["2004", "2007", "2021", "2015"], correct: 2 },
-          { question: "¿Quién es el máximo goleador histórico de la Bombonera?", options: ["Martín Palermo", "Riquelme", "Guillermo Barros Schelotto", "Carlos Tévez"], correct: 0 },
-          { question: "¿Contra quién se jugó la final de la Copa América 2021?", options: ["Brasil", "Colombia", "Chile", "Uruguay"], correct: 0 },
-          { question: "¿Qué jugador argentino ganó el Balón de Oro antes que Messi?", options: ["Kempes", "Maradona", "Di Stéfano", "Ninguno"], correct: 3 },
-          { question: "¿En qué club jugaba Messi cuando debutó en la Selección?", options: ["Newell's", "Barcelona", "River", "PSG"], correct: 1 },
-          { question: "¿Quién dirigió a Argentina en el Mundial 2014?", options: ["Basile", "Maradona", "Sabella", "Martino"], correct: 2 },
-          { question: "¿Cuántos goles hizo Messi en el Mundial 2022?", options: ["5", "7", "6", "8"], correct: 1 },
-        ],
-        dificil: [
-          { question: "¿Quién fue el arquero titular de Argentina en el Mundial 1978?", options: ["Fillol", "Goycochea", "Pumpido", "Caranta"], correct: 0 },
-          { question: "¿En qué minuto Maradona hizo la 'Mano de Dios'?", options: ["51'", "55'", "60'", "45'"], correct: 0 },
-          { question: "¿Quién marcó el gol del empate de Argentina en la final de 1990?", options: ["Caniggia", "Burruchaga", "Maradona", "No hubo gol argentino"], correct: 3 },
-          { question: "¿Qué número usaba Batistuta en la Roma?", options: ["9", "18", "19", "10"], correct: 0 },
-          { question: "¿Quién fue el goleador de Argentina en el Mundial 1978?", options: ["Kempes", "Luque", "Bertoni", "Passarella"], correct: 0 },
-          { question: "¿En qué estadio se jugó la final del Mundial 1986?", options: ["Azteca", "Monumental", "Maracaná", "Wembley"], correct: 0 },
-          { question: "¿Quién le dio el pase a Messi en el primer gol de la final 2022?", options: ["Di María", "Álvarez", "Fernández", "De Paul"], correct: 0 },
-          { question: "¿Cuántas finales de Champions perdió Messi con el Barcelona?", options: ["1", "2", "3", "0"], correct: 0 },
-        ],
-        muy_dificil: [
-          { question: "¿Quién fue el técnico de Argentina en el Mundial 1930?", options: ["Olazar", "Stábile", "Pescia", "No tenía técnico fijo"], correct: 0 },
-          { question: "¿En qué club debutó profesionalmente Maradona?", options: ["Argentinos Juniors", "Boca", "Newell's", "Vélez"], correct: 0 },
-          { question: "¿Quién marcó el gol número 1000 de la historia de los Mundiales? (fue argentino)", options: ["Batistuta", "Kempes", "Maradona", "Caniggia"], correct: 0 },
-          { question: "¿Cuántos partidos consecutivos ganó Argentina en el ciclo Scaloni hasta antes de Qatar?", options: ["28", "31", "35", "36"], correct: 3 },
-          { question: "¿Quién fue el primer argentino en jugar en el Real Madrid?", options: ["Di Stéfano", "Rial", "Héctor Rial", "Pedernera"], correct: 0 },
-          { question: "¿En qué año River le ganó la final de la Libertadores a Boca en Madrid?", options: ["2017", "2018", "2019", "2015"], correct: 1 },
-          { question: "¿Quién atajó el penal de Higuaín en la final de Champions 2015?", options: ["Neuer", "Buffon", "Navas", "Oblak"], correct: 0 },
-          { question: "¿Qué jugador argentino tiene más títulos de liga en Europa?", options: ["Messi", "Di María", "Higuaín", "Mascherano"], correct: 0 },
-        ]
-      }
+    // Datos cargados desde JSON
+    let DATA = {
+      banderas: [],
+      cultura: [],
+      argentina: [],
+      futbol: {}
     };
+
+    // ========== CARGAR JSONs ==========
+    async function loadAllQuestions() {
+      try {
+        const [banderas, cultura, argentina, futbol] = await Promise.all([
+          fetch("./banderas.json").then(r => r.json()),
+          fetch("./cultura.json").then(r => r.json()),
+          fetch("./argentina.json").then(r => r.json()),
+          fetch("./futbol.json").then(r => r.json())
+        ]);
+
+        DATA.banderas = banderas;
+        DATA.cultura = cultura;
+        DATA.argentina = argentina;
+        DATA.futbol = futbol;
+      } catch (err) {
+        console.error("Error cargando preguntas:", err);
+        alert("No se pudieron cargar las preguntas. Revisá que los .json estén en la misma carpeta.");
+      }
+    }
 
     // ========== PARTICIPANTES ==========
     function loadPeople() {
@@ -362,19 +305,24 @@
       currentDifficulty = difficulty;
       currentIndex = 0;
       answered = false;
+      pointGiven = false;
 
       // Reset scores
       scores = {};
       people.forEach(p => scores[p] = 0);
 
-      // Cargar preguntas
+      // Cargar preguntas según categoría
       if (category === "futbol") {
-        questions = [...QUESTIONS.futbol[difficulty]];
+        questions = [...(DATA.futbol[difficulty] || [])];
       } else {
-        questions = [...QUESTIONS[category]];
+        questions = [...(DATA[category] || [])];
       }
 
-      // Mezclar
+      if (questions.length === 0) {
+        alert("No hay preguntas cargadas para esta categoría");
+        return;
+      }
+
       questions = shuffle(questions);
 
       hideAll();
@@ -398,19 +346,24 @@
       }
 
       answered = false;
+      pointGiven = false;
+
       const q = questions[currentIndex];
 
       document.getElementById("progress").textContent = `Pregunta ${currentIndex + 1} de ${questions.length}`;
       document.getElementById("question-text").textContent = q.question;
 
+      // Bandera (si existe)
       const flagEl = document.getElementById("flag-display");
-      if (q.flag) {
-        flagEl.textContent = q.flag;
+      if (q.flagUrl) {
+        flagEl.innerHTML = `<img src="${q.flagUrl}" alt="Bandera" class="mx-auto rounded-lg shadow-lg" style="width: 160px; height: auto;">`;
         flagEl.classList.remove("hidden");
       } else {
+        flagEl.innerHTML = "";
         flagEl.classList.add("hidden");
       }
 
+      // Opciones
       const optionsEl = document.getElementById("options");
       optionsEl.innerHTML = q.options.map((opt, i) => `
         <button onclick="selectAnswer(${i})" class="option-btn w-full text-left px-4 py-3.5 bg-slate-950/70 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl transition text-sm font-medium">
@@ -418,7 +371,11 @@
         </button>
       `).join("");
 
+      // Reset sección de puntos
       document.getElementById("point-section").classList.add("hidden");
+      const nextBtn = document.getElementById("btn-next");
+      nextBtn.disabled = true;
+      nextBtn.classList.add("opacity-40", "cursor-not-allowed");
     }
 
     function selectAnswer(index) {
@@ -437,14 +394,14 @@
         }
       });
 
-      // Mostrar sección para dar punto
+      // Mostrar botones de quién acertó
       const pointBtns = document.getElementById("point-buttons");
       pointBtns.innerHTML = people.map(p => `
-        <button onclick="givePoint('${p}')" class="px-4 py-2 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-xl text-sm font-medium transition">
+        <button onclick="givePoint('${p}', this)" class="point-btn px-4 py-2 bg-slate-800 hover:bg-blue-600 border border-slate-700 rounded-xl text-sm font-medium transition">
           ${p}
         </button>
       `).join("") + `
-        <button onclick="givePoint(null)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition">
+        <button onclick="givePoint(null, this)" class="point-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm text-slate-400 transition">
           Nadie
         </button>
       `;
@@ -452,10 +409,30 @@
       document.getElementById("point-section").classList.remove("hidden");
     }
 
-    function givePoint(player) {
-      if (player) scores[player]++;
-      // Deshabilitar botones de punto para evitar doble click
-      document.querySelectorAll("#point-buttons button").forEach(b => b.disabled = true);
+    function givePoint(player, btnElement) {
+      if (pointGiven) return; // evitar doble click
+      pointGiven = true;
+
+      if (player) {
+        scores[player] = (scores[player] || 0) + 1;
+      }
+
+      // Feedback visual: marcar el botón elegido y deshabilitar el resto
+      const allBtns = document.querySelectorAll(".point-btn");
+      allBtns.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.remove("hover:bg-blue-600", "hover:bg-slate-700");
+        btn.classList.add("opacity-50");
+      });
+
+      // Destacar el botón seleccionado
+      btnElement.classList.remove("opacity-50", "bg-slate-800", "text-slate-400");
+      btnElement.classList.add("bg-emerald-600", "border-emerald-500", "text-white", "opacity-100");
+
+      // Habilitar botón "Siguiente"
+      const nextBtn = document.getElementById("btn-next");
+      nextBtn.disabled = false;
+      nextBtn.classList.remove("opacity-40", "cursor-not-allowed");
     }
 
     function nextQuestion() {
@@ -504,12 +481,14 @@
       goToPlayers();
     }
 
-    // Enter
+    // Enter para agregar persona
     document.getElementById("new-person").addEventListener("keydown", e => {
       if (e.key === "Enter") addPerson();
     });
 
+    // Iniciar
     loadPeople();
+    loadAllQuestions();
   </script>
 </body>
 </html>
